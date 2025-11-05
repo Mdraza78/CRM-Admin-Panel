@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM DASHBOARD</title>
+    <link rel="stylesheet" href="/main/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header / Navigation -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="logo">
+                        <img src="../Asset/Globentix_logo.png" alt="Globentix Logo">
+                    </div>
+                    
+                    <nav class="main-nav">
+                        <a href="/dashboard" class="nav-link" data-page="dashboard">
+                            <i class="fas fa-tachometer-alt"></i> 
+                            <span>Dashboard</span>
+                        </a>
+<a href="/leads" class="nav-link" data-page="leads">
+    <i class="fas fa-user-plus"></i> 
+    <span>Show Leads</span>
+</a>
+                       <!-- In main_page/index.html - Update the Industry Leads link -->
+<a href="/industry-leads" class="nav-link" data-page="industry-leads">
+    <i class="fas fa-headset"></i> 
+    <span>Industry Leads</span>
+</a>
+                        <a href="/main/DEAL/deal.html" class="nav-link" data-page="deals">
+                            <i class="fas fa-handshake"></i> 
+                            <span>Deals</span>
+                        </a>
+                        <a href="/main/CONTACT/contact.html" class="nav-link" data-page="contacts">
+                            <i class="fas fa-address-book"></i> 
+                            <span>Contacts</span>
+                        </a>
+                        <a href="/main/INVOICE/invoice.html" class="nav-link" data-page="invoice">
+                            <i class="fas fa-file-invoice"></i> 
+                            <span>Invoice</span>
+                        </a>
+                        <a href="/main/REPORTS/reports.html" class="nav-link" data-page="reports">
+                            <i class="fas fa-chart-bar"></i> 
+                            <span>Reports</span>
+                        </a>
+                        <a href="/main/SETTINGSS/setting.html" class="nav-link" data-page="settings">
+                            <i class="fas fa-cog"></i> 
+                            <span>Settings</span>
+                        </a>
+                        <a href="/main/SALARY/Salary.html" class="nav-link" data-page="salary">
+                            <i class="fas fa-money-bill"></i> 
+                            <span>Salary</span>
+                        </a>
+                    </nav>
+                </div>
+                
+                <div class="header-right">
+                    <div class="notifications" onclick="toggleNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span>Notification</span>
+                        <span class="notification-badge" id="notificationCount">5</span>
+                    </div>
+                    
+                    <div class="user-profile" onclick="toggleUserMenu()">
+                        <img src="/Logo.png" alt="User" class="user-avatar">
+                        <span class="user-name" id="userDisplayName">Md Raza</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- User Dropdown Menu -->
+            <div class="user-dropdown" id="userDropdown">
+                <div class="dropdown-item" onclick="viewProfile()">
+                    <i class="fas fa-user"></i>
+                    <span>View Profile</span>
+                </div>
+                <div class="dropdown-item" onclick="openSettings()">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </div>
+                <div class="dropdown-item" onclick="openHelp()">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Help & Support</span>
+                </div>
+                <div class="dropdown-item logout" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </div>
+            </div>
+            
+            <!-- Notifications Dropdown Menu -->
+            <div class="notifications-dropdown" id="notificationsDropdown">
+                <div class="notifications-header">
+                    <h4>Notifications</h4>
+                    <button class="mark-all-read" onclick="markAllRead()">Mark all as read</button>
+                </div>
+                <div class="notifications-list">
+                    <div class="notification-item urgent" onclick="viewNotification(1)">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div class="notification-content">
+                            <p>High-value deal closing tomorrow: ABC Corp - $50,000</p>
+                            <span class="notification-time">2 minutes ago</span>
+                        </div>
+                    </div>
+                    <div class="notification-item" onclick="viewNotification(2)">
+                        <i class="fas fa-user-plus"></i>
+                        <div class="notification-content">
+                            <p>New lead assigned: Sarah Wilson from TechStart</p>
+                            <span class="notification-time">1 hour ago</span>
+                        </div>
+                    </div>
+                    <div class="notification-item" onclick="viewNotification(3)">
+                        <i class="fas fa-calendar"></i>
+                        <div class="notification-content">
+                            <p>Meeting reminder: Client demo at 3:00 PM</p>
+                            <span class="notification-time">2 hours ago</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Content -->
+        <main class="main-content">
+            <!-- Menu Toggle Button - Moved to Main Content on LEFT side -->
+            <div class="menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </div>
+            
+            <!-- KPI / Summary Cards -->
+<section class="kpi-section">
+    <div class="kpi-card leads">
+        <div class="kpi-icon">
+            <i class="fas fa-user-plus"></i>
+        </div>
+        <div class="kpi-content">
+            <div class="kpi-value">247</div>
+            <div class="kpi-label">Total Leads</div>
+            <div class="kpi-change positive">
+                <i class="fas fa-arrow-up"></i> +12% this month
+            </div>
+        </div>
+    </div>
+    
+    <div class="kpi-card deals">
+        <div class="kpi-icon">
+            <i class="fas fa-handshake"></i>
+        </div>
+        <div class="kpi-content">
+            <div class="kpi-value">43</div>
+            <div class="kpi-label">Active Deals</div>
+            <div class="kpi-change positive">
+                <i class="fas fa-arrow-up"></i> +8% this month
+            </div>
+        </div>
+    </div>
+    
+    <div class="kpi-card revenue">
+        <div class="kpi-icon">
+            <i class="fas fa-dollar-sign"></i>
+        </div>
+        <div class="kpi-content">
+            <div class="kpi-value">$128,500</div>
+            <div class="kpi-label">Revenue This Month</div>
+            <div class="kpi-change positive">
+                <i class="fas fa-arrow-up"></i> +23% vs last month
+            </div>
+        </div>
+    </div>
+    
+    <div class="kpi-card tasks">
+        <div class="kpi-icon">
+            <i class="fas fa-tasks"></i>
+        </div>
+        <div class="kpi-content">
+            <div class="kpi-value">8</div>
+            <div class="kpi-label">Tasks Due Today</div>
+            <div class="kpi-change negative">
+                <i class="fas fa-exclamation-triangle"></i> 3 overdue
+            </div>
+        </div>
+    </div>
+</section>
+
+            <!-- Main Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Sales Pipeline Overview -->
+                <section class="pipeline-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-funnel-dollar"></i> Sales Pipeline Overview</h3>
+                        <div class="pipeline-total">Total Pipeline: $485,000</div>
+                    </div>
+                    
+                    <div class="pipeline-stages">
+                        <div class="pipeline-stage prospecting" onclick="viewPipelineStage('prospecting')">
+                            <div class="stage-header">
+                                <h4>Prospecting</h4>
+                                <div class="stage-stats">
+                                    <span class="stage-count">12</span>
+                                    <span class="stage-value">$95,000</span>
+                                </div>
+                            </div>
+                            <div class="stage-progress">
+                                <div class="progress-bar" style="width: 25%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="pipeline-stage qualification" onclick="viewPipelineStage('qualification')">
+                            <div class="stage-header">
+                                <h4>Qualification</h4>
+                                <div class="stage-stats">
+                                    <span class="stage-count">8</span>
+                                    <span class="stage-value">$125,000</span>
+                                </div>
+                            </div>
+                            <div class="stage-progress">
+                                <div class="progress-bar" style="width: 35%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="pipeline-stage proposal" onclick="viewPipelineStage('proposal')">
+                            <div class="stage-header">
+                                <h4>Proposal</h4>
+                                <div class="stage-stats">
+                                    <span class="stage-count">6</span>
+                                    <span class="stage-value">$155,000</span>
+                                </div>
+                            </div>
+                            <div class="stage-progress">
+                                <div class="progress-bar" style="width: 55%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="pipeline-stage negotiation" onclick="viewPipelineStage('negotiation')">
+                            <div class="stage-header">
+                                <h4>Negotiation</h4>
+                                <div class="stage-stats">
+                                    <span class="stage-count">4</span>
+                                    <span class="stage-value">$110,000</span>
+                                </div>
+                            </div>
+                            <div class="stage-progress">
+                                <div class="progress-bar" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="pipeline-stage won" onclick="viewPipelineStage('won')">
+                            <div class="stage-header">
+                                <h4>Won</h4>
+                                <div class="stage-stats">
+                                    <span class="stage-count">15</span>
+                                    <span class="stage-value">$285,000</span>
+                                </div>
+                            </div>
+                            <div class="stage-progress">
+                                <div class="progress-bar won" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="pipeline-stage lost" onclick="viewPipelineStage('lost')">
+                            <div class="stage-header">
+                                <h4>Lost</h4>
+                                <div class="stage-stats">
+                                    <span class="stage-count">3</span>
+                                    <span class="stage-value">$45,000</span>
+                                </div>
+                            </div>
+                            <div class="stage-progress">
+                                <div class="progress-bar lost" style="width: 15%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Reports & Charts Section -->
+            <section class="reports-section">
+                <div class="section-header">
+                    <h3><i class="fas fa-chart-line"></i> Reports & Analytics</h3>
+                    <select class="time-filter" onchange="updateReports(this.value)">
+                        <option value="week">This Week</option>
+                        <option value="month" selected>This Month</option>
+                        <option value="quarter">This Quarter</option>
+                        <option value="year">This Year</option>
+                    </select>
+                </div>
+                
+                <div class="charts-container">
+                    <div class="chart-item">
+                        <h4><i class="fas fa-chart-bar"></i> Sales Performance</h4>
+                        <div class="chart-placeholder">
+                            <canvas id="salesChart" width="300" height="200"></canvas>
+                        </div>
+                        <div class="chart-summary">
+                            <span class="trend positive">📈 +15% increase from last month</span>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-item">
+                        <h4><i class="fas fa-chart-pie"></i> Lead Sources</h4>
+                        <div class="lead-sources">
+                            <div class="source-item">
+                                <span class="source-label">Website</span>
+                                <div class="source-bar">
+                                    <div class="source-fill website" style="width: 45%"></div>
+                                </div>
+                                <span class="source-percentage">45%</span>
+                            </div>
+                            <div class="source-item">
+                                <span class="source-label">LinkedIn</span>
+                                <div class="source-bar">
+                                    <div class="source-fill linkedin" style="width: 30%"></div>
+                                </div>
+                                <span class="source-percentage">30%</span>
+                            </div>
+                            <div class="source-item">
+                                <span class="source-label">Email Campaign</span>
+                                <div class="source-bar">
+                                    <div class="source-fill email" style="width: 15%"></div>
+                                </div>
+                                <span class="source-percentage">15%</span>
+                            </div>
+                            <div class="source-item">
+                                <span class="source-label">Referral</span>
+                                <div class="source-bar">
+                                    <div class="source-fill referral" style="width: 10%"></div>
+                                </div>
+                                <span class="source-percentage">10%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-item">
+                        <h4><i class="fas fa-percentage"></i> Conversion Rates</h4>
+                        <div class="conversion-stats">
+                            <div class="conversion-item">
+                                <span class="conversion-label">Lead to Opportunity</span>
+                                <span class="conversion-rate good">23%</span>
+                            </div>
+                            <div class="conversion-item">
+                                <span class="conversion-label">Opportunity to Deal</span>
+                                <span class="conversion-rate excellent">67%</span>
+                            </div>
+                            <div class="conversion-item">
+                                <span class="conversion-label">Deal to Closed Won</span>
+                                <span class="conversion-rate good">45%</span>
+                            </div>
+                            <div class="conversion-item">
+                                <span class="conversion-label">Overall Conversion</span>
+                                <span class="conversion-rate average">15%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-item">
+                        <h4><i class="fas fa-chart-area"></i> Revenue Trend</h4>
+                        <div class="revenue-trend">
+                            <canvas id="revenueChart" width="300" height="150"></canvas>
+                        </div>
+                        <div class="revenue-summary">
+                            <div class="revenue-item">
+                                <span class="revenue-label">This Month</span>
+                                <span class="revenue-value">$128,500</span>
+                            </div>
+                            <div class="revenue-item">
+                                <span class="revenue-label">Last Month</span>
+                                <span class="revenue-value">$104,200</span>
+                            </div>
+                            <div class="revenue-item">
+                                <span class="revenue-label">Growth</span>
+                                <span class="revenue-growth positive">+23.3%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <br>
+            <br>
+            <!-- Quick Actions Panel -->
+            <section class="quick-actions-section">
+                <div class="section-header">
+                    <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                </div>
+                
+                <div class="quick-actions-grid">
+                    <button class="quick-action-btn add-lead" onclick="addLead()">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Add Lead</span>
+                    </button>
+                    
+                    <button class="quick-action-btn add-deal" onclick="addDeal()">
+                        <i class="fas fa-handshake"></i>
+                        <span>Add Deal</span>
+                    </button>
+                    
+                    <button class="quick-action-btn log-activity" onclick="logActivity()">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span>Log Activity</span>
+                    </button>
+                    
+                    <button class="quick-action-btn import-data" onclick="importData()">
+                        <i class="fas fa-file-import"></i>
+                        <span>Import Data</span>
+                    </button>
+                    
+                    <button class="quick-action-btn export-data" onclick="exportData()">
+                        <i class="fas fa-file-export"></i>
+                        <span>Export Data</span>
+                    </button>
+                    
+                    <button class="quick-action-btn schedule-meeting" onclick="scheduleMeeting()">
+                        <i class="fas fa-calendar-plus"></i>
+                        <span>Schedule Meeting</span>
+                    </button>
+                </div>
+            </section>
+        </main>
+    </div>    
+
+    <!-- Task Modal -->
+    <div class="modal-overlay" id="taskModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Task</h3>
+                <button class="modal-close" onclick="closeTaskModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="field-group">
+                    <label for="taskTitle">Task Title</label>
+                    <input type="text" id="taskTitle" class="form-input" placeholder="Enter task description">
+                </div>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label for="taskType">Task Type</label>
+                        <select id="taskType" class="form-select">
+                            <option value="call">Call</option>
+                            <option value="email">Email</option>
+                            <option value="meeting">Meeting</option>
+                            <option value="follow-up">Follow-up</option>
+                        </select>
+                    </div>
+                    <div class="field-group">
+                        <label for="taskPriority">Priority</label>
+                        <select id="taskPriority" class="form-select">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="field-group">
+                    <label for="taskDate">Due Date & Time</label>
+                    <input type="datetime-local" id="taskDate" class="form-input">
+                </div>
+                <div class="field-group">
+                    <label for="taskDescription">Description</label>
+                    <textarea id="taskDescription" class="form-textarea" rows="3" placeholder="Additional details..."></textarea>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-primary" onclick="saveTask()">Save Task</button>
+                <button class="btn-secondary" onclick="closeTaskModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal-overlay" id="profileModal" style="display: none;">
+        <div class="modal-content profile-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-user"></i> User Profile</h3>
+                <button class="modal-close" onclick="closeProfileModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <!-- View Mode -->
+                <div id="profileViewMode">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <img src="/Logo.png" alt="Profile" class="user-avatar-large">
+                            <div class="profile-status online"></div>
+                        </div>
+                        <div class="profile-info">
+                            <h2 id="profileName">Loading...</h2>
+                            <p class="profile-role">CRM User</p>
+                            <p class="profile-member-since">Member since: <span id="profileMemberSince">2024</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-details">
+                        <h4><i class="fas fa-info-circle"></i> Personal Information</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label><i class="fas fa-user-tag"></i> Username</label>
+                                <span id="profileUsername">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label><i class="fas fa-envelope"></i> Email</label>
+                                <span id="profileEmail">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label><i class="fas fa-id-card"></i> User ID</label>
+                                <span id="profileUserId">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label><i class="fas fa-calendar"></i> Last Login</label>
+                                <span id="profileLastLogin">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-stats">
+                        <h4><i class="fas fa-chart-bar"></i> Quick Stats</h4>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-value" id="profileLeadsCount">0</div>
+                                <div class="stat-label">Total Leads</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="profileDealsCount">0</div>
+                                <div class="stat-label">Active Deals</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="profileTasksCount">0</div>
+                                <div class="stat-label">Pending Tasks</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-actions">
+                        <button class="btn-primary" onclick="switchToEditMode()">
+                            <i class="fas fa-edit"></i> Edit Profile
+                        </button>
+                        <button class="btn-secondary" onclick="closeProfileModal()">
+                            <i class="fas fa-times"></i> Close
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Edit Mode -->
+                <div id="profileEditMode" style="display: none;">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <img src="/Logo.png" alt="Profile" class="user-avatar-large">
+                            <button class="avatar-upload-btn" onclick="triggerAvatarUpload()">
+                                <i class="fas fa-camera"></i>
+                            </button>
+                        </div>
+                        <div class="profile-info">
+                            <h2>Edit Profile</h2>
+                            <p class="profile-role">Update your information</p>
+                        </div>
+                    </div>
+                    
+                   <form id="editProfileForm" onsubmit="handleProfileUpdate(event)">
+                        <div class="form-section">
+                            <h4><i class="fas fa-user-edit"></i> Basic Information</h4>
+                            <div class="field-group">
+                                <label for="editName">Full Name *</label>
+                                <input type="text" id="editName" class="form-input" required>
+                                <span class="field-error" id="nameError"></span>
+                            </div>
+                            
+                            <div class="field-group">
+                                <label for="editUsername">Username *</label>
+                                <input type="text" id="editUsername" class="form-input" required>
+                                <span class="field-error" id="usernameError"></span>
+                            </div>
+                            
+                            <div class="field-group">
+                                <label for="editEmail">Email Address *</label>
+                                <input type="email" id="editEmail" class="form-input" required>
+                                <span class="field-error" id="emailError"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h4><i class="fas fa-lock"></i> Security</h4>
+                            <div class="field-group">
+                                <label for="editCurrentPassword">Current Password (for verification)</label>
+                                <input type="password" id="editCurrentPassword" class="form-input">
+                                <span class="field-help">Required only if changing password</span>
+                            </div>
+                            
+                            <div class="field-row">
+                                <div class="field-group">
+                                    <label for="editNewPassword">New Password</label>
+                                    <input type="password" id="editNewPassword" class="form-input">
+                                    <span class="field-error" id="passwordError"></span>
+                                </div>
+                                <div class="field-group">
+                                    <label for="editConfirmPassword">Confirm Password</label>
+                                    <input type="password" id="editConfirmPassword" class="form-input">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="profile-actions">
+                            <button type="submit" class="btn-primary" id="saveProfileBtn">
+                                <i class="fas fa-save"></i> Save Changes
+                            </button>
+                            <button type="button" class="btn-secondary" onclick="switchToViewMode()">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                        </div>
+                        <div class="field-group">
+                            <label for="profilePicture">Profile Picture</label>
+                            <input type="file" id="profilePicture" name="profilePicture" accept="image/*" onchange="previewImage(this)">
+                            <div id="imagePreview" style="margin-top: 10px;"></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden file input for avatar upload -->
+    <input type="file" id="avatarUpload" accept="image/*" style="display: none;" onchange="handleAvatarUpload(this.files)">
+
+    <script src="/main/script.js"></script>
+</body>
+</html>

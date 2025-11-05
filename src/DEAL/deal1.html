@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Dashboard - Kanban Board</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- <link rel="stylesheet" href="deal.css"> -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F9FAFB;
+            width: 1440px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .app-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: row;
+}
+
+.header{
+    background: #121D33;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position:sticky;
+    top: 0;
+    z-index: 1000;
+    height: 930px;
+}
+
+
+.header-content{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    height: 70px;
+    max-width: 1800px;
+    margin: 0 auto;}
+
+.header-left {
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+    gap: 20px;
+}
+/* .header-actions{
+    padding: 5px;
+    margin-top: 50px;
+} */
+
+.logo-head{
+    display: flex;
+    justify-content: left;
+    align-items: left;
+}
+.logo-img{
+    padding-left: 0;
+    max-width: 50%;
+    height: auto;
+    width: 175px;
+    margin: 10px;
+    object-fit: contain;
+} 
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: white;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.logo i {
+    font-size: 28px;
+    background: linear-gradient(135deg, #fff 0%, #f0f8ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.main-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.main-nav a{
+    font-size: 16px;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover
+.nav-link.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+}
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-container i {
+    position: absolute;
+    left: 15px;
+    color: #6c757d;
+    font-size: 14px;
+    z-index: 1;
+}
+/* this is hero section search input */
+.search-heroinput{
+     padding: 12px 15px 12px 40px;
+    border: none;
+    border-radius: 25px;
+    width: 200px;
+    font-size: 14px;
+    background-color: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+}
+
+.search-input {
+    padding: 12px 15px 12px 40px;
+    border: none;
+    border-radius: 25px;
+    width: 200px;
+    font-size: 14px;
+    background-color: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    background-color: white;
+    box-shadow: 0 0 0 3px #5587d7;
+    width: 200px;
+}
+.notifications {
+    position: relative;
+    right: 27px;
+    top: 10px;
+    cursor: pointer;
+    color: white;
+    font-size: 18px;
+    padding: 12px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.notifications:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+.notification-badge {
+    position: absolute;
+    top: 6px;
+    right: 105px;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: white;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    position: relative;
+    right: 20px;
+}
+
+.user-profile:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.user-name {
+    font-size: 17px;
+    font-weight: 500;
+}
+
+/* Dropdowns */
+.notifications-dropdown {
+    top: 100%;
+    right: 0;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    min-width: 220px;
+    padding: 10px 0px;
+    display: none;
+    margin-top: 30px;
+    z-index: 2000;
+    
+}
+.user-dropdown {
+    top: 100%;
+    right: 0;
+    background:#223458 ;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    min-width: 200px;
+    padding: 10px 0px;
+    display: none;
+    margin-top: 30px;
+    z-index: 2000;
+    
+}
+
+.notifications-dropdown.show {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 200px;
+    left: 310px;
+    animation: fadeInDown 0.3s ease;
+}
+
+.user-dropdown.show{
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 670px;
+    left: 20px;
+    animation: fadeInDown 0.3s ease;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    color: #98A2B7;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.dropdown-item:hover {
+    color: #ffffff;
+    transform: translateX(5px);
+}
+
+.dropdown-item.logout {
+    color: #dc3545;
+    border-top: 1px solid #e9ecef;
+    margin-top: 5px;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background-color: #e9ecef;
+    margin: 5px 0;
+}
+
+/* Notifications Dropdown */
+.notifications-dropdown {
+    width: 350px;
+}
+
+.notifications-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.notifications-header h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #383636;
+}
+
+.mark-all-read {
+    background: none;
+    border: none;
+    color: #667eea;
+    font-size: 12px;
+    cursor: pointer;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.mark-all-read:hover {
+    background-color: #f0f4ff;
+}
+
+.notification-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 15px 20px;
+    border-bottom: 1px solid #f8f9fa;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.notification-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(5px);
+}
+
+.notification-item.urgent {
+    border-left: 4px solid #ff6b6b;
+    background-color: #fff5f5;
+}
+
+.notification-item i {
+    width: 20px;
+    color: #6c757d;
+    margin-top: 2px;
+}
+
+.notification-content p {
+    font-size: 14px;
+    color: #495057;
+    margin-bottom: 5px;
+}
+
+.notification-time {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+
+        /* Top Navigation Bar */
+        .navbar {
+            background-color: white;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 24px;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .create-deal-btn {
+            background-color: #7453FF;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .create-deal-btn::before {
+            content: '+';
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 8px;
+        }
+
+        .toggle-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #D1D5DB;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .toggle-icon.active {
+            background-color: #7453FF;
+            color: white;
+            border-color: #7453FF;
+        }
+
+        .filters {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .filter-chip {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .filter-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .active .filter-dot { background-color: #6B7280; }
+        .lost .filter-dot { background-color: #EF4444; }
+        .won .filter-dot { background-color: #10B981; }
+
+        .filter-chip span {
+            color: #6B7280;
+        }
+
+        .search-bar {
+            flex: 1;
+            max-width: 300px;
+            position: relative;
+            margin: 0 24px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 40px 8px 12px;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6B7280;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .total-stats {
+            font-size: 14px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .pipeline-dropdown {
+            padding: 8px 12px;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            background-color: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .three-dot-menu {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 2px;
+            cursor: pointer;
+        }
+
+        .three-dot-menu::before,
+        .three-dot-menu::after,
+        .three-dot-menu div {
+            content: '';
+            height: 3px;
+            background-color: #6B7280;
+            border-radius: 2px;
+        }
+
+        .three-dot-menu div {
+            height: 3px;
+            background-color: #6B7280;
+        }
+
+        /* Kanban Board */
+        .kanban-board {
+            background-color: #E5E7EB;
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            gap: 24px;
+            height: calc(100vh - 200px);
+            overflow: hidden;
+        }
+
+        .kanban-column {
+            flex: 1;
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .column-header {
+            padding: 16px 20px 8px;
+            border-bottom: 2px solid;
+            font-size: 16px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .column-lead-in .column-header { border-bottom-color: #EF4444; }
+        .column-contact .column-header { border-bottom-color: #10B981; }
+        .column-demo .column-header { border-bottom-color: #F59E0B; }
+        .column-needs .column-header { border-bottom-color: #3B82F6; }
+        .column-negotiations .column-header { border-bottom-color: #EF4444; }
+
+        .column-subtext {
+            font-size: 12px;
+            color: #6B7280;
+            padding-bottom: 8px;
+            margin-top: 4px;
+        }
+
+        .column-content {
+            padding: 16px 20px;
+            overflow-y: auto;
+            height: calc(100% - 80px);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Deal Card */
+        .deal-card {
+            width: 260px;
+            background-color: white;
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin: 0 auto;
+        }
+
+        .deal-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .deal-date {
+            font-size: 12px;
+            color: #6B7280;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .yellow-badge {
+            width: 6px;
+            height: 6px;
+            background-color: #F59E0B;
+            border-radius: 50%;
+        }
+
+        .deal-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #7453FF;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .deal-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+
+        .deal-subtitle {
+            font-size: 14px;
+            color: #6B7280;
+            margin-bottom: 8px;
+        }
+
+        .deal-price {
+            font-size: 14px;
+            font-weight: 600;
+            color: #10B981;
+        }
+    </style>
+</head>
+<body>
+      <div class="app-container">
+        <!-- header Navigation -->
+        <nav class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="logo">
+                        <img class="logo-img" src='../Asset/Globentix_white logo.png' alt="Logo">
+                    </div>
+                    <nav class="main-nav">
+                        <div class="search-container">
+                            <i class="fas fa-search"></i>
+                            <input type="search" class="search-heroinput" placeholder="Search leads,contacts..." onkeyup="performSearch(this.value)">
+                        </div>
+                        <a href="../MAIN_PAGE/" class="nav-link active" data-page="dashboard">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                        <a href="../show_new_demo/show.html" class="nav-link" data-page="leads">
+                            <i class="fas fa-user-plus"></i> Show Leads
+                        </a>
+                        <a href="../INDUSTRY_LEAD_PAGE/demo.html" class="nav-link" data-page="opportunities">
+                            <i class="fa-solid fa-headset"></i>Industry Leads
+
+                        <a href="../DEAL/deal.html" class="nav-link" data-page="deals">
+                            <i class="fas fa-handshake"></i> Deals
+                        </a>
+                        <a href="../CONTACT/contact.html" class="nav-link" data-page="contacts">
+                            <i class="fas fa-address-book"></i> Contacts
+                        </a>
+                        <a href="../INVOICE/invoice.html" class="nav-link" data-page="invoice" >
+                            <i class="fas fa-file-invoice"></i> Invoice 
+                        </a>
+                            
+                        <a href="../REPORTS/reports.html" class="nav-link" data-page="reports">
+                            <i class="fas fa-chart-bar"></i> Reports
+                        </a>
+                        <a href="../SETTINGSS/setting.html" class="nav-link" data-page="settings">
+                            <i class="fas fa-cog"></i> Settings
+                        </a>
+                        <a href="../SALARY/Salary.html" class="nav-link" data-page="settings">
+                            <i class="fas fa-cog"></i> Salary
+                        </a>
+                    </nav>
+                       <div class="header-right">
+                                      
+                    <div class="notifications" onclick="toggleNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notificationCount">5</span> Notification
+                        
+                    </div>
+                    
+                    <div class="user-profile" onclick="toggleUserMenu()">
+                        <img src="Logo.png" alt="User" class="user-avatar">
+                        <span class="user-name">John Doe</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+            </nav>
+      </div>
+    <!-- Top Navigation Bar -->
+    <div class="navbar">
+        <div class="navbar-left">
+            <button class="create-deal-btn">Create deal</button>
+            <div class="view-toggle">
+                <div class="toggle-icon">
+                    <div>≡</div> <!-- 3-line icon (inactive) -->
+                </div>
+                <div class="toggle-icon active">
+                    <div>⊞</div> <!-- Grid icon (active) -->
+                </div>
+            </div>
+            <div class="filters">
+                <div class="filter-chip active">
+                    <div class="filter-dot"></div>
+                    <span>Active</span>
+                </div>
+                <div class="filter-chip lost">
+                    <div class="filter-dot"></div>
+                    <span>Lost</span>
+                </div>
+                <div class="filter-chip won">
+                    <div class="filter-dot"></div>
+                    <span>Won</span>
+                </div>
+            </div>
+        </div>
+        <div class="search-bar">
+            <input type="text" class="search-input" placeholder="Search">
+            <div class="search-icon">🔍</div>
+        </div>
+        <div class="navbar-right">
+            <div class="total-stats">$23,213 • 1 deal</div>
+            <select class="pipeline-dropdown">
+                <option>Pipeline</option>
+            </select>
+            <div class="three-dot-menu">
+                <div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kanban Board -->
+    <div class="kanban-board">
+        <!-- Column 1: Lead in -->
+        <div class="kanban-column column-lead-in">
+            <div class="column-header">
+                Lead in
+                <div class="column-subtext">$0 • No deals</div>
+            </div>
+            <div class="column-content">
+                <!-- Empty -->
+            </div>
+        </div>
+
+        <!-- Column 2: Contact made -->
+        <div class="kanban-column column-contact">
+            <div class="column-header">
+                Contact made
+                <div class="column-subtext">$0 • No deals</div>
+            </div>
+            <div class="column-content">
+                <!-- Empty -->
+            </div>
+        </div>
+
+        <!-- Column 3: Demo scheduled -->
+        <div class="kanban-column column-demo">
+            <div class="column-header">
+                Demo scheduled
+                <div class="column-subtext">$23,213 • 1 deal</div>
+            </div>
+            <div class="column-content">
+                <div class="deal-card">
+                    <div class="deal-card-header">
+                        <div class="deal-date">
+                            5 Oct 2025
+                            <div class="yellow-badge"></div>
+                        </div>
+                    </div>
+                    <div class="deal-avatar">AR</div>
+                    <div class="deal-title">sfaa</div>
+                    <div class="deal-subtitle">gassga</div>
+                    <div class="deal-price">$23,213</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Column 4: Needs defined -->
+        <div class="kanban-column column-needs">
+            <div class="column-header">
+                Needs defined
+                <div class="column-subtext">$0 • No deals</div>
+            </div>
+            <div class="column-content">
+                <!-- Empty -->
+            </div>
+        </div>
+
+        <!-- Column 5: Negotiations started -->
+        <div class="kanban-column column-negotiations">
+            <div class="column-header">
+                Negotiations started
+                <div class="column-subtext">$0 • No deals</div>
+            </div>
+            <div class="column-content">
+                <!-- Empty -->
+            </div>
+        </div>
+    </div>
+</body>
+</html>

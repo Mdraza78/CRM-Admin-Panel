@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Globentix Technologies</title>
+    <!-- FIXED: Use relative path for login CSS -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Main Container -->
+    <div class="login-container">
+        
+        <!-- Left Panel - Login Form -->
+        <div class="left-panel">
+            <!-- Company Logo -->
+        
+ <img src="/globentix-login/Globentix_logo (1).png" alt="Globentix Technologies" class="brand-logo">
+                
+            <!-- Login Form -->
+            <form class="login-form" id="loginForm">
+                <!-- Email Field -->
+                <div class="form-group">
+                    <label for="email" class="form-label">Email address</label>
+                    <div class="input-container">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input type="email" id="email" class="form-input" placeholder="Enter your work email" required>
+                    </div>
+                </div>
+
+                <!-- Password Field -->
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-container">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="password" class="form-input" placeholder="Enter your password" required>
+                        <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+                    </div>
+                </div>
+
+                <!-- Remember Me & Forgot Password -->
+                <div class="form-options">
+                    <div class="remember-me">
+                        <input type="checkbox" id="remember" class="checkbox">
+                        <label for="remember" class="checkbox-label">Remember me</label>
+                    </div>
+                    <a href="#" class="forgot-password">Forgot password?</a>
+                </div>
+
+                <!-- Sign In Button -->
+                <button type="submit" class="signin-btn">
+                    <span>Sign in</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Right Panel - Branding -->
+        <div class="right-panel">
+            <div class="branding-content">
+                <!-- CRM Icon Illustration -->
+                <div class="icon-illustration">
+                    <div class="icon-circle outer-circle">
+                        <div class="icon-item" data-icon="chart-line">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="icon-item" data-icon="users">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="icon-item" data-icon="target">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <div class="icon-item" data-icon="handshake">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="icon-circle middle-circle">
+                        <div class="icon-item" data-icon="chart-bar">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <div class="icon-item" data-icon="phone">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="icon-item" data-icon="envelope">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="icon-circle inner-circle">
+                        <div class="center-icon">
+                            <i class="fas fa-cog"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- Connecting dotted lines -->
+                    <div class="connecting-lines"></div>
+                </div>
+
+                <!-- Text Content -->
+                <div class="text-content">
+                    <h2 class="main-heading">Smart Sales Hub</h2>
+                    <p class="subtitle">Login to manage your sales, leads, and deals in one place.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025, Globentix Technologies. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Success Message Modal -->
+    <div class="success-modal" id="successModal" style="display: none;">
+        <div class="modal-content">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3>Login Successful!</h3>
+            <p>Welcome back to Globentix Technologies</p>
+            <button class="modal-btn" onclick="closeModal()">Continue</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

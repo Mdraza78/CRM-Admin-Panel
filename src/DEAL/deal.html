@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deal Management System</title>
+    <link rel="stylesheet" href="../DEAL/deal.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="app-container">
+        <!-- Header Navigation -->
+        <nav class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="logo">
+                        <img src="../Asset/Globentix_logo.png" alt="Globentix Logo">
+                    </div>
+                    <nav class="main-nav">
+                        <a href="/dashboard" class="nav-link" data-page="dashboard">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                        <a href="/leads" class="nav-link" data-page="leads">
+                            <i class="fas fa-user-plus"></i> Show Leads
+                        </a>
+                        <a href="/industry-leads" class="nav-link" data-page="industry-leads">
+                            <i class="fa-solid fa-headset"></i> Industry Leads
+                        </a>
+                        <a href="/deals" class="nav-link active" data-page="deals">
+                            <i class="fas fa-handshake"></i> Deals
+                        </a>
+                        <a href="/contacts" class="nav-link" data-page="contacts">
+                            <i class="fas fa-address-book"></i> Contacts
+                        </a>
+                        <a href="/invoice" class="nav-link" data-page="invoice">
+                            <i class="fas fa-file-invoice"></i> Invoice 
+                        </a>
+                        <a href="/reports" class="nav-link" data-page="reports">
+                            <i class="fas fa-chart-bar"></i> Reports
+                        </a>
+                        <a href="/settings" class="nav-link" data-page="settings">
+                            <i class="fas fa-cog"></i> Settings
+                        </a>
+                        <a href="/salary" class="nav-link" data-page="salary">
+                            <i class="fas fa-money-bill"></i> Salary
+                        </a>
+                    </nav>
+                </div>
+                <div class="header-right">
+                    <div class="notifications" onclick="toggleNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notificationCount">5</span> Notification
+                    </div>
+                    
+                    <div class="user-profile" onclick="toggleUserMenu()">
+                        <img src="/assets/Logo.png" alt="User" class="user-avatar">
+                        <span class="user-name">John Doe</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <div class="main-layout">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="fas fa-handshake"></i>
+                    Deals Management
+                </h1>
+                <div class="header-actions">
+                    <button class="btn-secondary" onclick="exportDeals()">
+                        <i class="fas fa-download"></i> Export 
+                    </button>
+                    <button class="btn-primary" onclick="AddDeals()">
+                        <i class="fas fa-plus"></i> Add Deal
+                    </button>
+                </div>
+            </div>
+
+            <!-- Deals List View -->
+            <div class="deals-list" id="dealsList">
+                <div class="list-header">
+                    <div class="list-controls">
+                        <select class="filter-select" id="stageFilter" onchange="filterDeals()">
+                            <option value="">All Stages</option>
+                            <option value="Prospecting">Prospecting</option>
+                            <option value="Qualification">Qualification</option>
+                            <option value="Proposal">Proposal</option>
+                            <option value="Negotiation">Negotiation</option>
+                            <option value="Won">Won</option>
+                            <option value="Lost">Lost</option>
+                        </select>
+                        <select class="filter-select" id="priorityFilter" onchange="filterDeals()">
+                            <option value="">All Priorities</option>
+                            <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low">Low</option>
+                        </select>
+                        <div class="search-container">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="search" class="search-input" placeholder="Search deals..." onkeyup="searchDeals(this.value)">
+                        </div>
+                    </div>
+                    <div class="pagination-info">
+                        <span id="recordCount">0-0 / 0</span>
+                        <div class="pagination-controls">
+                            <button class="page-btn" id="prevBtn" onclick="previousPage()" disabled>‹</button>
+                            <button class="page-btn" id="nextBtn" onclick="nextPage()" disabled>›</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="deals-table">
+                        <thead>
+                            <tr>
+                                <th onclick="sortTable(0)">Deal Title</th>
+                                <th onclick="sortTable(1)">Company</th>
+                                <th onclick="sortTable(2)">Value</th>
+                                <th onclick="sortTable(3)">Stage</th>
+                                <th onclick="sortTable(4)">Close Date</th>
+                                <th onclick="sortTable(5)">Priority</th>
+                                <th onclick="sortTable(6)">Owner</th>
+                                <th class="actions-col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dealsTableBody">
+                            <!-- Table content will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination-container">
+                    <div class="pagination-info-bottom">
+                        <span id="recordCountBottom">Showing 0-0 of 0 records</span>
+                    </div>
+                    <div class="pagination-buttons">
+                        <button class="pagination-btn" id="firstBtn" onclick="goToPage(1)" disabled>«</button>
+                        <button class="pagination-btn" id="prevBtnBottom" onclick="previousPage()" disabled>‹</button>
+                        <div class="page-numbers" id="pageNumbers"></div>
+                        <button class="pagination-btn" id="nextBtnBottom" onclick="nextPage()" disabled>›</button>
+                        <button class="pagination-btn" id="lastBtn" onclick="goToLastPage()" disabled>»</button>
+                    </div>
+                </div>
+
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <div class="empty-content">
+                        <i class="fas fa-handshake empty-icon"></i>
+                        <h3>No deals found</h3>
+                        <p>Start by creating your first deal to get started</p>
+                        <button class="btn-primary" onclick="AddDeals()">
+                            <i class="fas fa-plus"></i> Create Deal
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deal Detail/Edit Form -->
+            <div class="deal-form" id="dealForm" style="display: none;">
+                <div class="form-header">
+                    <div class="form-title">
+                        <h2 id="formTitle">Create New Deal</h2>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn-primary" onclick="saveDeal()">Save</button>
+                        <button class="btn-success" onclick="markAsWon()" id="markWonBtn" style="display: none;">Mark as Won</button>
+                        <button class="btn-danger" onclick="markAsLost()" id="markLostBtn" style="display: none;">Mark as Lost</button>
+                        <button class="btn-secondary" onclick="cancelForm()">Cancel</button>
+                        <button class="btn-cancel" onclick="cancelForm()">×</button>
+                    </div>
+                </div>
+
+                <div class="form-content">
+                    <div class="form-main">
+                        <!-- Deal Overview Section -->
+                        <div class="form-section">
+                            <h3 class="section-title">Deal Overview</h3>
+                            
+                            <div class="field-row">
+                                <div class="field-group">
+                                    <label for="dealTitle">Deal Title <span class="required">*</span></label>
+                                    <input type="text" id="dealTitle" class="form-input" required placeholder="e.g., ABC Corp – Website Redesign">
+                                </div>
+                                <div class="field-group">
+                                    <label for="dealValue">Deal Value <span class="required">*</span></label>
+                                    <input type="number" id="dealValue" class="form-input" required placeholder="0.00" step="0.01">
+                                </div>
+                            </div>
+
+                            <div class="field-row">
+                                <div class="field-group">
+                                    <label for="dealStage">Status/Stage <span class="required">*</span></label>
+                                    <select id="dealStage" class="form-select" required>
+                                        <option value="Prospecting">Prospecting</option>
+                                        <option value="Qualification">Qualification</option>
+                                        <option value="Proposal">Proposal</option>
+                                        <option value="Negotiation">Negotiation</option>
+                                        <option value="Won">Won</option>
+                                        <option value="Lost">Lost</option>
+                                    </select>
+                                </div>
+                                <div class="field-group">
+                                    <label for="closeDate">Close Date <span class="required">*</span></label>
+                                    <input type="date" id="closeDate" class="form-input" required>
+                                </div>
+                            </div>
+
+                            <div class="field-row">
+                                <div class="field-group">
+                                    <label for="assignedOwner">Assigned Owner</label>
+                                    <select id="assignedOwner" class="form-select">
+                                        <option value="">Select Owner</option>
+                                        <option value="John Smith">John Smith</option>
+                                        <option value="Sarah Johnson">Sarah Johnson</option>
+                                        <option value="Michael Chen">Michael Chen</option>
+                                        <option value="Emma Wilson">Emma Wilson</option>
+                                    </select>
+                                </div>
+                                <div class="field-group">
+                                    <label for="priority">Priority</label>
+                                    <select id="priority" class="form-select">
+                                        <option value="Low">Low</option>
+                                        <option value="Medium" selected>Medium</option>
+                                        <option value="High">High</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact & Company Info -->
+                        <div class="form-section">
+                            <h3 class="section-title">Contact & Company Information</h3>
+                            
+                            <div class="field-row">
+                                <div class="field-group">
+                                    <label for="companyName">Company Name <span class="required">*</span></label>
+                                    <input type="text" id="companyName" class="form-input" required>
+                                </div>
+                                <div class="field-group">
+                                    <label for="primaryContact">Primary Contact <span class="required">*</span></label>
+                                    <input type="text" id="primaryContact" class="form-input" required>
+                                </div>
+                            </div>
+
+                            <div class="field-row">
+                                <div class="field-group">
+                                    <label for="contactEmail">Contact Email</label>
+                                    <input type="email" id="contactEmail" class="form-input">
+                                </div>
+                                <div class="field-group">
+                                    <label for="contactPhone">Contact Phone</label>
+                                    <input type="tel" id="contactPhone" class="form-input">
+                                </div>
+                            </div>
+
+                            <div class="field-group">
+                                <label for="secondaryContacts">Secondary Contacts</label>
+                                <textarea id="secondaryContacts" class="form-textarea" rows="3" placeholder="Additional contacts (one per line)"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Deal Metrics -->
+                        <div class="form-section">
+                            <h3 class="section-title">Deal Metrics</h3>
+                            
+                            <div class="field-row">
+                                <div class="field-group">
+                                    <label for="winProbability">Win Probability (%)</label>
+                                    <input type="number" id="winProbability" class="form-input" min="0" max="100" placeholder="0-100">
+                                </div>
+                                <div class="field-group">
+                                    <label for="grossMargin">Gross Margin (%)</label>
+                                    <input type="number" id="grossMargin" class="form-input" min="0" max="100" step="0.1" placeholder="0-100">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notes & Attachments -->
+                        <div class="form-section">
+                            <h3 class="section-title">Notes & Attachments</h3>
+                            
+                            <div class="field-group">
+                                <label for="dealNotes">Notes</label>
+                                <textarea id="dealNotes" class="form-textarea" rows="6" placeholder="Deal notes and details..."></textarea>
+                            </div>
+
+                            <div class="field-group">
+                                <label for="dealAttachments">Attachments</label>
+                                <div class="file-upload-container">
+                                    <input type="file" id="dealAttachments" class="file-input" multiple>
+                                    <div class="file-upload-area" onclick="document.getElementById('dealAttachments').click()">
+                                        <div class="upload-icon">📎</div>
+                                        <div class="upload-text">
+                                            <span>Click to upload files</span>
+                                            <small>Proposals, contracts, invoices</small>
+                                        </div>
+                                    </div>
+                                    <div class="file-list" id="fileList"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Deal Sidebar -->
+                    <div class="deal-sidebar">
+                        <!-- Pipeline Progress -->
+                        <div class="sidebar-section">
+                            <h4>Pipeline Progress</h4>
+                            <div class="pipeline-visual" id="pipelineVisual">
+                                <div class="pipeline-stage" data-stage="Prospecting">
+                                    <div class="stage-dot"></div>
+                                    <div class="stage-label">Prospecting</div>
+                                </div>
+                                <div class="pipeline-connector"></div>
+                                <div class="pipeline-stage" data-stage="Qualification">
+                                    <div class="stage-dot"></div>
+                                    <div class="stage-label">Qualification</div>
+                                </div>
+                                <div class="pipeline-connector"></div>
+                                <div class="pipeline-stage" data-stage="Proposal">
+                                    <div class="stage-dot"></div>
+                                    <div class="stage-label">Proposal</div>
+                                </div>
+                                <div class="pipeline-connector"></div>
+                                <div class="pipeline-stage" data-stage="Negotiation">
+                                    <div class="stage-dot"></div>
+                                    <div class="stage-label">Negotiation</div>
+                                </div>
+                                <div class="pipeline-connector"></div>
+                                <div class="pipeline-stage final" data-stage="Won">
+                                    <div class="stage-dot"></div>
+                                    <div class="stage-label">Won</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="sidebar-section">
+                            <h4>Quick Actions</h4>
+                            <div class="quick-actions">
+                                <button class="action-button call-btn" onclick="callContact()">📞 Call</button>
+                                <button class="action-button email-btn" onclick="emailContact()">📧 Email</button>
+                                <button class="action-button activity-btn" onclick="addActivity()">➕ Add Activity</button>
+                            </div>
+                        </div>
+
+                        <!-- Deal Info -->
+                        <div class="sidebar-section">
+                            <h4>Deal Information</h4>
+                            <div class="info-item">
+                                <label>Days in Stage:</label>
+                                <span id="daysInStage">-</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Days Since Created:</label>
+                                <span id="daysSinceCreated">-</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Last Activity:</label>
+                                <span id="lastActivity">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Timeline Section -->
+                <div class="activity-section">
+                    <h3 class="section-title">Activity Timeline</h3>
+                    <div class="activity-tabs">
+                        <button class="activity-tab active" data-tab="past" onclick="switchActivityTab('past')">Past Activities</button>
+                        <button class="activity-tab" data-tab="upcoming" onclick="switchActivityTab('upcoming')">Upcoming Activities</button>
+                    </div>
+                    
+                    <div class="activity-content">
+                        <div class="activity-pane active" id="pastActivities">
+                            <div class="activity-timeline" id="pastTimeline">
+                                <!-- Past activities will be populated here -->
+                            </div>
+                            <button class="btn-secondary" onclick="addPastActivity()">+ Add Past Activity</button>
+                        </div>
+                        
+                        <div class="activity-pane" id="upcomingActivities">
+                            <div class="activity-timeline" id="upcomingTimeline">
+                                <!-- Upcoming activities will be populated here -->
+                            </div>
+                            <button class="btn-secondary" onclick="scheduleActivity()">+ Schedule Activity</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Related Deals Section -->
+                <div class="related-deals-section">
+                    <h3 class="section-title">Related Deals & Cross-Sell Opportunities</h3>
+                    <div class="related-deals-list" id="relatedDealsList">
+                        <!-- Related deals will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Modal -->
+                       <div class="modal-overlay" id="activityModal" style="display: none;">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="activityModalTitle">Add Activity</h3>
+                        <button class="modal-close" onclick="closeActivityModal()">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="field-group">
+                            <label for="activityType">Activity Type</label>
+                            <select id="activityType" class="form-select">
+                                <option value="Call">Call</option>
+                                <option value="Email">Email</option>
+                                <option value="Meeting">Meeting</option>
+                                <option value="Follow-up">Follow-up</option>
+                                <option value="Proposal">Proposal</option>
+                            </select>
+                        </div>
+                        <div class="field-group">
+                            <label for="activityDate">Date & Time</label>
+                            <input type="datetime-local" id="activityDate" class="form-input">
+                        </div>
+                        <div class="field-group">
+                            <label for="activityDescription">Description</label>
+                            <textarea id="activityDescription" class="form-textarea" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn-primary" onclick="saveActivity()">Save Activity</button>
+                        <button class="btn-secondary" onclick="closeActivityModal()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delete Confirmation Modal -->
+            <div class="modal-overlay" id="deleteModal" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Confirm Deletion</h3>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete this deal?</p>
+                        <p><strong id="deleteDealName"></strong></p>
+                        <p class="warning-text">This action cannot be undone.</p>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn-danger" onclick="confirmDelete()">Delete</button>
+                        <button class="btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="deal.js"></script>
+</body>
+</html>

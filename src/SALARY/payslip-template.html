@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Payslip</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="salary.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="logo">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <span>Employee Payslip</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div id="payslipContainer" class="payslip-container">
+                <div class="payslip-header">
+                    <h2>Global Datasys Group</h2>
+                    <p>1309 Coffeen Avenue, STE 1200, Sheridan, WY 82801, USA</p>
+                </div>
+                <h3 class="payslip-month" id="payslipMonth">Payslip</h3>
+                <section class="summary-section">
+                    <h4>EMPLOYEE PAY SUMMARY</h4>
+                    <div class="summary-grid">
+                        <div><strong>Emp ID</strong><p id="empIdDisplay">-</p></div>
+                        <div><strong>Emp Name</strong><p id="empNameDisplay">-</p></div>
+                        <div><strong>Title</strong><p id="empTitleDisplay">-</p></div>
+                        <div><strong>A/C NO.</strong><p id="empAccountDisplay">-</p></div>
+                        <div><strong>Email ID</strong><p id="empEmailDisplay">-</p></div>
+                        <div><strong>Working Days</strong><p id="workingDaysDisplay">-</p></div>
+                        <div><strong>PAN</strong><p id="empPanDisplay">-</p></div>
+                        <div><strong>LOP Days</strong><p id="lopDaysDisplay">-</p></div>
+                    </div>
+                </section>
+                <section class="details-section">
+                    <div class="earnings-table">
+                        <table>
+                            <thead><tr><th>EARNING</th><th class="amount">AMOUNT</th></tr></thead>
+                            <tbody>
+                                <tr><td>Basic</td><td class="amount" id="basicPayDisplay">0.00</td></tr>
+                                <tr><td>SPL ALL</td><td class="amount" id="splAllowanceDisplay">0.00</td></tr>
+                                <tr class="total-row"><td>Total</td><td class="amount" id="totalEarningsDisplay">0.00</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="deductions-table">
+                        <table>
+                            <thead><tr><th>DEDUCTIONS</th><th class="amount">AMOUNT</th></tr></thead>
+                            <tbody>
+                                <tr><td>Tax</td><td class="amount" id="taxDisplay">0.00</td></tr>
+                                <tr><td>LOP Days</td><td class="amount" id="lopDaysDeductionDisplay">0.00</td></tr>
+                                <tr class="total-row"><td>Total</td><td class="amount" id="totalDeductionsDisplay">0.00</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                <section class="net-pay-section">
+                    <div class="net-pay-label">Total Net Payable</div>
+                    <div class="net-pay-amount" id="netPayableDisplay">0.00 INR</div>
+                </section>
+                <p class="amount-in-words" id="amountInWordsDisplay">( Rupees Zero Only )</p>
+            </div>
+        </main>
+    </div>
+    <script src="payslip-viewer.js"></script>
+</body>
+</html>
