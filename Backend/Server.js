@@ -11,10 +11,23 @@ const contactRoutes = require('./routes/contacts')
 const salaryRoutes = require('./routes/salary');
 require('dotenv').config();
 
+if (!process.env.MONGO_URI) {
+  console.error("ERROR: MONGO_URI environment variable is required!");
+  process.exit(1);
+}
+
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: [
+    'https://your-frontend.vercel.app', // You'll update this after Vercel
+    'http://localhost:3000',
+    'http://127.0.0.1:5500'
+  ],
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -23,6 +36,15 @@ app.use(express.urlencoded({ extended: true }));
 mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log("MongoDB Connected"))
 .catch(err => console.error("MongoDB connection error:", err));
+
+// Health check route for deployment platforms
+app.get('/health', (req, res) => {
+  res.status(200).json({ 
+    status: 'OK', 
+    message: 'Server is running',
+    timestamp: new Date().toISOString()
+  });
+});
 
 // Serve static files from src directory
 app.use(express.static(path.join(__dirname, '../src')));
