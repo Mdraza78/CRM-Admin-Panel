@@ -274,16 +274,16 @@ function handleNavigation(page) {
     console.log(`Navigation requested to: ${page}`);
     
     // Define navigation routes - UPDATED industry-leads route
-    const routes = {
-        'dashboard': '/dashboard',
-        'leads': '/leads', 
-        'industry-leads': '/industry-leads', // CHANGED: Now points to correct route
-        'deals': '/deals',
-        'contacts': '/contacts',
-        'invoice': '/invoice',
-        'reports': '/reports',
-        'settings': '/settings',
-        'salary': '/salary'
+ const routes = {
+        'dashboard': '/MAIN_PAGE/index.html',
+        'leads': '/show_new_demo/show.html',
+        'industry-leads': '/INDUSTRY_LEAD_PAGE/demo.html',
+        'deals': '/DEAL/deal.html',
+        'contacts': '/CONTACT/contact.html',
+        'invoice': '/INVOICE/invoice.html',
+        'reports': '/REPORTS/reports.html',
+        'settings': '/SETTINGS/setting.html',
+        'salary': '/SALARY/Salary.html'
     };
     
     const route = routes[page];
