@@ -10,6 +10,7 @@ body {
     background-color: #f8f9fa;
     color: #333;
     line-height: 1.6;
+    overflow-x: hidden;
 }
 
 .app-container {
@@ -682,21 +683,47 @@ body {
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-/* Table Styles */
+/* ===== TABLE CONTAINER WITH HORIZONTAL SCROLLING ===== */
 .table-wrapper {
     overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    margin-bottom: 20px;
+}
+
+/* Custom scrollbar for table container */
+.table-wrapper::-webkit-scrollbar {
+    height: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+    margin: 0 10px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+    border: 2px solid #f1f5f9;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
 }
 
 .table-container {
     overflow: hidden;
-    border-radius: 12px;
-    border: 1px solid #e2e8f0;
+    min-width: 1000px; /* Ensure table has minimum width for scrolling */
 }
 
+/* ===== INVOICE TABLE STYLING ===== */
 .invoices-table {
     width: 100%;
     border-collapse: collapse;
     background: white;
+    min-width: 1000px; /* Ensure table has minimum width */
 }
 
 .invoices-table th {
@@ -709,12 +736,59 @@ body {
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    white-space: nowrap;
 }
 
 .invoices-table td {
     padding: 1rem 1.5rem;
     border-bottom: 1px solid #f1f5f9;
     vertical-align: middle;
+    white-space: nowrap;
+}
+
+/* ===== INCREASED CLIENT COLUMN WIDTH ===== */
+.invoices-table th:nth-child(3), /* Client column */
+.invoices-table td:nth-child(3) {
+    min-width: 200px; /* Increased width for Client column */
+    max-width: 300px;
+    white-space: normal; /* Allow text wrapping for client names */
+    word-wrap: break-word;
+}
+
+/* Adjust other column widths to accommodate larger Client column */
+.invoices-table th:nth-child(1), /* Invoice # */
+.invoices-table td:nth-child(1) {
+    min-width: 120px;
+}
+
+.invoices-table th:nth-child(2), /* Date */
+.invoices-table td:nth-child(2) {
+    min-width: 100px;
+}
+
+.invoices-table th:nth-child(4), /* Company */
+.invoices-table td:nth-child(4) {
+    min-width: 150px;
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+.invoices-table th:nth-child(5), /* Amount */
+.invoices-table td:nth-child(5) {
+    min-width: 100px;
+    text-align: right;
+}
+
+.invoices-table th:nth-child(6), /* Status */
+.invoices-table td:nth-child(6) {
+    min-width: 100px;
+    text-align: center;
+}
+
+.invoices-table th:nth-child(7), /* Actions */
+.invoices-table td:nth-child(7) {
+    min-width: 120px;
+    text-align: center;
 }
 
 .invoices-table tr:hover {
@@ -733,6 +807,9 @@ body {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    display: inline-block;
+    min-width: 80px;
+    text-align: center;
 }
 
 .status-badge.draft {
@@ -759,6 +836,7 @@ body {
 .actions {
     display: flex;
     gap: 8px;
+    justify-content: center;
 }
 
 .action-btn {
