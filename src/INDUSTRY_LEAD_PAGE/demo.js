@@ -1,4 +1,4 @@
-// demo.js - Updated with Backend Integration
+// demo.js - Complete Fixed Version with Navigation
 
 // Global variables
 let leads = [];
@@ -14,11 +14,10 @@ let totalLeadsCount = 0;
 // API Base URL
 const API_BASE_URL = 'https://crm-admin-panel-production.up.railway.app/api';
 
-// Update the handleNavigation function in script.js
+// ✅ ADD: Navigation function matching MAIN_PAGE/script.js
 function handleNavigation(page) {
     console.log(`Navigation requested to: ${page}`);
     
-    // Define navigation routes with actual file paths
     const routes = {
         'dashboard': '/MAIN_PAGE/index.html',
         'leads': '/show_new_demo/show.html',
@@ -36,6 +35,7 @@ function handleNavigation(page) {
     if (route) {
         showNotification(`Loading ${getPageTitle(page)}...`, 'info');
         setTimeout(() => {
+            console.log(`Redirecting to: ${route}`);
             window.location.href = route;
         }, 500);
     } else {
@@ -43,9 +43,44 @@ function handleNavigation(page) {
         showNotification(`Page ${page} is not available yet`, 'warning');
     }
 }
-// Initialize the application
+
+// ✅ ADD: Get page title function
+function getPageTitle(page) {
+    const titles = {
+        'dashboard': 'Dashboard',
+        'leads': 'Leads Management',
+        'industry-leads': 'Industry Leads',
+        'deals': 'Deals Pipeline',
+        'contacts': 'Contacts',
+        'invoice': 'Invoices',
+        'reports': 'Reports',
+        'settings': 'Settings',
+        'salary': 'Salary'
+    };
+    return titles[page] || page.replace('-', ' ');
+}
+
+// ✅ ADD: Navigation event listeners setup
+function setupNavigationEventListeners() {
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const page = this.dataset.page;
+            console.log(`Nav link clicked: ${page}`);
+            
+            if (page && page !== 'unknown') {
+                handleNavigation(page);
+            } else {
+                console.warn('No valid page specified for navigation');
+                showNotification('Navigation not available', 'warning');
+            }
+        });
+    });
+}
+
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Demo.js - DOM Content Loaded');
     initializeLeads();
     setupEventListeners();
     displayUserName();
@@ -66,9 +101,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function initializeLeads() {
     console.log('Industry Leads System initialized with backend integration');
+    setupNavigationEventListeners(); // ✅ ADD THIS LINE
 }
 
 function setupEventListeners() {
+    // ✅ ADD: Navigation event listeners
+    setupNavigationEventListeners();
+
     // Modal close events
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('modal-overlay')) {
