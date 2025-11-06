@@ -2,7 +2,6 @@
   "name": "crm-admin-panel",
   "version": "1.0.0", 
   "scripts": {
-    "start": "cd backend && node server.js",
-    "build": "cd backend && npm install"
+    "start": "node Backend/server.js"
   }
 }
