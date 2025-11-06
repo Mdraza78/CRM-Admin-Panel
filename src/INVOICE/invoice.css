@@ -10,7 +10,6 @@ body {
     background-color: #f8f9fa;
     color: #333;
     line-height: 1.6;
-    overflow-x: hidden;
 }
 
 .app-container {
@@ -23,7 +22,7 @@ body {
     display: none !important;
 }
 
-/* ===== ENHANCED SIDEBAR STYLING - Matching Main Page ===== */
+/* ===== ENHANCED SIDEBAR STYLING - Matching Salary Page ===== */
 .header {
     background: #ffffff;
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
@@ -652,6 +651,7 @@ body {
     gap: 1rem;
     margin-bottom: 2rem;
     flex-wrap: wrap;
+    align-items: center;
 }
 
 .filter-group {
@@ -666,7 +666,7 @@ body {
     font-size: 0.9rem;
 }
 
-.form-select {
+.form-select, .form-input {
     padding: 10px 15px;
     border: 2px solid #e2e8f0;
     border-radius: 10px;
@@ -677,7 +677,7 @@ body {
     min-width: 150px;
 }
 
-.form-select:focus {
+.form-select:focus, .form-input:focus {
     outline: none;
     border-color: #667eea;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
@@ -695,7 +695,7 @@ body {
 
 /* Custom scrollbar for table container */
 .table-wrapper::-webkit-scrollbar {
-    height: 10px;
+    height: 8px;
 }
 
 .table-wrapper::-webkit-scrollbar-track {
@@ -705,13 +705,13 @@ body {
 }
 
 .table-wrapper::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
+    background: #cbd5e1;
     border-radius: 6px;
     border: 2px solid #f1f5f9;
 }
 
 .table-wrapper::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
+    background: #94a3b8;
 }
 
 /* ===== INVOICE TABLE STYLING ===== */
@@ -743,51 +743,6 @@ body {
     border-bottom: 1px solid #f1f5f9;
     vertical-align: middle;
     white-space: nowrap;
-}
-
-/* ===== INCREASED CLIENT COLUMN WIDTH ===== */
-.invoices-table th:nth-child(3), /* Client column */
-.invoices-table td:nth-child(3) {
-    min-width: 250px; /* Increased width for Client column */
-    max-width: 300px;
-    white-space: normal; /* Allow text wrapping for client names */
-    word-wrap: break-word;
-}
-
-/* Adjust other column widths to accommodate larger Client column */
-.invoices-table th:nth-child(1), /* Invoice # */
-.invoices-table td:nth-child(1) {
-    min-width: 140px;
-}
-
-.invoices-table th:nth-child(2), /* Date */
-.invoices-table td:nth-child(2) {
-    min-width: 120px;
-}
-
-.invoices-table th:nth-child(4), /* Company */
-.invoices-table td:nth-child(4) {
-    min-width: 180px;
-    white-space: normal;
-    word-wrap: break-word;
-}
-
-.invoices-table th:nth-child(5), /* Amount */
-.invoices-table td:nth-child(5) {
-    min-width: 120px;
-    text-align: right;
-}
-
-.invoices-table th:nth-child(6), /* Status */
-.invoices-table td:nth-child(6) {
-    min-width: 120px;
-    text-align: center;
-}
-
-.invoices-table th:nth-child(7), /* Actions */
-.invoices-table td:nth-child(7) {
-    min-width: 150px;
-    text-align: center;
 }
 
 .invoices-table tr:hover {
@@ -972,7 +927,7 @@ body {
     margin: 0 auto;
 }
 
-.invoice-header.alternative {
+.invoice-header {
     display: flex;
     justify-content: space-between;
     padding-bottom: 30px;
@@ -1406,7 +1361,7 @@ body {
         padding: 25px;
     }
     
-    .invoice-header.alternative {
+    .invoice-header {
         flex-direction: column;
         gap: 20px;
     }
