@@ -251,7 +251,7 @@ if (response.ok) {
     
     // Redirect to dashboard
     setTimeout(() => {
-        window.location.href = '/dashboard';
+        window.location.href = '/MAIN_PAGE';
     }, 1500);
     
 } else {
