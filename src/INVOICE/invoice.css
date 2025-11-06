@@ -10,6 +10,7 @@ body {
     background-color: #f8f9fa;
     color: #333;
     line-height: 1.6;
+    overflow-x: hidden; /* Prevent entire page horizontal scroll */
 }
 
 .app-container {
@@ -460,6 +461,7 @@ body {
     width: 100%;
     background: #f8f9fa;
     transition: all 0.3s ease;
+    overflow-x: hidden; /* Prevent horizontal scroll on main content */
 }
 
 /* ===== MENU TOGGLE BUTTON - MOVED TO MAIN CONTENT ===== */
@@ -576,6 +578,7 @@ body {
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     border: 1px solid #e9ecef;
+    overflow: hidden; /* Prevent overflow from form container */
 }
 
 .form-header {
@@ -652,6 +655,7 @@ body {
     margin-bottom: 2rem;
     flex-wrap: wrap;
     align-items: center;
+    max-width: 100%;
 }
 
 .filter-group {
@@ -686,7 +690,7 @@ body {
 /* ===== TABLE CONTAINER WITH HORIZONTAL SCROLLING ===== */
 .table-wrapper {
     width: 100%;
-    overflow-x: auto;
+    overflow-x: auto; /* Horizontal scroll only for table */
     border-radius: 12px;
     border: 1px solid #e2e8f0;
     background: white;
