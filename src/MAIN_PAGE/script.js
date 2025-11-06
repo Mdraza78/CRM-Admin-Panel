@@ -1,280 +1,24 @@
+// deal.js - Complete Fixed Version with Working Navigation
+
 // Global variables
+let deals = [];
+let filteredDeals = [];
+let currentDealId = null;
+let currentView = 'list';
+let sortColumn = null;
+let sortDirection = 'asc';
+let currentPage = 1;
+const itemsPerPage = 5;
+let currentActivityType = 'past';
+
+// API Base URL
 const API_BASE_URL = 'https://crm-admin-panel-production.up.railway.app/api';
 
-let dashboardData = {
-    kpis: {
-        leads: 247,
-        deals: 43,
-        revenue: 128500,
-        tasks: 8
-    },
-    notifications: [
-        { id: 1, type: 'urgent', icon: 'fa-exclamation-triangle', message: 'High-value deal closing tomorrow: ABC Corp - $50,000', time: '2 minutes ago' },
-        { id: 2, type: 'normal', icon: 'fa-user-plus', message: 'New lead assigned: Sarah Wilson from TechStart', time: '1 hour ago' },
-        { id: 3, type: 'normal', icon: 'fa-calendar', message: 'Meeting reminder: Client demo at 3:00 PM', time: '2 hours ago' },
-        { id: 4, type: 'normal', icon: 'fa-clock', message: 'Overdue follow-up: GlobalTech proposal review', time: '1 day ago' },
-        { id: 5, type: 'normal', icon: 'fa-envelope', message: 'Internal message: Team meeting scheduled for Friday', time: '2 days ago' }
-    ]
-};
-
-let currentDropdown = null;
-
-// Initialize the application
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Dashboard loading...'); // Debug
-    
-    // Check authentication first
-    if (!checkAuthentication()) {
-        console.log('Authentication failed, redirecting to login'); // Debug
-        return;
-    }
-    
-    console.log('Authentication successful, initializing dashboard'); // Debug
-    
-    initializeDashboard();
-    setupEventListeners();
-    renderCharts();
-    updateDateTime();
-    setInterval(updateDateTime, 60000);
-});
-
-// Add this debug function
-function debugUserData() {
-    console.log('=== DEBUG USER DATA ===');
-    console.log('localStorage userData:', localStorage.getItem('userData'));
-    console.log('localStorage token:', localStorage.getItem('token'));
-    
-    const userData = getUserData();
-    console.log('Parsed userData:', userData);
-    console.log('========================');
-}
-
-function checkAuthentication() {
-    console.log('🔐 Checking authentication...');
-    
-    // ✅ CONSISTENT: Use same keys as login.js
-    const userData = getUserData();
-    const token = localStorage.getItem('authToken'); // Changed from 'token'
-    
-    console.log('🔐 Auth check - UserData:', userData);
-    console.log('🔐 Auth check - Token:', !!token);
-    
-    if (!userData || !token) {
-        console.warn('❌ Authentication failed: Missing userData or token');
-        
-        // Clear any inconsistent data
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
-        localStorage.removeItem('userData');
-        localStorage.removeItem('authToken');
-        
-        showNotification('Please login to access dashboard', 'error');
-        setTimeout(() => {
-            window.location.href = '/';
-        }, 2000);
-        return false;
-    }
-    
-    // ✅ Optional: Validate token expiration
-    const loginTime = localStorage.getItem('loginTime');
-    if (loginTime) {
-        const loginDate = new Date(loginTime);
-        const now = new Date();
-        const hoursDiff = (now - loginDate) / (1000 * 60 * 60);
-        
-        if (hoursDiff > 24) { // 24 hour expiration
-            console.warn('❌ Token expired');
-            logout();
-            return false;
-        }
-    }
-    
-    console.log('✅ Authentication successful');
-    return true;
-}
-
-function getUserData() {
-    try {
-        // ✅ CONSISTENT: Use 'userData' key
-        const userDataString = localStorage.getItem('userData');
-        console.log('👤 Raw userData from localStorage:', userDataString);
-        
-        if (!userDataString) {
-            console.warn('❌ No user data found in localStorage');
-            return null;
-        }
-        
-        const userData = JSON.parse(userDataString);
-        console.log('👤 Parsed userData:', userData);
-        
-        // Validate required fields
-        if (userData && userData.id && userData.name) {
-            return userData;
-        } else {
-            console.warn('❌ User data missing required fields');
-            return null;
-        }
-        
-    } catch (error) {
-        console.error('❌ Error parsing user data:', error);
-        return null;
-    }
-}
-
-function debugAuth() {
-    console.log('=== AUTH DEBUG INFO ===');
-    console.log('localStorage userData:', localStorage.getItem('userData'));
-    console.log('localStorage authToken:', localStorage.getItem('authToken'));
-    console.log('localStorage user:', localStorage.getItem('user'));
-    console.log('localStorage token:', localStorage.getItem('token'));
-    
-    const userData = getUserData();
-    console.log('Parsed userData:', userData);
-    console.log('Authentication check:', checkAuthentication());
-    console.log('========================');
-}
-
-// Call this on dashboard load
-debugAuth();
-
-// Display user name in the header
-function displayUserName() {
-    const userData = getUserData();
-    const userNameElement = document.getElementById('userDisplayName');
-    
-    console.log('👤 Displaying user name for:', userData);
-    
-    if (userData && userData.name) {
-        userNameElement.textContent = userData.name;
-        console.log('✅ User name displayed:', userData.name);
-    } else {
-        // If no name found, try other fields
-        const displayName = userData?.username || userData?.email || 'User';
-        userNameElement.textContent = displayName;
-        console.log('✅ Fallback name displayed:', displayName);
-    }
-    
-    // Make the name clickable to open profile
-    userNameElement.style.cursor = 'pointer';
-    userNameElement.title = 'Click to view profile';
-    
-    // Add click event to open profile
-    userNameElement.onclick = function(e) {
-        e.stopPropagation();
-        openProfileModal();
-    };
-}
-
-function initializeDashboard() {
-    console.log('🚀 Initializing dashboard...');
-    
-    // Debug first
-    debugAuth();
-    
-    // Check authentication
-    if (!checkAuthentication()) {
-        return;
-    }
-    
-    // Then load dashboard content
-    displayUserName();
-    updateKPIs();
-    loadRecentActivities();
-    
-    // ✅ ADD THIS LINE - Initialize active menu
-    window.activeMenuManager = new ActiveMenuManager();
-    
-    // Initialize sidebar state
-    initializeSidebar();
-    
-    animateCounters();
-    
-    console.log('✅ Dashboard initialized successfully');
-}
-
-function previewImage(input) {
-    const preview = document.getElementById('imagePreview');
-    preview.innerHTML = '';
-    
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        
-        reader.onload = function(e) {
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.style.maxWidth = '150px';
-            img.style.maxHeight = '150px';
-            img.style.borderRadius = '50%';
-            preview.appendChild(img);
-        }
-        
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-
-function setupEventListeners() {
-    // Navigation click events
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            handleNavigation(this.dataset.page);
-        });
-    });
-
-    // Close dropdowns when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('.user-profile') && !e.target.closest('.notifications')) {
-            closeAllDropdowns();
-        }
-    });
-
-    // Close modals when clicking outside
-    document.addEventListener('click', function(e) {
-        const profileModal = document.getElementById('profileModal');
-        const taskModal = document.getElementById('taskModal');
-        
-        if (e.target === profileModal) {
-            closeProfileModal();
-        }
-        if (e.target === taskModal) {
-            closeTaskModal();
-        }
-    });
-
-    // Escape key to close modals and dropdowns
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeAllDropdowns();
-            closeTaskModal();
-            closeProfileModal();
-        }
-    });
-
-    // Real-time search
-    const searchInput = document.querySelector('.search-input');
-    let searchTimeout;
-    if (searchInput) {
-        searchInput.addEventListener('input', function() {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                performSearch(this.value);
-            }, 300);
-        });
-    }
-
-    // Edit profile form submission
-    const editProfileForm = document.getElementById('editProfileForm');
-    if (editProfileForm) {
-        editProfileForm.addEventListener('submit', handleProfileUpdate);
-    }
-}
-
-// Navigation functions - UPDATED VERSION
+// ✅ FIXED: Navigation function matching MAIN_PAGE/script.js
 function handleNavigation(page) {
     console.log(`Navigation requested to: ${page}`);
     
-    // Define navigation routes - UPDATED industry-leads route
- const routes = {
+    const routes = {
         'dashboard': '/MAIN_PAGE/index.html',
         'leads': '/show_new_demo/show.html',
         'industry-leads': '/INDUSTRY_LEAD_PAGE/demo.html',
@@ -290,9 +34,8 @@ function handleNavigation(page) {
     
     if (route) {
         showNotification(`Loading ${getPageTitle(page)}...`, 'info');
-        
-        // Use setTimeout to allow notification to show before navigation
         setTimeout(() => {
+            console.log(`Redirecting to: ${route}`);
             window.location.href = route;
         }, 500);
     } else {
@@ -301,6 +44,7 @@ function handleNavigation(page) {
     }
 }
 
+// ✅ ADD: Get page title function
 function getPageTitle(page) {
     const titles = {
         'dashboard': 'Dashboard',
@@ -316,407 +60,1329 @@ function getPageTitle(page) {
     return titles[page] || page.replace('-', ' ');
 }
 
-// Updated navigation event listeners
-document.querySelectorAll('.nav-link').forEach(link => {
-    link.addEventListener('click', function (e) {
-        e.preventDefault(); // Always prevent default to handle navigation via JavaScript
-        
-        const page = this.dataset.page;
-        const href = this.getAttribute('href');
-        
-        console.log(`Nav click - Page: ${page}, Href: ${href}`);
-        
-        if (page && page !== 'unknown') {
-            handleNavigation(page);
-        } else if (href && href !== '#' && href !== '') {
-            // Fallback: use href if no data-page attribute
-            showNotification('Loading...', 'info');
-            setTimeout(() => {
-                window.location.href = href;
-            }, 500);
-        } else {
-            console.warn('No valid navigation target found');
-            showNotification('Navigation not available', 'warning');
-        }
+// ✅ ADD: Navigation event listeners setup
+function setupNavigationEventListeners() {
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const page = this.dataset.page;
+            console.log(`Nav link clicked: ${page}`);
+            
+            if (page && page !== 'unknown') {
+                handleNavigation(page);
+            } else {
+                console.warn('No valid page specified for navigation');
+                showNotification('Navigation not available', 'warning');
+            }
+        });
     });
+}
+
+// Initialize the application
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Deal.js - DOM Content Loaded');
+    initializeApp();
+    setupEventListeners();
+    displayUserName();
+    loadDeals();
 });
 
+function initializeApp() {
+    console.log('Deal Management System initialized with backend integration');
+    setupNavigationEventListeners();
+    showDealsList();
+    updatePagination();
+    setMinCloseDate();
+}
 
-// Dropdown functions
+function setupEventListeners() {
+    // File upload
+    const fileInput = document.getElementById('dealAttachments');
+    if (fileInput) {
+        fileInput.addEventListener('change', handleFileSelect);
+    }
+
+    // Drag and drop
+    const uploadArea = document.querySelector('.file-upload-area');
+    if (uploadArea) {
+        uploadArea.addEventListener('dragover', handleDragOver);
+        uploadArea.addEventListener('drop', handleFileDrop);
+        uploadArea.addEventListener('dragleave', handleDragLeave);
+    }
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.dropdown')) {
+            closeAllDropdowns();
+        }
+    });
+
+    // Form validation
+    document.addEventListener('input', handleFormValidation);
+
+    // Pipeline stage click events
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.pipeline-stage')) {
+            const stage = e.target.closest('.pipeline-stage');
+            const stageValue = stage.getAttribute('data-stage');
+            document.getElementById('dealStage').value = stageValue;
+            updatePipelineVisual(stageValue);
+        }
+    });
+
+    // Escape key to close modals
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeAllModals();
+        }
+    });
+}
+
+function displayUserName() {
+    try {
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        const userNameElement = document.querySelector('.user-name');
+        
+        if (userData && userData.name) {
+            userNameElement.textContent = userData.name;
+        } else {
+            const displayName = userData?.username || userData?.email || 'User';
+            userNameElement.textContent = displayName;
+        }
+    } catch (error) {
+        console.error('Error displaying user name:', error);
+        document.querySelector('.user-name').textContent = 'User';
+    }
+}
+
+function setMinCloseDate() {
+    const closeDateInput = document.getElementById('closeDate');
+    if (closeDateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        closeDateInput.min = today;
+    }
+}
+
+// API Functions
+async function loadDeals() {
+    try {
+        showLoading(true);
+        
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            showNotification('Please login to access deals', 'error');
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 2000);
+            return;
+        }
+
+        const search = document.querySelector('.search-input')?.value || '';
+        const stageFilter = document.getElementById('stageFilter')?.value || '';
+        const priorityFilter = document.getElementById('priorityFilter')?.value || '';
+        const sortBy = 'createdAt';
+        const sortOrder = 'desc';
+
+        const params = new URLSearchParams({
+            page: currentPage,
+            limit: itemsPerPage,
+            ...(search && { search }),
+            ...(stageFilter && { stage: stageFilter }),
+            ...(priorityFilter && { priority: priorityFilter }),
+            sortBy: sortBy,
+            sortOrder: sortOrder
+        });
+
+        const response = await fetch(`${API_BASE_URL}/deals?${params}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (result.deals) {
+            deals = result.deals.map(deal => ({
+                id: deal._id,
+                title: deal.title,
+                value: deal.value,
+                stage: deal.stage,
+                closeDate: deal.closeDate,
+                assignedOwner: deal.assignedOwner,
+                priority: deal.priority,
+                companyName: deal.companyName,
+                primaryContact: deal.primaryContact,
+                contactEmail: deal.contactEmail,
+                contactPhone: deal.contactPhone,
+                secondaryContacts: deal.secondaryContacts ? deal.secondaryContacts.join(', ') : '',
+                winProbability: deal.winProbability,
+                grossMargin: deal.grossMargin,
+                notes: deal.notes,
+                attachments: deal.attachments || [],
+                activities: deal.activities || [],
+                created: deal.createdAt,
+                modified: deal.updatedAt,
+                createdBy: deal.createdBy
+            }));
+
+            filteredDeals = [...deals];
+            renderDealsTable();
+            updatePagination();
+            updateRecordCount();
+        } else {
+            throw new Error('Failed to load deals');
+        }
+    } catch (error) {
+        console.error('Error loading deals:', error);
+        showNotification('Failed to load deals: ' + error.message, 'error');
+        deals = [];
+        filteredDeals = [];
+        renderDealsTable();
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function saveDealToAPI(dealData, isUpdate = false) {
+    try {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            throw new Error('Authentication required');
+        }
+
+        const url = isUpdate 
+            ? `${API_BASE_URL}/deals/${currentDealId}`
+            : `${API_BASE_URL}/deals`;
+        
+        const method = isUpdate ? 'PUT' : 'POST';
+
+        const apiData = {
+            title: dealData.title,
+            value: dealData.value,
+            stage: dealData.stage,
+            closeDate: dealData.closeDate,
+            assignedOwner: dealData.assignedOwner,
+            priority: dealData.priority,
+            companyName: dealData.companyName,
+            primaryContact: dealData.primaryContact,
+            contactEmail: dealData.contactEmail,
+            contactPhone: dealData.contactPhone,
+            secondaryContacts: dealData.secondaryContacts ? dealData.secondaryContacts.split('\n').filter(s => s.trim()) : [],
+            winProbability: dealData.winProbability,
+            grossMargin: dealData.grossMargin,
+            notes: dealData.notes,
+            attachments: dealData.attachments
+        };
+
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(apiData)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error('Error saving deal:', error);
+        throw error;
+    }
+}
+
+async function deleteDealFromAPI(dealId) {
+    try {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            throw new Error('Authentication required');
+        }
+
+        const response = await fetch(`${API_BASE_URL}/deals/${dealId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        
+        if (!result.message) {
+            throw new Error('Failed to delete deal');
+        }
+
+        return result;
+    } catch (error) {
+        console.error('Error deleting deal:', error);
+        throw error;
+    }
+}
+
+async function updateDealStageAPI(dealId, stage) {
+    try {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            throw new Error('Authentication required');
+        }
+
+        const response = await fetch(`${API_BASE_URL}/deals/${dealId}/stage`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ stage })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error('Error updating deal stage:', error);
+        throw error;
+    }
+}
+
+async function addActivityToDealAPI(dealId, activityData) {
+    try {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            throw new Error('Authentication required');
+        }
+
+        const response = await fetch(`${API_BASE_URL}/deals/${dealId}/activities`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(activityData)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error('Error adding activity:', error);
+        throw error;
+    }
+}
+
+// Navigation functions
+function showDealsList() {
+    document.getElementById('dealsList').style.display = 'block';
+    document.getElementById('dealForm').style.display = 'none';
+    currentView = 'list';
+    renderDealsTable();
+}
+
+function AddDeals() {
+    currentDealId = null;
+    resetDealForm();
+    document.getElementById('formTitle').textContent = 'Create New Deal';
+    document.getElementById('markWonBtn').style.display = 'none';
+    document.getElementById('markLostBtn').style.display = 'none';
+    document.getElementById('dealsList').style.display = 'none';
+    document.getElementById('dealForm').style.display = 'block';
+    currentView = 'form';
+    updatePipelineVisual('Prospecting');
+    loadRelatedDeals();
+}
+
+function editDeal(id) {
+    currentDealId = id;
+    const deal = deals.find(d => d.id === id);
+    if (deal) {
+        populateDealForm(deal);
+        document.getElementById('formTitle').textContent = 'Edit Deal';
+        document.getElementById('markWonBtn').style.display = 'inline-block';
+        document.getElementById('markLostBtn').style.display = 'inline-block';
+        document.getElementById('dealsList').style.display = 'none';
+        document.getElementById('dealForm').style.display = 'block';
+        currentView = 'form';
+        updatePipelineVisual(deal.stage);
+        updateDealInfo(deal);
+        loadRelatedDeals(deal);
+        loadActivities(deal);
+    }
+}
+
+function viewDeal(id) {
+    editDeal(id);
+}
+
+function cancelForm() {
+    showDealsList();
+}
+
+// CRUD Operations
+async function saveDeal() {
+    if (!validateForm()) {
+        return;
+    }
+
+    const formData = collectFormData();
+    
+    try {
+        showLoading(true);
+        const savedDeal = await saveDealToAPI(formData, !!currentDealId);
+
+        showNotification(
+            `Deal ${currentDealId ? 'updated' : 'created'} successfully`, 
+            'success'
+        );
+
+        closeForm();
+        await loadDeals();
+        
+    } catch (error) {
+        console.error('Error saving deal:', error);
+        showNotification('Failed to save deal: ' + error.message, 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function deleteDeal(id) {
+    const deal = deals.find(d => d.id === id);
+    if (deal) {
+        document.getElementById('deleteDealName').textContent = deal.title;
+        currentDealId = id;
+        document.getElementById('deleteModal').style.display = 'flex';
+    }
+}
+
+async function confirmDelete() {
+    if (!currentDealId) return;
+    
+    try {
+        showLoading(true);
+        await deleteDealFromAPI(currentDealId);
+        
+        showNotification('Deal deleted successfully', 'success');
+        closeDeleteModal();
+        await loadDeals();
+        
+    } catch (error) {
+        console.error('Error deleting deal:', error);
+        showNotification('Failed to delete deal: ' + error.message, 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function markAsWon() {
+    if (currentDealId) {
+        try {
+            showLoading(true);
+            await updateDealStageAPI(currentDealId, 'Won');
+            
+            showNotification('Deal marked as Won!', 'success');
+            closeForm();
+            await loadDeals();
+            
+        } catch (error) {
+            console.error('Error marking deal as won:', error);
+            showNotification('Failed to update deal: ' + error.message, 'error');
+        } finally {
+            showLoading(false);
+        }
+    }
+}
+
+async function markAsLost() {
+    if (currentDealId) {
+        try {
+            showLoading(true);
+            await updateDealStageAPI(currentDealId, 'Lost');
+            
+            showNotification('Deal marked as Lost', 'info');
+            closeForm();
+            await loadDeals();
+            
+        } catch (error) {
+            console.error('Error marking deal as lost:', error);
+            showNotification('Failed to update deal: ' + error.message, 'error');
+        } finally {
+            showLoading(false);
+        }
+    }
+}
+
+// Form handling
+function collectFormData() {
+    const attachments = Array.from(document.querySelectorAll('.file-item')).map(item => 
+        item.querySelector('.file-name').textContent
+    );
+
+    return {
+        title: document.getElementById('dealTitle').value.trim(),
+        value: parseFloat(document.getElementById('dealValue').value) || 0,
+        stage: document.getElementById('dealStage').value,
+        closeDate: document.getElementById('closeDate').value,
+        assignedOwner: document.getElementById('assignedOwner').value,
+        priority: document.getElementById('priority').value,
+        companyName: document.getElementById('companyName').value.trim(),
+        primaryContact: document.getElementById('primaryContact').value.trim(),
+        contactEmail: document.getElementById('contactEmail').value.trim(),
+        contactPhone: document.getElementById('contactPhone').value.trim(),
+        secondaryContacts: document.getElementById('secondaryContacts').value.trim(),
+        winProbability: parseInt(document.getElementById('winProbability').value) || 0,
+        grossMargin: parseFloat(document.getElementById('grossMargin').value) || 0,
+        notes: document.getElementById('dealNotes').value.trim(),
+        attachments: attachments
+    };
+}
+
+function populateDealForm(deal) {
+    document.getElementById('dealTitle').value = deal.title || '';
+    document.getElementById('dealValue').value = deal.value || '';
+    document.getElementById('dealStage').value = deal.stage || 'Prospecting';
+    document.getElementById('closeDate').value = deal.closeDate ? deal.closeDate.split('T')[0] : '';
+    document.getElementById('assignedOwner').value = deal.assignedOwner || '';
+    document.getElementById('priority').value = deal.priority || 'Medium';
+    document.getElementById('companyName').value = deal.companyName || '';
+    document.getElementById('primaryContact').value = deal.primaryContact || '';
+    document.getElementById('contactEmail').value = deal.contactEmail || '';
+    document.getElementById('contactPhone').value = deal.contactPhone || '';
+    document.getElementById('secondaryContacts').value = deal.secondaryContacts || '';
+    document.getElementById('winProbability').value = deal.winProbability || '';
+    document.getElementById('grossMargin').value = deal.grossMargin || '';
+    document.getElementById('dealNotes').value = deal.notes || '';
+    
+    const fileList = document.getElementById('fileList');
+    fileList.innerHTML = '';
+    if (deal.attachments && deal.attachments.length > 0) {
+        deal.attachments.forEach(fileName => {
+            addFileToList(fileName);
+        });
+    }
+}
+
+function resetDealForm() {
+    document.getElementById('dealTitle').value = '';
+    document.getElementById('dealValue').value = '';
+    document.getElementById('dealStage').value = 'Prospecting';
+    document.getElementById('closeDate').value = '';
+    document.getElementById('assignedOwner').value = '';
+    document.getElementById('priority').value = 'Medium';
+    document.getElementById('companyName').value = '';
+    document.getElementById('primaryContact').value = '';
+    document.getElementById('contactEmail').value = '';
+    document.getElementById('contactPhone').value = '';
+    document.getElementById('secondaryContacts').value = '';
+    document.getElementById('winProbability').value = '';
+    document.getElementById('grossMargin').value = '';
+    document.getElementById('dealNotes').value = '';
+    document.getElementById('fileList').innerHTML = '';
+    document.getElementById('dealAttachments').value = '';
+    
+    document.getElementById('daysInStage').textContent = '-';
+    document.getElementById('daysSinceCreated').textContent = '-';
+    document.getElementById('lastActivity').textContent = '-';
+    
+    document.getElementById('pastTimeline').innerHTML = '<p>No past activities</p>';
+    document.getElementById('upcomingTimeline').innerHTML = '<p>No upcoming activities</p>';
+}
+
+// Pipeline Visual Update
+function updatePipelineVisual(currentStage) {
+    const stages = ['Prospecting', 'Qualification', 'Proposal', 'Negotiation', 'Won'];
+    const pipelineStages = document.querySelectorAll('.pipeline-stage');
+    
+    pipelineStages.forEach(stage => {
+        const stageValue = stage.getAttribute('data-stage');
+        stage.classList.remove('active', 'completed');
+        
+        if (stageValue === currentStage) {
+            stage.classList.add('active');
+        } else if (stages.indexOf(stageValue) < stages.indexOf(currentStage) && currentStage !== 'Lost') {
+            stage.classList.add('completed');
+        }
+    });
+}
+
+// Deal Info Update
+function updateDealInfo(deal) {
+    if (!deal) return;
+    
+    const now = new Date();
+    const created = new Date(deal.created);
+    const modified = new Date(deal.modified);
+    
+    const daysSinceCreated = Math.floor((now - created) / (1000 * 60 * 60 * 24));
+    const daysSinceModified = Math.floor((now - modified) / (1000 * 60 * 60 * 24));
+    
+    document.getElementById('daysInStage').textContent = daysSinceModified + ' days';
+    document.getElementById('daysSinceCreated').textContent = daysSinceCreated + ' days';
+    
+    const lastActivity = deal.activities && deal.activities.length > 0 
+        ? deal.activities[deal.activities.length - 1] 
+        : null;
+    
+    document.getElementById('lastActivity').textContent = lastActivity 
+        ? `${lastActivity.type} (${formatDateShort(lastActivity.date)})` 
+        : 'None';
+}
+
+// Activity Management
+function switchActivityTab(tab) {
+    currentActivityType = tab;
+    
+    document.querySelectorAll('.activity-tab').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector(`.activity-tab[data-tab="${tab}"]`).classList.add('active');
+    
+    document.querySelectorAll('.activity-pane').forEach(pane => {
+        pane.classList.remove('active');
+    });
+    document.getElementById(tab === 'past' ? 'pastActivities' : 'upcomingActivities').classList.add('active');
+}
+
+function loadActivities(deal) {
+    if (!deal.activities) deal.activities = [];
+    
+    const pastTimeline = document.getElementById('pastTimeline');
+    const upcomingTimeline = document.getElementById('upcomingTimeline');
+    
+    const pastActivities = deal.activities.filter(a => a.isPast);
+    const upcomingActivities = deal.activities.filter(a => !a.isPast);
+    
+    if (pastActivities.length === 0) {
+        pastTimeline.innerHTML = '<p>No past activities</p>';
+    } else {
+        pastTimeline.innerHTML = pastActivities.map(activity => `
+            <div class="activity-item">
+                <div class="activity-icon">${getActivityIcon(activity.type)}</div>
+                <div class="activity-content-text">
+                    <h5>${activity.type}</h5>
+                    <p>${activity.description}</p>
+                    <div class="activity-date">${formatDate(activity.date)}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    if (upcomingActivities.length === 0) {
+        upcomingTimeline.innerHTML = '<p>No upcoming activities</p>';
+    } else {
+        upcomingTimeline.innerHTML = upcomingActivities.map(activity => `
+            <div class="activity-item">
+                <div class="activity-icon">${getActivityIcon(activity.type)}</div>
+                <div class="activity-content-text">
+                    <h5>${activity.type}</h5>
+                    <p>${activity.description}</p>
+                    <div class="activity-date">${formatDate(activity.date)}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+}
+
+function getActivityIcon(type) {
+    const icons = {
+        'Call': '📞',
+        'Email': '📧',
+        'Meeting': '👥',
+        'Follow-up': '📅',
+        'Proposal': '📄',
+        'Deal Won': '🏆',
+        'Deal Lost': '❌'
+    };
+    return icons[type] || '📋';
+}
+
+function addActivity() {
+    document.getElementById('activityModalTitle').textContent = 'Add Activity';
+    document.getElementById('activityModal').style.display = 'flex';
+    
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    document.getElementById('activityDate').value = now.toISOString().slice(0, 16);
+}
+
+function addPastActivity() {
+    currentActivityType = 'past';
+    addActivity();
+}
+
+function scheduleActivity() {
+    currentActivityType = 'upcoming';
+    addActivity();
+}
+
+async function saveActivity() {
+    const type = document.getElementById('activityType').value;
+    const date = document.getElementById('activityDate').value;
+    const description = document.getElementById('activityDescription').value.trim();
+    
+    if (!type || !date || !description) {
+        showNotification('Please fill in all activity fields', 'error');
+        return;
+    }
+    
+    if (currentDealId) {
+        try {
+            const isPast = new Date(date) < new Date();
+            const activityData = {
+                type: type,
+                description: description,
+                date: date,
+                isPast: isPast
+            };
+
+            await addActivityToDealAPI(currentDealId, activityData);
+            
+            showNotification('Activity added successfully', 'success');
+            closeActivityModal();
+            await loadDeals();
+            
+        } catch (error) {
+            console.error('Error adding activity:', error);
+            showNotification('Failed to add activity: ' + error.message, 'error');
+        }
+    }
+}
+
+function closeActivityModal() {
+    document.getElementById('activityModal').style.display = 'none';
+    document.getElementById('activityType').value = 'Call';
+    document.getElementById('activityDate').value = '';
+    document.getElementById('activityDescription').value = '';
+}
+
+// Related Deals
+function loadRelatedDeals(currentDeal) {
+    const relatedDealsContainer = document.getElementById('relatedDealsList');
+    
+    if (!currentDeal) {
+        relatedDealsContainer.innerHTML = '<p>No related deals found</p>';
+        return;
+    }
+    
+    const relatedDeals = deals.filter(d => 
+        d.id !== currentDeal.id && 
+        (d.companyName === currentDeal.companyName || d.primaryContact === currentDeal.primaryContact)
+    );
+    
+    if (relatedDeals.length === 0) {
+        relatedDealsContainer.innerHTML = '<p>No related deals found</p>';
+    } else {
+        relatedDealsContainer.innerHTML = relatedDeals.map(deal => `
+            <div class="related-deal-card" onclick="viewDeal('${deal.id}')">
+                <h6>${deal.title}</h6>
+                <p>Value: $${deal.value.toLocaleString()}</p>
+                <p>Stage: ${deal.stage}</p>
+                <p>Close Date: ${formatDateShort(deal.closeDate)}</p>
+            </div>
+        `).join('');
+    }
+}
+
+// Quick Actions
+function callContact() {
+    const phone = document.getElementById('contactPhone').value;
+    if (phone) {
+        window.open(`tel:${phone}`);
+        showNotification(`Calling ${phone}`, 'info');
+    } else {
+        showNotification('No phone number available', 'warning');
+    }
+}
+
+function emailContact() {
+    const email = document.getElementById('contactEmail').value;
+    const subject = encodeURIComponent(`Regarding: ${document.getElementById('dealTitle').value}`);
+    
+    if (email) {
+        window.open(`mailto:${email}?subject=${subject}`);
+        showNotification(`Emailing ${email}`, 'info');
+    } else {
+        showNotification('No email address available', 'warning');
+    }
+}
+
+// Validation
+function validateForm() {
+    const requiredFields = [
+        { id: 'dealTitle', name: 'Deal Title' },
+        { id: 'dealValue', name: 'Deal Value' },
+        { id: 'dealStage', name: 'Deal Stage' },
+        { id: 'closeDate', name: 'Close Date' },
+        { id: 'companyName', name: 'Company Name' },
+        { id: 'primaryContact', name: 'Primary Contact' }
+    ];
+    
+    let isValid = true;
+    let firstErrorField = null;
+    
+    requiredFields.forEach(field => {
+        const element = document.getElementById(field.id);
+        const value = element.value.trim();
+        
+        if (!value) {
+            element.style.borderColor = '#dc3545';
+            element.style.boxShadow = '0 0 0 4px rgba(220, 53, 69, 0.1)';
+            
+            if (!firstErrorField) {
+                firstErrorField = element;
+            }
+            isValid = false;
+        } else {
+            element.style.borderColor = '#e9ecef';
+            element.style.boxShadow = '';
+        }
+    });
+    
+    const dealValue = parseFloat(document.getElementById('dealValue').value);
+    if (dealValue <= 0) {
+        const element = document.getElementById('dealValue');
+        element.style.borderColor = '#dc3545';
+        element.style.boxShadow = '0 0 0 4px rgba(220, 53, 69, 0.1)';
+        showNotification('Deal value must be greater than 0', 'error');
+        isValid = false;
+    }
+    
+    const emailField = document.getElementById('contactEmail');
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (emailField.value.trim() && !emailPattern.test(emailField.value.trim())) {
+        emailField.style.borderColor = '#dc3545';
+        emailField.style.boxShadow = '0 0 0 4px rgba(220, 53, 69, 0.1)';
+        showNotification('Please enter a valid email address', 'error');
+        isValid = false;
+    }
+    
+    if (!isValid) {
+        if (firstErrorField) {
+            firstErrorField.focus();
+        }
+        showNotification('Please fill in all required fields', 'error');
+    }
+    
+    return isValid;
+}
+
+function handleFormValidation(e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
+        if (e.target.value.trim()) {
+            e.target.style.borderColor = '#e9ecef';
+            e.target.style.boxShadow = '';
+        }
+    }
+}
+
+// File handling
+function handleFileSelect(e) {
+    const files = Array.from(e.target.files);
+    files.forEach(file => {
+        addFileToList(file.name);
+    });
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+    e.currentTarget.style.borderColor = '#667eea';
+    e.currentTarget.style.background = 'linear-gradient(135deg, #f0f8ff 0%, #e6f2ff 100%)';
+}
+
+function handleDragLeave(e) {
+    e.preventDefault();
+    e.currentTarget.style.borderColor = '#e9ecef';
+    e.currentTarget.style.background = 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)';
+}
+
+function handleFileDrop(e) {
+    e.preventDefault();
+    e.currentTarget.style.borderColor = '#e9ecef';
+    e.currentTarget.style.background = 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)';
+    
+    const files = Array.from(e.dataTransfer.files);
+    files.forEach(file => {
+        addFileToList(file.name);
+    });
+}
+
+function addFileToList(fileName) {
+    const fileList = document.getElementById('fileList');
+    const fileItem = document.createElement('div');
+    fileItem.className = 'file-item';
+    fileItem.innerHTML = `
+        <span class="file-name">${fileName}</span>
+        <button class="file-remove" onclick="removeFile(this)" title="Remove file">×</button>
+    `;
+    fileList.appendChild(fileItem);
+}
+
+function removeFile(button) {
+    button.parentElement.remove();
+}
+
+// Table rendering
+function renderDealsTable() {
+    const tbody = document.getElementById('dealsTableBody');
+    const emptyState = document.getElementById('emptyState');
+    
+    applyFilters();
+    
+    if (filteredDeals.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        updateRecordCount();
+        updatePagination();
+        return;
+    }
+    
+    emptyState.style.display = 'none';
+    
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedDeals = filteredDeals.slice(startIndex, endIndex);
+    
+    tbody.innerHTML = '';
+    
+    paginatedDeals.forEach((deal, index) => {
+        const row = document.createElement('tr');
+        row.onclick = () => viewDeal(deal.id);
+        
+        if (index % 2 === 0) {
+            row.style.backgroundColor = '#fafbfc';
+        }
+        
+        row.innerHTML = `
+            <td>
+                <div class="deal-title-cell">
+                    <strong>${deal.title}</strong>
+                    ${deal.notes ? '<br><small class="text-muted">' + (deal.notes.length > 50 ? deal.notes.substring(0, 50) + '...' : deal.notes) + '</small>' : ''}
+                </div>
+            </td>
+            <td>
+                <div class="company-cell">
+                    <strong>${deal.companyName}</strong>
+                    ${deal.contactEmail ? '<br><small class="text-muted">' + deal.contactEmail + '</small>' : ''}
+                </div>
+            </td>
+            <td><strong>$${deal.value.toLocaleString()}</strong></td>
+            <td><span class="stage-badge ${deal.stage.toLowerCase()}">${deal.stage}</span></td>
+            <td>
+                <div class="date-cell">
+                    <strong>${formatDateShort(deal.closeDate)}</strong>
+                    ${getDaysUntilClose(deal.closeDate) ? '<br><small class="text-muted">' + getDaysUntilClose(deal.closeDate) + '</small>' : ''}
+                </div>
+            </td>
+            <td><span class="priority-badge ${deal.priority.toLowerCase()}">${deal.priority}</span></td>
+            <td>${deal.assignedOwner || '-'}</td>
+            <td class="actions-cell">
+                <div class="dropdown">
+                    <button class="action-btn" onclick="toggleActionMenu(event, '${deal.id}')">⋯</button>
+                    <div class="dropdown-menu" id="actionMenu${deal.id}">
+                        <div class="dropdown-item" onclick="viewDeal('${deal.id}')">
+                            <i class="fas fa-eye"></i> View
+                        </div>
+                        <div class="dropdown-item" onclick="editDeal('${deal.id}')">
+                            <i class="fas fa-edit"></i> Edit
+                        </div>
+                        <div class="dropdown-item danger" onclick="deleteDeal('${deal.id}')">
+                            <i class="fas fa-trash"></i> Delete
+                        </div>
+                    </div>
+                </div>
+            </td>
+        `;
+        
+        tbody.appendChild(row);
+    });
+    
+    updateRecordCount();
+    updatePagination();
+}
+
+function getDaysUntilClose(closeDate) {
+    if (!closeDate) return '';
+    
+    const today = new Date();
+    const close = new Date(closeDate);
+    const diffTime = close - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) return 'Due today';
+    if (diffDays === 1) return 'Due tomorrow';
+    if (diffDays === -1) return 'Overdue by 1 day';
+    if (diffDays < 0) return `Overdue by ${Math.abs(diffDays)} days`;
+    if (diffDays > 0) return `${diffDays} days left`;
+    
+    return '';
+}
+
+// Search and filter functions
+function searchDeals(query) {
+    currentPage = 1;
+    applyFilters();
+    renderDealsTable();
+}
+
+function filterDeals() {
+    currentPage = 1;
+    applyFilters();
+    renderDealsTable();
+}
+
+function applyFilters() {
+    const searchQuery = document.querySelector('.search-input').value.toLowerCase().trim();
+    const stageFilter = document.getElementById('stageFilter').value;
+    const priorityFilter = document.getElementById('priorityFilter').value;
+    
+    filteredDeals = deals.filter(deal => {
+        const matchesSearch = !searchQuery || 
+            deal.title.toLowerCase().includes(searchQuery) ||
+            deal.companyName.toLowerCase().includes(searchQuery) ||
+            deal.primaryContact.toLowerCase().includes(searchQuery) ||
+            (deal.assignedOwner && deal.assignedOwner.toLowerCase().includes(searchQuery));
+        
+        const matchesStage = !stageFilter || deal.stage === stageFilter;
+        const matchesPriority = !priorityFilter || deal.priority === priorityFilter;
+        
+        return matchesSearch && matchesStage && matchesPriority;
+    });
+}
+
+// Sorting
+function sortTable(columnIndex) {
+    const columns = ['title', 'companyName', 'value', 'stage', 'closeDate', 'priority', 'assignedOwner'];
+    const column = columns[columnIndex];
+    
+    if (sortColumn === column) {
+        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+        sortColumn = column;
+        sortDirection = 'asc';
+    }
+    
+    filteredDeals.sort((a, b) => {
+        let valueA, valueB;
+        
+        if (column === 'value') {
+            valueA = a[column] || 0;
+            valueB = b[column] || 0;
+        } else if (column === 'closeDate') {
+            valueA = new Date(a[column] || '9999-12-31');
+            valueB = new Date(b[column] || '9999-12-31');
+        } else {
+            valueA = (a[column] || '').toLowerCase();
+            valueB = (b[column] || '').toLowerCase();
+        }
+        
+        if (sortDirection === 'asc') {
+            return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
+        } else {
+            return valueA < valueB ? 1 : valueA > valueB ? -1 : 0;
+        }
+    });
+    
+    renderDealsTable();
+    updateSortIcons(columnIndex);
+}
+
+function updateSortIcons(activeColumn) {
+    const sortIcons = document.querySelectorAll('.sort-icon');
+    sortIcons.forEach((icon, index) => {
+        if (index === activeColumn) {
+            icon.textContent = sortDirection === 'asc' ? '↑' : '↓';
+        } else {
+            icon.textContent = '↕';
+        }
+    });
+}
+
+// Enhanced Pagination
+function updatePagination() {
+    const totalPages = Math.ceil(filteredDeals.length / itemsPerPage);
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const prevBtnBottom = document.getElementById('prevBtnBottom');
+    const nextBtnBottom = document.getElementById('nextBtnBottom');
+    const firstBtn = document.getElementById('firstBtn');
+    const lastBtn = document.getElementById('lastBtn');
+    
+    prevBtn.disabled = currentPage <= 1;
+    nextBtn.disabled = currentPage >= totalPages;
+    
+    prevBtnBottom.disabled = currentPage <= 1;
+    nextBtnBottom.disabled = currentPage >= totalPages;
+    firstBtn.disabled = currentPage <= 1;
+    lastBtn.disabled = currentPage >= totalPages;
+    
+    updatePageNumbers(totalPages);
+}
+
+function updatePageNumbers(totalPages) {
+    const pageNumbersContainer = document.getElementById('pageNumbers');
+    pageNumbersContainer.innerHTML = '';
+    
+    let startPage = Math.max(1, currentPage - 2);
+    let endPage = Math.min(totalPages, startPage + 4);
+    
+    if (endPage - startPage < 4) {
+        startPage = Math.max(1, endPage - 4);
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+        const pageNumber = document.createElement('button');
+        pageNumber.className = `page-number ${i === currentPage ? 'active' : ''}`;
+        pageNumber.textContent = i;
+        pageNumber.onclick = () => goToPage(i);
+        pageNumbersContainer.appendChild(pageNumber);
+    }
+}
+
+function updateRecordCount() {
+    const startIndex = filteredDeals.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+    const endIndex = Math.min(currentPage * itemsPerPage, filteredDeals.length);
+    const total = filteredDeals.length;
+    
+    document.getElementById('recordCount').textContent = `${startIndex}-${endIndex} / ${total}`;
+    document.getElementById('recordCountBottom').textContent = `Showing ${startIndex}-${endIndex} of ${total} records`;
+}
+
+function previousPage() {
+    if (currentPage > 1) {
+        currentPage--;
+        renderDealsTable();
+    }
+}
+
+function nextPage() {
+    const totalPages = Math.ceil(filteredDeals.length / itemsPerPage);
+    if (currentPage < totalPages) {
+        currentPage++;
+        renderDealsTable();
+    }
+}
+
+function goToPage(page) {
+    const totalPages = Math.ceil(filteredDeals.length / itemsPerPage);
+    if (page >= 1 && page <= totalPages) {
+        currentPage = page;
+        renderDealsTable();
+    }
+}
+
+function goToLastPage() {
+    const totalPages = Math.ceil(filteredDeals.length / itemsPerPage);
+    if (totalPages > 0) {
+        currentPage = totalPages;
+        renderDealsTable();
+    }
+}
+
+// Action menu functions
+function toggleActionMenu(event, id) {
+    event.stopPropagation();
+    closeAllDropdowns();
+    currentDealId = id;
+    const menu = document.getElementById(`actionMenu${id}`);
+    if (menu) {
+        menu.classList.toggle('show');
+    }
+}
+
+function closeAllDropdowns() {
+    const dropdowns = document.querySelectorAll('.dropdown-menu');
+    dropdowns.forEach(dropdown => {
+        dropdown.classList.remove('show');
+    });
+}
+
+// Modal functions
+function closeDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+    currentDealId = null;
+}
+
+function closeForm() {
+    document.getElementById('dealForm').style.display = 'none';
+    document.getElementById('dealsList').style.display = 'block';
+    currentView = 'list';
+}
+
+function closeAllModals() {
+    const modals = document.querySelectorAll('.modal-overlay');
+    modals.forEach(modal => {
+        modal.style.display = 'none';
+    });
+    currentDealId = null;
+}
+
+// Export function
+async function exportDeals() {
+    try {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            showNotification('Please login to export deals', 'error');
+            return;
+        }
+
+        const response = await fetch(`${API_BASE_URL}/deals/export/csv`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'deals_export.csv';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+
+        showNotification('Deals exported successfully', 'success');
+    } catch (error) {
+        console.error('Error exporting deals:', error);
+        showNotification('Failed to export deals: ' + error.message, 'error');
+    }
+}
+
+// Utility functions
+function formatDate(dateString) {
+    if (!dateString) return '-';
+    try {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    } catch (error) {
+        return dateString;
+    }
+}
+
+function formatDateShort(dateString) {
+    if (!dateString) return '-';
+    try {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric',
+            year: 'numeric'
+        });
+    } catch (error) {
+        return dateString;
+    }
+}
+
+function showLoading(show) {
+    if (show) {
+        document.body.style.cursor = 'wait';
+    } else {
+        document.body.style.cursor = 'default';
+    }
+}
+
+// Notification system
+function showNotification(message, type = 'info') {
+    const existingNotification = document.querySelector('.toast-notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+    
+    const notification = document.createElement('div');
+    notification.className = `toast-notification toast-${type}`;
+    notification.innerHTML = `
+        <div class="toast-content">
+            <i class="fas ${getNotificationIcon(type)}"></i>
+            <span>${message}</span>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+    }, 100);
+    
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 400);
+        }
+    }, 5000);
+}
+
+function getNotificationIcon(type) {
+    const icons = {
+        success: 'fa-check-circle',
+        error: 'fa-times-circle',
+        warning: 'fa-exclamation-triangle',
+        info: 'fa-info-circle'
+    };
+    return icons[type] || icons.info;
+}
+
+// ✅ ADD: Dashboard functions for navigation
 function toggleUserMenu() {
     const dropdown = document.getElementById('userDropdown');
     const isVisible = dropdown.classList.contains('show');
-    
     closeAllDropdowns();
-    
     if (!isVisible) {
         dropdown.classList.add('show');
-        currentDropdown = 'user';
     }
 }
 
 function toggleNotifications() {
     const dropdown = document.getElementById('notificationsDropdown');
     const isVisible = dropdown.classList.contains('show');
-    
     closeAllDropdowns();
-    
     if (!isVisible) {
         dropdown.classList.add('show');
-        currentDropdown = 'notifications';
     }
 }
 
-function closeAllDropdowns() {
-    document.querySelectorAll('.user-dropdown, .notifications-dropdown').forEach(dropdown => {
-        dropdown.classList.remove('show');
-    });
-    currentDropdown = null;
-}
-
-// Profile Modal Functions
 function viewProfile() {
     closeAllDropdowns();
-    openProfileModal();
+    showNotification('Profile feature coming soon', 'info');
 }
 
-function openProfileModal() {
-    const userData = getUserData();
-    const modal = document.getElementById('profileModal');
-    
-    if (userData) {
-        // Populate profile data
-        document.getElementById('profileName').textContent = userData.name || 'Unknown User';
-        document.getElementById('profileUsername').textContent = userData.username || '-';
-        document.getElementById('profileEmail').textContent = userData.email || '-';
-        document.getElementById('profileUserId').textContent = userData.id || '-';
-        
-        // Set current date as member since (you can modify this to use actual registration date)
-        const memberSince = new Date().getFullYear();
-        document.getElementById('profileMemberSince').textContent = memberSince;
-        
-        // Set last login time
-        const lastLogin = new Date().toLocaleString();
-        document.getElementById('profileLastLogin').textContent = lastLogin;
-        
-        // Populate stats from dashboard data
-        document.getElementById('profileLeadsCount').textContent = dashboardData.kpis.leads.toLocaleString();
-        document.getElementById('profileDealsCount').textContent = dashboardData.kpis.deals.toLocaleString();
-        document.getElementById('profileTasksCount').textContent = dashboardData.kpis.tasks.toLocaleString();
-        
-        // Show modal
-        modal.style.display = 'flex';
-        setTimeout(() => {
-            modal.classList.add('show');
-        }, 10);
-        
-        showNotification(`Opening ${userData.name}'s profile`, 'info');
-    } else {
-        showNotification('Unable to load user profile data', 'error');
-    }
-}
-
-function closeProfileModal() {
-    const modal = document.getElementById('profileModal');
-    modal.classList.remove('show');
-    setTimeout(() => {
-        modal.style.display = 'none';
-    }, 300);
-    // Switch back to view mode when closing
-    switchToViewMode();
-}
-
-// Profile Edit Mode Functions
-function switchToEditMode() {
-    const userData = getUserData();
-    
-    // Populate edit form with current data
-    document.getElementById('editName').value = userData.name || '';
-    document.getElementById('editUsername').value = userData.username || '';
-    document.getElementById('editEmail').value = userData.email || '';
-    
-    // Clear password fields
-    document.getElementById('editCurrentPassword').value = '';
-    document.getElementById('editNewPassword').value = '';
-    document.getElementById('editConfirmPassword').value = '';
-    
-    // Clear error messages
-    clearErrorMessages();
-    
-    // Switch modes
-    document.getElementById('profileViewMode').style.display = 'none';
-    document.getElementById('profileEditMode').style.display = 'block';
-}
-
-function switchToViewMode() {
-    document.getElementById('profileEditMode').style.display = 'none';
-    document.getElementById('profileViewMode').style.display = 'block';
-}
-
-function clearErrorMessages() {
-    const errorElements = document.querySelectorAll('.field-error');
-    errorElements.forEach(element => {
-        element.textContent = '';
-    });
-}
-
-function showFieldError(fieldId, message) {
-    const errorElement = document.getElementById(fieldId);
-    if (errorElement) {
-        errorElement.textContent = message;
-    }
-}
-
-// Handle Profile Update - FIXED VERSION
-async function handleProfileUpdate(e) {
-    console.log('🔄 handleProfileUpdate called'); // Debug log
-    
-    // Prevent form submission and page redirect - THIS IS CRITICAL
-    e.preventDefault();
-    
-    const saveBtn = document.getElementById('saveProfileBtn');
-    const originalText = saveBtn.innerHTML;
-    
-    try {
-        // Show loading state
-        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-        saveBtn.disabled = true;
-        
-        // Get form data
-        const formData = {
-            name: document.getElementById('editName').value.trim(),
-            username: document.getElementById('editUsername').value.trim(),
-            email: document.getElementById('editEmail').value.trim(),
-            currentPassword: document.getElementById('editCurrentPassword').value,
-            newPassword: document.getElementById('editNewPassword').value
-        };
-        
-        console.log('📝 Form data to send:', formData);
-        
-        // Basic validation
-        if (!formData.name || !formData.username || !formData.email) {
-            alert('❌ Please fill in all required fields');
-            saveBtn.innerHTML = originalText;
-            saveBtn.disabled = false;
-            return;
-        }
-        
-        if (formData.newPassword && !formData.currentPassword) {
-            alert('❌ Please enter your current password to change password');
-            saveBtn.innerHTML = originalText;
-            saveBtn.disabled = false;
-            return;
-        }
-        
-        // Get token
-        const token = localStorage.getItem('token');
-        if (!token) {
-            alert('❌ Authentication token not found. Please login again.');
-            saveBtn.innerHTML = originalText;
-            saveBtn.disabled = false;
-            return;
-        }
-        
-        console.log('🔑 Token found');
-        
-        // IMPORTANT: Use the correct endpoint - check your backend routes
-        // Try both endpoints to see which one works
-        const endpoints = ['/api/update', '/api/profile/update'];
-        let response = null;
-        let result = null;
-        
-        for (const endpoint of endpoints) {
-            try {
-                console.log(`🚀 Trying endpoint: ${endpoint}`);
-                response = await fetch(endpoint, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `Bearer ${token}`, // Added Bearer prefix
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
-                
-                console.log(`📡 Response from ${endpoint}:`, response.status);
-                
-                if (response.ok) {
-                    result = await response.json();
-                    console.log('✅ Success with endpoint:', endpoint);
-                    break;
-                }
-            } catch (error) {
-                console.log(`❌ Failed with ${endpoint}:`, error.message);
-                continue;
-            }
-        }
-        
-        if (!response) {
-            throw new Error('No response from server - check if backend is running');
-        }
-        
-        if (response.ok) {
-            // Success - update local storage
-            const currentUserData = getUserData();
-            const updatedUserData = {
-                ...currentUserData,
-                name: formData.name,
-                username: formData.username,
-                email: formData.email
-            };
-            localStorage.setItem('userData', JSON.stringify(updatedUserData));
-            
-            // Show success message using your notification system
-            showNotification('✅ Profile updated successfully!', 'success');
-            
-            // Switch back to view mode
-            switchToViewMode();
-            
-            // Update displayed user name immediately
-            displayUserName();
-            
-            // Close modal after delay (don't reload page)
-            setTimeout(() => {
-                closeProfileModal();
-            }, 1500);
-            
-        } else {
-            // Server returned error
-            const errorMessage = result?.msg || `Server error: ${response.status}`;
-            console.error('❌ Server error:', errorMessage);
-            showNotification('❌ ' + errorMessage, 'error');
-        }
-        
-    } catch (error) {
-        console.error('💥 Update error:', error);
-        
-        // Network error or other issues
-        if (error.name === 'TypeError' || error.message.includes('Network') || error.message.includes('Failed to fetch')) {
-            showNotification('❌ Network error: Cannot connect to server. Please check if your backend server is running on port 5080.', 'error');
-        } else {
-            showNotification('❌ Error: ' + error.message, 'error');
-        }
-        
-    } finally {
-        // Restore button state
-        saveBtn.innerHTML = originalText;
-        saveBtn.disabled = false;
-    }
-    
-    // Prevent default form behavior
-    return false;
-}
-
-// Add this test function to debug
-async function testBackendConnection() {
-    try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            alert('No token found');
-            return;
-        }
-        
-        console.log('Testing backend connection...');
-        const response = await fetch('/api/profile/me', {
-            headers: {
-                'Authorization': token
-            }
-        });
-        
-        console.log('Test response status:', response.status);
-        const result = await response.json();
-        console.log('Test response data:', result);
-        
-        if (response.ok) {
-            alert('✅ Backend is working! User: ' + result.name);
-        } else {
-            alert('❌ Backend error: ' + result.msg);
-        }
-    } catch (error) {
-        console.error('Backend test failed:', error);
-        alert('❌ Cannot connect to backend: ' + error.message);
-    }
-}
-
-function validateProfileForm(formData) {
-    let isValid = true;
-    clearErrorMessages();
-    
-    // Validate name
-    if (!formData.name) {
-        showFieldError('nameError', 'Name is required');
-        isValid = false;
-    } else if (formData.name.length < 2) {
-        showFieldError('nameError', 'Name must be at least 2 characters');
-        isValid = false;
-    }
-    
-    // Validate username
-    if (!formData.username) {
-        showFieldError('usernameError', 'Username is required');
-        isValid = false;
-    } else if (formData.username.length < 3) {
-        showFieldError('usernameError', 'Username must be at least 3 characters');
-        isValid = false;
-    }
-    
-    // Validate email
-    if (!formData.email) {
-        showFieldError('emailError', 'Email is required');
-        isValid = false;
-    } else if (!isValidEmail(formData.email)) {
-        showFieldError('emailError', 'Please enter a valid email address');
-        isValid = false;
-    }
-    
-    // Validate password if provided
-    if (formData.newPassword) {
-        if (!formData.currentPassword) {
-            showFieldError('passwordError', 'Current password is required to change password');
-            isValid = false;
-        } else if (formData.newPassword.length < 6) {
-            showFieldError('passwordError', 'New password must be at least 6 characters');
-            isValid = false;
-        } else if (formData.newPassword !== document.getElementById('editConfirmPassword').value) {
-            showFieldError('passwordError', 'Passwords do not match');
-            isValid = false;
-        }
-    }
-    
-    return isValid;
-}
-
-function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
-
-// Avatar Upload Functions
-function triggerAvatarUpload() {
-    document.getElementById('avatarUpload').click();
-}
-
-function handleAvatarUpload(files) {
-    if (files.length > 0) {
-        const file = files[0];
-        if (file.type.startsWith('image/')) {
-            // Here you would typically upload to your server
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                // Update avatar preview
-                const avatarImages = document.querySelectorAll('.user-avatar-large, .user-avatar');
-                avatarImages.forEach(img => {
-                    img.src = e.target.result;
-                });
-                showNotification('Profile picture updated successfully!', 'success');
-            };
-            reader.readAsDataURL(file);
-        } else {
-            showNotification('Please select a valid image file', 'error');
-        }
-    }
-}
-
-// User menu functions
 function openSettings() {
     closeAllDropdowns();
     showNotification('Opening settings...', 'info');
@@ -730,580 +1396,32 @@ function openHelp() {
 function logout() {
     closeAllDropdowns();
     if (confirm('Are you sure you want to logout?')) {
-        const userData = getUserData();
+        const userData = JSON.parse(localStorage.getItem('userData'));
         const userName = userData ? userData.name : 'User';
         
         showNotification(`Goodbye, ${userName}! Logging out...`, 'info');
         
-        // ✅ Clear the correct keys
         localStorage.removeItem('userData');
         localStorage.removeItem('authToken');
         localStorage.removeItem('loginTime');
-        localStorage.removeItem('rememberMe');
-        localStorage.removeItem('savedEmail');
         
-        // Redirect to login page
         setTimeout(() => {
             window.location.href = '/';
         }, 1000);
     }
 }
 
-function debugStorage() {
-    console.log('🔍 STORAGE DEBUG:');
-    console.log('user:', localStorage.getItem('user'));
-    console.log('authToken:', localStorage.getItem('authToken'));
-    console.log('userData:', localStorage.getItem('userData')); // Old key
-    console.log('token:', localStorage.getItem('token')); // Old key
-}
-
-// Run this in console after login
-debugStorage();
-
-// Notification functions
 function markAllRead() {
-    dashboardData.notifications.forEach(notification => {
-        notification.read = true;
-    });
-    
     const badge = document.getElementById('notificationCount');
     badge.textContent = '0';
     badge.style.display = 'none';
-    
     closeAllDropdowns();
     showNotification('All notifications marked as read', 'success');
 }
 
 function viewNotification(id) {
-    const notification = dashboardData.notifications.find(n => n.id === id);
-    if (notification) {
-        notification.read = true;
-        updateNotificationBadge();
-        closeAllDropdowns();
-        showNotification(`Viewing: ${notification.message}`, 'info');
-    }
+    closeAllDropdowns();
+    showNotification(`Viewing notification ${id}`, 'info');
 }
 
-function updateNotificationBadge() {
-    const unreadCount = dashboardData.notifications.filter(n => !n.read).length;
-    const badge = document.getElementById('notificationCount');
-    badge.textContent = unreadCount;
-    badge.style.display = unreadCount > 0 ? 'flex' : 'none';
-}
-
-// Sidebar Toggle Functionality
-let sidebarCollapsed = false;
-
-// Toggle sidebar function - FIXED VERSION
-function toggleSidebar() {
-    const appContainer = document.querySelector('.app-container');
-    const header = document.querySelector('.header');
-    
-    // Toggle the collapsed class
-    appContainer.classList.toggle('sidebar-collapsed');
-    
-    // Update the state variable
-    sidebarCollapsed = appContainer.classList.contains('sidebar-collapsed');
-    
-    // Save state to localStorage
-    localStorage.setItem('sidebarCollapsed', sidebarCollapsed);
-    
-    console.log('Sidebar toggled. Collapsed:', sidebarCollapsed);
-}
-
-// Initialize sidebar state from localStorage
-function initializeSidebar() {
-    const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-    const appContainer = document.querySelector('.app-container');
-    
-    if (isCollapsed) {
-        appContainer.classList.add('sidebar-collapsed');
-        sidebarCollapsed = true;
-    } else {
-        appContainer.classList.remove('sidebar-collapsed');
-        sidebarCollapsed = false;
-    }
-    
-    console.log('Sidebar initialized. Collapsed:', sidebarCollapsed);
-}
-
-// Call this on page load
-document.addEventListener('DOMContentLoaded', function() {
-    initializeSidebar();
-    
-    // Add click event listener to menu toggle
-    const menuToggle = document.querySelector('.menu-toggle');
-    if (menuToggle) {
-        menuToggle.addEventListener('click', toggleSidebar);
-    }
-    
-    // Close sidebar when clicking on nav links on mobile
-    const navLinks = document.querySelectorAll('.nav-link');
-    navLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            if (window.innerWidth <= 768 && sidebarCollapsed) {
-                toggleSidebar();
-            }
-        });
-    });
-});
-
-// Handle window resize
-window.addEventListener('resize', function() {
-    if (window.innerWidth > 768) {
-        // Ensure sidebar is visible on larger screens if not explicitly collapsed
-        const isExplicitlyCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-        if (!isExplicitlyCollapsed) {
-            document.querySelector('.app-container').classList.remove('sidebar-collapsed');
-            sidebarCollapsed = false;
-        }
-    }
-});
-
-// Enhanced Active Menu Manager with sidebar support
-class ActiveMenuManager {
-    constructor() {
-        this.currentActiveMenu = null;
-        this.init();
-    }
-
-    init() {
-        // Set dashboard as default active menu
-        this.setActiveMenu('dashboard');
-        
-        // Add click event listeners to all nav links
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const page = link.getAttribute('data-page');
-                this.setActiveMenu(page);
-                
-                // Auto-expand sidebar when clicking menu items if collapsed
-                if (sidebarCollapsed) {
-                    toggleSidebar();
-                }
-                
-                // You can add page navigation logic here
-                this.navigateToPage(page, link.getAttribute('href'));
-            });
-        });
-
-        // Load saved active menu from session storage
-        this.loadSavedActiveMenu();
-    }
-
-    setActiveMenu(page) {
-        // Remove active class from all nav links
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.classList.remove('active');
-        });
-
-        // Add active class to clicked nav link
-        const activeLink = document.querySelector(`.nav-link[data-page="${page}"]`);
-        if (activeLink) {
-            activeLink.classList.add('active');
-            this.currentActiveMenu = page;
-            
-            // Save to session storage
-            this.saveActiveMenu(page);
-        }
-    }
-
-    saveActiveMenu(page) {
-        sessionStorage.setItem('activeMenu', page);
-    }
-
-    loadSavedActiveMenu() {
-        const savedMenu = sessionStorage.getItem('activeMenu');
-        if (savedMenu) {
-            this.setActiveMenu(savedMenu);
-        }
-    }
-
-    navigateToPage(page, href) {
-        console.log(`Navigating to: ${page}`);
-        
-        if (href && href !== '#' && !href.includes('javascript')) {
-            showNotification(`Loading ${this.getPageTitle(page)}...`, 'info');
-            // window.location.href = href; // Uncomment for actual navigation
-        }
-    }
-
-    getPageTitle(page) {
-        const titles = {
-            'dashboard': 'Dashboard',
-            'leads': 'Leads Management',
-            'industry-leads': 'Industry Leads',
-            'deals': 'Deals Pipeline',
-            'contacts': 'Contacts',
-            'invoice': 'Invoices',
-            'reports': 'Reports',
-            'settings': 'Settings',
-            'salary': 'Salary'
-        };
-        return titles[page] || page.replace('-', ' ');
-    }
-}
-
-function navigateToLeads() {
-    console.log('Navigating to leads page...');
-    showNotification('Loading Leads Management...', 'info');
-    
-    // Use window.location for direct navigation
-    setTimeout(() => {
-        window.location.href = '/leads';
-    }, 500);
-}
-
-// Search function
-function performSearch(query) {
-    if (query.length < 2) return;
-    
-    console.log(`Searching for: ${query}`);
-    showNotification(`Searching for "${query}"...`, 'info');
-    
-    // Simulate search results
-    setTimeout(() => {
-        showNotification(`Found 12 results for "${query}"`, 'success');
-    }, 1000);
-}
-
-// KPI functions
-function updateKPIs() {
-    const kpis = dashboardData.kpis;
-    
-    // Update KPI values with animation will be handled by animateCounters
-    document.querySelector('.kpi-card.leads .kpi-value').textContent = '0';
-    document.querySelector('.kpi-card.deals .kpi-value').textContent = '0';
-    document.querySelector('.kpi-card.revenue .kpi-value').textContent = '$0';
-    document.querySelector('.kpi-card.tasks .kpi-value').textContent = '0';
-}
-
-function animateCounters() {
-    const kpis = dashboardData.kpis;
-    
-    animateCounter('.kpi-card.leads .kpi-value', 0, kpis.leads, 2000);
-    animateCounter('.kpi-card.deals .kpi-value', 0, kpis.deals, 2000);
-    animateCounter('.kpi-card.revenue .kpi-value', 0, kpis.revenue, 2000, true);
-    animateCounter('.kpi-card.tasks .kpi-value', 0, kpis.tasks, 2000);
-}
-
-function animateCounter(selector, start, end, duration, isCurrency = false) {
-    const element = document.querySelector(selector);
-    const range = end - start;
-    const increment = range / (duration / 16);
-    let current = start;
-    
-    const timer = setInterval(() => {
-        current += increment;
-        if (current >= end) {
-            current = end;
-            clearInterval(timer);
-        }
-        
-        const value = Math.floor(current);
-        if (isCurrency) {
-            element.textContent = `$${value.toLocaleString()}`;
-        } else {
-            element.textContent = value.toLocaleString();
-        }
-    }, 16);
-}
-
-// Pipeline functions
-function viewPipelineStage(stage) {
-    showNotification(`Viewing ${stage} deals...`, 'info');
-    console.log(`Navigating to ${stage} pipeline stage`);
-}
-
-// Activity functions
-function loadRecentActivities() {
-    // Activities are already in HTML, but you could load them dynamically here
-    console.log('Recent activities loaded');
-}
-
-function viewAllActivities() {
-    showNotification('Loading all activities...', 'info');
-    console.log('Navigating to all activities');
-}
-
-function viewActivityDetail(id) {
-    showNotification(`Viewing activity details for ID: ${id}`, 'info');
-    console.log(`Viewing activity ${id}`);
-}
-
-// Task functions
-function toggleTask(id, completed) {
-    const taskItem = document.getElementById(`task${id}`).closest('.task-item');
-    
-    if (completed) {
-        taskItem.style.opacity = '0.6';
-        taskItem.style.textDecoration = 'line-through';
-        showNotification('Task marked as completed', 'success');
-        
-        setTimeout(() => {
-            taskItem.style.opacity = '1';
-            taskItem.style.textDecoration = 'none';
-            document.getElementById(`task${id}`).checked = false;
-        }, 2000);
-    } else {
-        taskItem.style.opacity = '1';
-        taskItem.style.textDecoration = 'none';
-    }
-}
-
-function addTask() {
-    document.getElementById('taskModal').style.display = 'flex';
-    document.getElementById('taskModal').classList.add('show');
-    
-    // Set default date to tomorrow
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(9, 0, 0, 0);
-    
-    const dateInput = document.getElementById('taskDate');
-    dateInput.value = tomorrow.toISOString().slice(0, 16);
-    
-    document.getElementById('taskTitle').focus();
-}
-
-function saveTask() {
-    const title = document.getElementById('taskTitle').value.trim();
-    const type = document.getElementById('taskType').value;
-    const priority = document.getElementById('taskPriority').value;
-    const date = document.getElementById('taskDate').value;
-    const description = document.getElementById('taskDescription').value.trim();
-    
-    if (!title) {
-        showNotification('Please enter a task title', 'error');
-        return;
-    }
-    
-    if (!date) {
-        showNotification('Please select a due date', 'error');
-        return;
-    }
-    
-    // Here you would typically save to database
-    console.log('Saving task:', { title, type, priority, date, description });
-    
-    closeTaskModal();
-    showNotification('Task created successfully', 'success');
-}
-
-function closeTaskModal() {
-    document.getElementById('taskModal').style.display = 'none';
-    document.getElementById('taskModal').classList.remove('show');
-    
-    // Reset form
-    document.getElementById('taskTitle').value = '';
-    document.getElementById('taskType').value = 'call';
-    document.getElementById('taskPriority').value = 'medium';
-    document.getElementById('taskDate').value = '';
-    document.getElementById('taskDescription').value = '';
-}
-
-// Reports functions
-function updateReports(timeframe) {
-    showNotification(`Updating reports for ${timeframe}`, 'info');
-    console.log(`Updating reports for timeframe: ${timeframe}`);
-    
-    // Here you would update the charts and data based on the selected timeframe
-    setTimeout(() => {
-        showNotification(`Reports updated for ${timeframe}`, 'success');
-    }, 1000);
-}
-
-// Chart rendering (simplified - you would use Chart.js or similar library)
-function renderCharts() {
-    renderSalesChart();
-    renderRevenueChart();
-}
-
-function renderSalesChart() {
-    const canvas = document.getElementById('salesChart');
-    if (!canvas) return;
-    
-    const ctx = canvas.getContext('2d');
-    
-    // Simple bar chart simulation
-    ctx.fillStyle = '#667eea';
-    ctx.fillRect(50, 150, 40, 40);
-    ctx.fillRect(100, 130, 40, 60);
-    ctx.fillRect(150, 110, 40, 80);
-    ctx.fillRect(200, 90, 40, 100);
-    
-    ctx.fillStyle = '#2c3e50';
-    ctx.font = '12px Arial';
-    ctx.fillText('Sales Performance Chart', 80, 20);
-    ctx.fillText('(Placeholder)', 110, 35);
-}
-
-function renderRevenueChart() {
-    const canvas = document.getElementById('revenueChart');
-    if (!canvas) return;
-    
-    const ctx = canvas.getContext('2d');
-    
-    // Simple line chart simulation
-    ctx.strokeStyle = '#28a745';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(20, 120);
-    ctx.lineTo(80, 100);
-    ctx.lineTo(140, 80);
-    ctx.lineTo(200, 60);
-    ctx.lineTo(260, 40);
-    ctx.stroke();
-    
-    ctx.fillStyle = '#2c3e50';
-    ctx.font = '12px Arial';
-    ctx.fillText('Revenue Trend', 110, 20);
-}
-
-// Quick Action functions
-function addLead() {
-    showNotification('Opening add lead form...', 'info');
-    console.log('Navigating to add lead');
-}
-
-function addDeal() {
-    showNotification('Opening add deal form...', 'info');
-    console.log('Navigating to add deal');
-}
-
-function logActivity() {
-    showNotification('Opening activity log...', 'info');
-    console.log('Navigating to log activity');
-}
-
-function importData() {
-    showNotification('Opening data import wizard...', 'info');
-    console.log('Opening import data');
-}
-
-function exportData() {
-    showNotification('Preparing data export...', 'info');
-    console.log('Exporting data');
-    
-    setTimeout(() => {
-        showNotification('Data export completed', 'success');
-    }, 2000);
-}
-
-function scheduleMeeting() {
-    showNotification('Opening meeting scheduler...', 'info');
-    console.log('Opening meeting scheduler');
-}
-
-// Utility functions
-function updateDateTime() {
-    const now = new Date();
-    const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-    const dateString = now.toLocaleDateString([], {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'});
-    
-    // Update any date/time displays if they exist
-    console.log(`Current time: ${timeString} on ${dateString}`);
-}
-
-function showNotification(message, type = 'info') {
-    // Remove existing notifications
-    const existingNotification = document.querySelector('.toast-notification');
-    if (existingNotification) {
-        existingNotification.remove();
-    }
-    
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = `toast-notification toast-${type}`;
-    notification.innerHTML = `
-        <div class="toast-content">
-            <i class="fas ${getNotificationIcon(type)}"></i>
-            <span>${message}</span>
-        </div>
-        <button class="toast-close" onclick="this.parentElement.remove()">×</button>
-    `;
-    
-    // Style notification
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: ${getNotificationColor(type)};
-        color: white;
-        padding: 16px 20px;
-        border-radius: 10px;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        z-index: 10000;
-        font-size: 14px;
-        font-weight: 500;
-        max-width: 400px;
-        transform: translateX(100%);
-        transition: transform 0.4s ease;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-    `;
-    
-    // Add to document
-    document.body.appendChild(notification);
-    
-    // Animate in
-    setTimeout(() => {
-        notification.style.transform = 'translateX(0)';
-    }, 100);
-    
-    // Auto remove after 4 seconds
-    setTimeout(() => {
-        if (notification.parentNode) {
-            notification.style.transform = 'translateX(100%)';
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.remove();
-                }
-            }, 400);
-        }
-    }, 4000);
-}
-
-function getNotificationIcon(type) {
-    const icons = {
-        success: 'fa-check-circle',
-        error: 'fa-times-circle',
-        warning: 'fa-exclamation-triangle',
-        info: 'fa-info-circle'
-    };
-    return icons[type] || icons.info;
-}
-
-function getNotificationColor(type) {
-    const colors = {
-        success: 'linear-gradient(135deg, #28a745 0%, #20c997 100%)',
-        error: 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)',
-        warning: 'linear-gradient(135deg, #ffc107 0%, #fd7e14 100%)',
-        info: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-    };
-    return colors[type] || colors.info;
-}
-
-// Initialize notification badge
-updateNotificationBadge();
-
-// Simulate real-time updates
-setInterval(() => {
-    // Simulate new notifications occasionally
-    if (Math.random() < 0.1) { // 10% chance every 30 seconds
-        const newNotification = {
-            id: Date.now(),
-            type: 'normal',
-            icon: 'fa-bell',
-            message: 'New activity detected in your CRM',
-            time: 'Just now'
-        };
-        dashboardData.notifications.unshift(newNotification);
-        updateNotificationBadge();
-    }
-}, 30000);
-
-console.log('CRM Dashboard initialized successfully');
+console.log('Deal Management System initialized with enhanced table styling and pagination');
