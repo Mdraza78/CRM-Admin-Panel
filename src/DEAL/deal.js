@@ -12,7 +12,7 @@ const itemsPerPage = 5; // Changed to 5 rows per page
 let currentActivityType = 'past';
 
 // API Base URL
-const API_BASE_URL = '/api';
+const API_BASE_URL = 'https://crm-admin-panel-production.up.railway.app/api';
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {

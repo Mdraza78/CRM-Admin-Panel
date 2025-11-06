@@ -7,7 +7,7 @@ let currentEditingSalary = null;
 let currentDeleteSalary = null;
 
 // API Base URL
-const API_BASE_URL = '/api/salary';
+const API_BASE_URL = 'https://crm-admin-panel-production.up.railway.app/api/salary';
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {

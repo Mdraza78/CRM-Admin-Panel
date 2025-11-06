@@ -8,7 +8,7 @@ const successModal = document.getElementById('successModal');
 const signinBtn = document.querySelector('.signin-btn');
 
 // API Base URL - Update this to your backend URL
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://crm-admin-panel-production.up.railway.app/api';
 
 // Password visibility toggle functionality
 togglePasswordBtn.addEventListener('click', function() {

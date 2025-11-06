@@ -12,7 +12,8 @@ let uploadedFiles = [];
 let totalLeadsCount = 0;
 
 // API Base URL
-const API_BASE_URL = '/api';
+const API_BASE_URL = 'https://crm-admin-panel-production.up.railway.app/api';
+
 
 // Initialize the application
 // Initialize the application

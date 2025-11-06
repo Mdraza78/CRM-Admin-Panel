@@ -6,11 +6,11 @@ let filteredContacts = [];
 let currentEditingContact = null;
 let currentDeleteContact = null;
 let currentPage = 1;
-let itemsPerPage = 10;
+let itemsPerPage = 4;
 let totalContacts = 0;
 
 // API Base URL
-const API_BASE_URL = '/api/contacts';
+const API_BASE_URL = 'https://crm-admin-panel-production.up.railway.app/api/contacts';
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {

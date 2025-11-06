@@ -21,7 +21,7 @@ const app = express();
 // Middleware
 app.use(cors({
   origin: [
-    'https://your-frontend.vercel.app', // You'll update this after Vercel
+    'https://crm-admin-panel.vercel.app', // You'll update this after Vercel
     'http://localhost:3000',
     'http://127.0.0.1:5500'
   ],

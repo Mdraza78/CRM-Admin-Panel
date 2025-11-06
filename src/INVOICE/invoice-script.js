@@ -7,7 +7,7 @@ let currentEditingInvoice = null;
 let currentDeleteInvoice = null;
 
 // API Base URL
-const API_BASE_URL = '/api/invoices';
+const API_BASE_URL = 'https://crm-admin-panel-production.up.railway.app/api/invoices';
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
