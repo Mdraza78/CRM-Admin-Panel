@@ -2,6 +2,6 @@
   "name": "crm-admin-panel",
   "version": "1.0.0", 
   "scripts": {
-    "start": "node Backend/server.js"
+    "start": "node Backend/Server.js"
   }
 }
