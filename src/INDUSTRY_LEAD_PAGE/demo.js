@@ -14,7 +14,35 @@ let totalLeadsCount = 0;
 // API Base URL
 const API_BASE_URL = 'https://crm-admin-panel-production.up.railway.app/api';
 
-
+// Update the handleNavigation function in script.js
+function handleNavigation(page) {
+    console.log(`Navigation requested to: ${page}`);
+    
+    // Define navigation routes with actual file paths
+    const routes = {
+        'dashboard': '/MAIN_PAGE/index.html',
+        'leads': '/show_new_demo/show.html',
+        'industry-leads': '/INDUSTRY_LEAD_PAGE/demo.html',
+        'deals': '/DEAL/deal.html',
+        'contacts': '/CONTACT/contact.html',
+        'invoice': '/INVOICE/invoice.html',
+        'reports': '/REPORTS/reports.html',
+        'settings': '/SETTINGS/setting.html',
+        'salary': '/SALARY/Salary.html'
+    };
+    
+    const route = routes[page];
+    
+    if (route) {
+        showNotification(`Loading ${getPageTitle(page)}...`, 'info');
+        setTimeout(() => {
+            window.location.href = route;
+        }, 500);
+    } else {
+        console.warn(`No route defined for page: ${page}`);
+        showNotification(`Page ${page} is not available yet`, 'warning');
+    }
+}
 // Initialize the application
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {

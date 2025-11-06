@@ -221,33 +221,32 @@ class ActiveMenuManager {
     }
 }
 
-// Navigation function
+// Update the handleNavigation function in script.js
 function handleNavigation(page) {
-    console.log(`🔄 Navigation requested to: ${page}`);
+    console.log(`Navigation requested to: ${page}`);
     
+    // Define navigation routes with actual file paths
     const routes = {
-        'dashboard': '/dashboard',
-        'leads': '/leads',
-        'industry-leads': '/industry-leads',
-        'deals': '/deals',
-        'contacts': '/contacts',
-        'invoice': '/invoice',
-        'reports': '/reports',
-        'settings': '/settings',
-        'salary': '/salary'
+        'dashboard': '/MAIN_PAGE/index.html',
+        'leads': '/show_new_demo/show.html',
+        'industry-leads': '/INDUSTRY_LEAD_PAGE/demo.html',
+        'deals': '/DEAL/deal.html',
+        'contacts': '/CONTACT/contact.html',
+        'invoice': '/INVOICE/invoice.html',
+        'reports': '/REPORTS/reports.html',
+        'settings': '/SETTINGS/setting.html',
+        'salary': '/SALARY/Salary.html'
     };
     
     const route = routes[page];
     
     if (route) {
         showNotification(`Loading ${getPageTitle(page)}...`, 'info');
-        
-        // Use setTimeout to allow notification to show before navigation
         setTimeout(() => {
             window.location.href = route;
         }, 500);
     } else {
-        console.warn(`❌ No route defined for page: ${page}`);
+        console.warn(`No route defined for page: ${page}`);
         showNotification(`Page ${page} is not available yet`, 'warning');
     }
 }
