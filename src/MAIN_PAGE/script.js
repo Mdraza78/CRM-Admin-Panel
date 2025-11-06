@@ -1,4 +1,6 @@
 // Global variables
+const API_BASE_URL = 'https://crm-admin-panel-production.up.railway.app/api';
+
 let dashboardData = {
     kpis: {
         leads: 247,
