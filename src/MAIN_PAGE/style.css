@@ -368,9 +368,9 @@ nav-link.active:hover i,
 
 /* ===== MENU TOGGLE BUTTON - MOVED TO MAIN CONTENT ===== */
 .menu-toggle {
-    position: fixed;
-    top: 25px;
-    left: 25px;
+    position: absolute; /* Changed from fixed to absolute */
+    top: 20px; /* Adjusted positioning */
+    left: 20px;
     width: 45px;
     height: 45px;
     background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
@@ -382,7 +382,7 @@ nav-link.active:hover i,
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    z-index: 1001;
+    z-index: 100; /* Reduced from 1001 to stay within main content context */
     box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4);
 }
 
@@ -393,7 +393,6 @@ nav-link.active:hover i,
 .menu-toggle:active {
     transform: scale(0.95);
 }
-
 /* Sidebar collapsed state */
 .app-container.sidebar-collapsed .header {
     transform: translateX(-100%);
@@ -699,8 +698,10 @@ nav-link.active:hover i,
 
 /* ===== MAIN CONTENT STYLING ===== */
 .main-content {
+    position: relative; /* ADD THIS */
     flex: 1;
     padding: 40px;
+    padding-top: 90px; /* Increased to make room for menu toggle */
     max-width: 1800px;
     margin: 0 auto;
     width: 100%;
