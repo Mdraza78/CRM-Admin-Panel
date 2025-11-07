@@ -846,422 +846,10 @@ nav-link.active:hover i,
     box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3);
 }
 
-@media (max-width: 768px) {
-    .app-container {
-        flex-direction: column;
-    }
-    
-    /* Sidebar becomes horizontal top bar */
-    .header {
-        width: 100%;
-        height: auto;
-        position: fixed;
-        top: 0;
-        z-index: 1000;
-        border-right: none;
-        border-bottom: 1px solid #e9ecef;
-    }
-    
-    .header-content {
-        flex-direction: row;
-        padding: 10px 15px;
-        height: 60px;
-        overflow: visible;
-    }
-    
-    .header-left {
-        flex-direction: row;
-        align-items: center;
-        padding-top: 0;
-        gap: 15px;
-        flex: 1;
-        overflow-x: auto;
-        overflow-y: hidden;
-    }
-    
-    .logo {
-        padding: 0;
-        margin: 0;
-        border-bottom: none;
-        justify-content: flex-start;
-        flex-shrink: 0;
-        min-width: fit-content;
-    }
-
-    .logo img {
-        height: 35px;
-        max-width: 140px;
-    }
-    
-    /* Horizontal scrollable navigation */
-    .main-nav {
-        flex-direction: row;
-        overflow-x: auto;
-        overflow-y: hidden;
-        gap: 8px;
-        margin-top: 0;
-        flex: 1;
-        max-height: none;
-        padding: 0;
-        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-    }
-    
-    .main-nav::-webkit-scrollbar {
-        height: 3px;
-    }
-    
-    .main-nav::-webkit-scrollbar-thumb {
-        background: #c1c1c1;
-        border-radius: 10px;
-    }
-    
-    .nav-link {
-        white-space: nowrap;
-        font-size: 13px;
-        padding: 8px 14px;
-        flex-shrink: 0;
-        margin: 0;
-        width: auto;
-    }
-    
-    .nav-link.active {
-        transform: translateX(0); /* Remove translateX on mobile */
-    }
-    
-    .nav-link:hover {
-        transform: translateX(0); /* Remove translateX on mobile */
-    }
-    
-    .header-right {
-        flex-direction: row;
-        margin-top: 0;
-        padding: 0;
-        width: auto;
-        gap: 10px;
-        flex-shrink: 0;
-        border-top: none;
-    }
-    
-    .user-profile {
-        padding: 6px 10px;
-    }
-    
-    .user-avatar {
-        width: 32px;
-        height: 32px;
-    }
-    
-    .user-name {
-        display: none; /* Hide username on mobile */
-    }
-    
-    /* Main content with proper spacing for fixed header */
-    .main-content {
-        margin-top: 60px;
-        padding: 15px;
-        width: 100%;
-    }
-    
-    .dashboard-header {
-        padding: 0 0 12px 0;
-        margin-bottom: 15px;
-    }
-    
-    .menu-toggle {
-        width: 38px;
-        height: 38px;
-        font-size: 15px;
-    }
-    
-    /* KPI Cards - 2 columns on tablets */
-    .kpi-section {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-    }
-    
-    .kpi-card {
-        padding: 18px 15px;
-        min-height: 110px;
-        gap: 15px;
-    }
-    
-    .kpi-icon {
-        width: 48px;
-        height: 48px;
-        font-size: 22px;
-    }
-    
-    .kpi-value {
-        font-size: 28px;
-    }
-    
-    .kpi-label {
-        font-size: 12px;
-    }
-    
-    .kpi-change {
-        font-size: 11px;
-        padding: 4px 10px;
-    }
-    
-    /* Pipeline stages - 2 columns */
-    .pipeline-stages {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-    }
-    
-    .pipeline-stage {
-        padding: 18px 15px;
-    }
-    
-    .pipeline-section,
-    .reports-section,
-    .quick-actions-section {
-        padding: 20px;
-        border-radius: 10px;
-    }
-    
-    .section-header h3 {
-        font-size: 18px;
-    }
-    
-    /* Charts - single column */
-    .charts-container {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-    
-    /* Quick actions - 2 columns */
-    .quick-actions-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-    }
-    
-    .quick-action-btn {
-        padding: 18px 12px;
-    }
-    
-    .quick-action-btn i {
-        font-size: 24px;
-    }
-    
-    .quick-action-btn span {
-        font-size: 12px;
-    }
-    
-    /* Modals */
-    .modal-content {
-        width: 95%;
-        margin: 10px;
-        border-radius: 10px;
-    }
-    
-    .modal-header {
-        padding: 18px 20px;
-    }
-    
-    .modal-body {
-        padding: 18px 20px;
-    }
-    
-    .modal-actions {
-        padding: 15px 20px;
-    }
-    
-    .field-row {
-        grid-template-columns: 1fr;
-    }
-    
-    .detail-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    /* Dropdowns positioning */
-    .notifications-dropdown.show {
-        top: 60px;
-        left: 10px;
-        width: calc(100vw - 20px);
-        max-width: 350px;
-    }
-    
-    .user-dropdown.show {
-        top: 60px;
-        left: auto;
-        right: 10px;
-        bottom: auto;
-    }
-}
 
 
-/* Small Mobile - Single Column */
-@media (max-width: 480px) {
-    .main-content {
-        padding: 12px;
-    }
-    
-    .dashboard-header {
-        padding: 0 0 10px 0;
-        margin-bottom: 12px;
-    }
-    
-    .menu-toggle {
-        width: 36px;
-        height: 36px;
-        font-size: 14px;
-    }
-    
-    /* KPI Cards - single column for phones */
-    .kpi-section {
-        grid-template-columns: 1fr;
-        gap: 10px;
-    }
-    
-    .kpi-card {
-        flex-direction: row; /* Keep horizontal layout */
-        text-align: left;
-        padding: 16px 12px;
-        min-height: 100px;
-        align-items: center;
-    }
-    
-    .kpi-icon {
-        width: 45px;
-        height: 45px;
-        font-size: 20px;
-        margin-bottom: 0;
-    }
-    
-    .kpi-value {
-        font-size: 26px;
-    }
-    
-    .kpi-label {
-        font-size: 11px;
-    }
-    
-    .kpi-change {
-        font-size: 10px;
-        padding: 3px 8px;
-    }
-    
-    /* Pipeline - single column */
-    .pipeline-stages {
-        grid-template-columns: 1fr;
-        gap: 10px;
-    }
-    
-    .pipeline-stage {
-        padding: 16px 12px;
-    }
-    
-    .stage-header h4 {
-        font-size: 14px;
-    }
-    
-    .pipeline-section,
-    .reports-section,
-    .quick-actions-section {
-        padding: 16px;
-    }
-    
-    .section-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
-    
-    .section-header h3 {
-        font-size: 16px;
-    }
-    
-    .pipeline-total {
-        font-size: 14px;
-        padding: 6px 12px;
-    }
-    
-    /* Quick actions - single column on small phones */
-    .quick-actions-grid {
-        grid-template-columns: 1fr;
-        gap: 10px;
-    }
-    
-    .quick-action-btn {
-        padding: 16px;
-    }
-    
-    .quick-action-btn i {
-        font-size: 22px;
-    }
-    
-    .quick-action-btn span {
-        font-size: 13px;
-    }
-    
-    /* Charts */
-    .charts-container {
-        grid-template-columns: 1fr;
-        gap: 12px;
-    }
-    
-    .chart-item {
-        padding: 16px;
-    }
-    
-    /* Modals on small screens */
-    .modal-content {
-        width: 98%;
-        margin: 5px;
-    }
-    
-    .modal-header h3 {
-        font-size: 18px;
-    }
-    
-    .profile-header {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .profile-actions,
-    .modal-actions {
-        flex-direction: column;
-    }
-    
-    .btn-primary,
-    .btn-secondary {
-        width: 100%;
-        padding: 12px;
-    }
-    
-    /* User dropdown full width on mobile */
-    .user-dropdown.show {
-        right: 10px;
-        left: 10px;
-        width: calc(100vw - 20px);
-    }
-    
-    .notifications-dropdown.show {
-        left: 10px;
-        width: calc(100vw - 20px);
-    }
-}
 
 
-@media (max-width: 768px) {
-    .app-container.sidebar-collapsed .header {
-        transform: translateY(-100%);
-        height: 0;
-        overflow: hidden;
-    }
-    
-    .app-container.sidebar-collapsed .main-content {
-        padding-top: 20px;
-    }
-}
 .dashboard-grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -2145,13 +1733,15 @@ nav-link.active:hover i,
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablet Landscape */
 @media (max-width: 1400px) {
     .dashboard-grid {
         grid-template-columns: 1fr;
     }
     
     .header {
-        width: 220px; /* Maintain reduced width */
+        width: 220px;
     }
     
     .activity-section,
@@ -2160,193 +1750,7 @@ nav-link.active:hover i,
     }
 }
 
-@media (max-width: 768px) {
-    .app-container {
-        flex-direction: column;
-    }
-    
-    .header {
-        width: 100%;
-        height: auto;
-        position: fixed;
-        top: 0;
-        z-index: 1000;
-    }
-    
-    .header-content {
-        flex-direction: row;
-        padding: 12px 15px;
-        height: 65px;
-        overflow: visible;
-    }
-    
-    .header-left {
-        flex-direction: row;
-        align-items: center;
-        padding-top: 0;
-        gap: 15px;
-        flex: none;
-        overflow: visible;
-    }
-    
-    .logo {
-        padding-bottom: 0;
-        border-bottom: none;
-        justify-content: flex-start;
-        flex-shrink: 0;
-    }
-
-    .logo img {
-        height: 35px;
-        max-width: 140px;
-    }
-    
-    .main-nav {
-        flex-direction: row;
-        overflow-x: auto;
-        overflow-y: hidden;
-        gap: 8px;
-        margin-top: 0;
-        flex: none;
-        max-height: none;
-        padding-right: 0;
-    }
-    
-    .nav-link {
-        white-space: nowrap;
-        font-size: 13px;
-        padding: 8px 12px;
-        flex-shrink: 0;
-    }
-    
-    .header-right {
-        flex-direction: row;
-        margin-top: 0;
-        padding-bottom: 0;
-        width: auto;
-        gap: 12px;
-        flex-shrink: 0;
-        border-top: none;
-        padding: 0;
-    }
-    
-    .main-content {
-        margin-top: 65px;
-        padding: 20px;
-    }
-    
-    .notifications-dropdown.show {
-        top: 65px;
-        left: 15px;
-    }
-    
-    .user-dropdown.show {
-        top: 65px;
-        left: auto;
-        right: 15px;
-        bottom: auto;
-    }
-    
-    .kpi-section {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 15px;
-    }
-    
-    .dashboard-grid {
-        gap: 20px;
-    }
-    
-    .pipeline-section,
-    .activity-section,
-    .tasks-section,
-    .reports-section,
-    .quick-actions-section {
-        padding: 25px;
-    }
-    
-    .charts-container {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-    
-    .quick-actions-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
-    }
-    
-    .modal-content {
-        width: 95%;
-        margin: 20px;
-    }
-    
-    .field-row {
-        grid-template-columns: 1fr;
-    }
-    
-    .detail-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 480px) {
-    .kpi-section {
-        grid-template-columns: 1fr;
-    }
-    
-    .kpi-card {
-        flex-direction: column;
-        text-align: center;
-        padding: 25px;
-    }
-    
-    .pipeline-stages {
-        grid-template-columns: 1fr;
-    }
-    
-    .charts-container {
-        grid-template-columns: 1fr;
-    }
-    
-    .quick-actions-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .main-content {
-        padding: 15px;
-    }
-    
-    .section-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-    
-    .section-header h3 {
-        font-size: 18px;
-    }
-    
-    .profile-header {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .profile-actions {
-        flex-direction: column;
-    }
-    
-    .modal-body {
-        padding: 20px;
-    }
-    
-    .modal-actions {
-        flex-direction: column;
-    }
-}
-
+/* Tablet View */
 @media (max-width: 1024px) {
     .header {
         width: 200px;
@@ -2385,7 +1789,254 @@ nav-link.active:hover i,
     }
 }
 
+/* Mobile Portrait */
 @media (max-width: 768px) {
+    .app-container {
+        flex-direction: column;
+    }
+    
+    /* Sidebar becomes horizontal top bar */
+    .header {
+        width: 100%;
+        height: auto;
+        position: fixed;
+        top: 0;
+        z-index: 1000;
+        border-right: none;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .header-content {
+        flex-direction: row;
+        padding: 10px 15px;
+        height: 60px;
+        overflow: visible;
+    }
+    
+    .header-left {
+        flex-direction: row;
+        align-items: center;
+        padding-top: 0;
+        gap: 15px;
+        flex: 1;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+    
+    .logo {
+        padding: 0;
+        margin: 0;
+        border-bottom: none;
+        justify-content: flex-start;
+        flex-shrink: 0;
+        min-width: fit-content;
+    }
+
+    .logo img {
+        height: 35px;
+        max-width: 140px;
+    }
+    
+    /* Horizontal scrollable navigation */
+    .main-nav {
+        flex-direction: row;
+        overflow-x: auto;
+        overflow-y: hidden;
+        gap: 8px;
+        margin-top: 0;
+        flex: 1;
+        max-height: none;
+        padding: 0;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .main-nav::-webkit-scrollbar {
+        height: 3px;
+    }
+    
+    .main-nav::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 10px;
+    }
+    
+    .nav-link {
+        white-space: nowrap;
+        font-size: 13px;
+        padding: 8px 14px;
+        flex-shrink: 0;
+        margin: 0;
+        width: auto;
+    }
+    
+    .nav-link.active,
+    .nav-link:hover {
+        transform: translateX(0);
+    }
+    
+    .header-right {
+        flex-direction: row;
+        margin-top: 0;
+        padding: 0;
+        width: auto;
+        gap: 10px;
+        flex-shrink: 0;
+        border-top: none;
+    }
+    
+    .user-profile {
+        padding: 6px 10px;
+    }
+    
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .user-name {
+        display: none;
+    }
+    
+    /* Main content with proper spacing for fixed header */
+    .main-content {
+        margin-top: 60px;
+        padding: 15px;
+        width: 100%;
+    }
+    
+    .dashboard-header {
+        padding: 0 0 12px 0;
+        margin-bottom: 15px;
+    }
+    
+    .menu-toggle {
+        width: 38px;
+        height: 38px;
+        font-size: 15px;
+    }
+    
+    /* KPI Cards - 2 columns */
+    .kpi-section {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+    .kpi-card {
+        padding: 18px 15px;
+        min-height: 110px;
+        gap: 15px;
+    }
+    
+    .kpi-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 22px;
+    }
+    
+    .kpi-value {
+        font-size: 28px;
+    }
+    
+    .kpi-label {
+        font-size: 12px;
+    }
+    
+    .kpi-change {
+        font-size: 11px;
+        padding: 4px 10px;
+    }
+    
+    /* Pipeline stages - 2 columns */
+    .pipeline-stages {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+    .pipeline-stage {
+        padding: 18px 15px;
+    }
+    
+    .pipeline-section,
+    .reports-section,
+    .quick-actions-section {
+        padding: 20px;
+        border-radius: 10px;
+    }
+    
+    .section-header h3 {
+        font-size: 18px;
+    }
+    
+    /* Charts - single column */
+    .charts-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    /* Quick actions - 2 columns */
+    .quick-actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+    .quick-action-btn {
+        padding: 18px 12px;
+    }
+    
+    .quick-action-btn i {
+        font-size: 24px;
+    }
+    
+    .quick-action-btn span {
+        font-size: 12px;
+    }
+    
+    /* Modals */
+    .modal-content {
+        width: 95%;
+        margin: 10px;
+        border-radius: 10px;
+    }
+    
+    .modal-header {
+        padding: 18px 20px;
+    }
+    
+    .modal-body {
+        padding: 18px 20px;
+    }
+    
+    .modal-actions {
+        padding: 15px 20px;
+    }
+    
+    .field-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* Dropdowns positioning */
+    .notifications-dropdown.show {
+        top: 60px;
+        left: 10px;
+        width: calc(100vw - 20px);
+        max-width: 350px;
+    }
+    
+    .user-dropdown.show {
+        top: 60px;
+        left: auto;
+        right: 10px;
+        bottom: auto;
+    }
+    
+    /* Sidebar collapse behavior */
     .app-container.sidebar-collapsed .header {
         transform: translateY(-100%);
         height: 0;
@@ -2396,4 +2047,166 @@ nav-link.active:hover i,
         margin-top: 0;
         padding-top: 15px;
     }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+    .main-content {
+        padding: 12px;
+    }
+    
+    .dashboard-header {
+        padding: 0 0 10px 0;
+        margin-bottom: 12px;
+    }
+    
+    .menu-toggle {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+    
+    /* KPI Cards - single column */
+    .kpi-section {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .kpi-card {
+        flex-direction: row;
+        text-align: left;
+        padding: 16px 12px;
+        min-height: 100px;
+        align-items: center;
+    }
+    
+    .kpi-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 20px;
+        margin-bottom: 0;
+    }
+    
+    .kpi-value {
+        font-size: 26px;
+    }
+    
+    .kpi-label {
+        font-size: 11px;
+    }
+    
+    .kpi-change {
+        font-size: 10px;
+        padding: 3px 8px;
+    }
+    
+    /* Pipeline - single column */
+    .pipeline-stages {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .pipeline-stage {
+        padding: 16px 12px;
+    }
+    
+    .stage-header h4 {
+        font-size: 14px;
+    }
+    
+    .pipeline-section,
+    .reports-section,
+    .quick-actions-section {
+        padding: 16px;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .section-header h3 {
+        font-size: 16px;
+    }
+    
+    .pipeline-total {
+        font-size: 14px;
+        padding: 6px 12px;
+    }
+    
+    /* Quick actions - single column */
+    .quick-actions-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .quick-action-btn {
+        padding: 16px;
+    }
+    
+    .quick-action-btn i {
+        font-size: 22px;
+    }
+    
+    .quick-action-btn span {
+        font-size: 13px;
+    }
+    
+    /* Charts */
+    .charts-container {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .chart-item {
+        padding: 16px;
+    }
+    
+    /* Modals on small screens */
+    .modal-content {
+        width: 98%;
+        margin: 5px;
+    }
+    
+    .modal-header h3 {
+        font-size: 18px;
+    }
+    
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .profile-actions,
+    .modal-actions {
+        flex-direction: column;
+    }
+    
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+        padding: 12px;
+    }
+    
+    /* User dropdown full width */
+    .user-dropdown.show {
+        right: 10px;
+        left: 10px;
+        width: calc(100vw - 20px);
+    }
+    
+    .notifications-dropdown.show {
+        left: 10px;
+        width: calc(100vw - 20px);
+    }
+}
+
+/* Smooth scroll and touch highlights */
+html {
+    scroll-behavior: smooth;
+}
+
+* {
+    -webkit-tap-highlight-color: rgba(0, 188, 212, 0.1);
 }
