@@ -21,7 +21,7 @@ html, body {
     min-height: 100vh;
     display: flex;
     flex-direction: row;
-    overflow-x: hidden;
+    overflow: hidden; /* Changed from overflow-x: hidden */
     width: 100%;
 }
 
@@ -29,8 +29,9 @@ html, body {
 .header {
     background: #ffffff;
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-    position: sticky;
+    position: fixed; /* Changed from sticky to fixed */
     top: 0;
+    left: 0;
     z-index: 1000;
     height: 100vh;
     width: 240px;
@@ -38,7 +39,9 @@ html, body {
     display: flex;
     flex-direction: column;
     transition: all 0.3s ease;
+    overflow-y: auto; /* Allow sidebar to scroll if needed */
 }
+
 
 .header-content {
     display: flex;
@@ -465,11 +468,15 @@ html, body {
     padding: 40px;
     max-width: 1800px;
     margin: 0 auto;
-    width: 100%;
+    width: calc(100% - 240px); /* Account for sidebar width */
     background: #f8f9fa;
     transition: all 0.3s ease;
     overflow-x: hidden;
-    width: 100%;
+    margin-left: 240px; /* Push content to the right of sidebar */
+    height: 100vh; /* Full viewport height */
+    overflow-y: auto; /* Enable vertical scrolling */
+    scroll-behavior: smooth;
+
 }
 
 /* ===== MENU TOGGLE BUTTON - MOVED TO MAIN CONTENT ===== */
@@ -504,8 +511,10 @@ html, body {
 /* Sidebar collapsed state */
 .app-container.sidebar-collapsed .header {
     width: 70px;
-    transform: translateX(-150px);
+    transform: translateX(0); /* Remove the translateX */
+    left: -170px; /* Hide sidebar by moving it left */
 }
+
 
 .app-container.sidebar-collapsed .logo img {
     width: 40px;
@@ -535,8 +544,8 @@ html, body {
 }
 
 .app-container.sidebar-collapsed .main-content {
-    margin-left: 0;
-    width: 100%;
+    margin-left: 70px; /* Adjust for collapsed sidebar */
+    width: calc(100% - 70px);
 }
 
 /* Ensure proper positioning in collapsed state */
@@ -555,6 +564,29 @@ html, body {
 .nav-link,
 .logo img {
     transition: all 0.3s ease;
+}
+
+.main-content {
+    scroll-behavior: smooth;
+}
+
+/* Hide default scrollbar and use custom one for main content */
+.main-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.main-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.main-content::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}
+
+.main-content::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
 }
 
 /* ===== ENHANCED PAGE HEADER ===== */
@@ -765,7 +797,7 @@ html, body {
     width: 100%;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     border-collapse: collapse;
-    min-width: 800px; /* This ensures table has minimum width but can scroll */
+    min-width: 800px;
 }
 
 
@@ -816,7 +848,7 @@ html, body {
     padding: 1.25rem 1.5rem;
     text-align: left;
     color: #374151;
-    border-bottom: 2px solid #e2e8f0;
+    border: none;
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -1355,124 +1387,36 @@ html, body {
 @media (max-width: 768px) {
     .app-container {
         flex-direction: column;
+        overflow: visible;
     }
     
     .header {
+        position: fixed;
         width: 100%;
         height: auto;
-        position: fixed;
-        top: 0;
-        z-index: 1000;
-    }
-    
-    .header-content {
-        flex-direction: row;
-        padding: 12px 15px;
-        height: 65px;
+        min-height: 65px;
         overflow: visible;
-    }
-    
-    .header-left {
-        flex-direction: row;
-        align-items: center;
-        padding-top: 0;
-        gap: 15px;
-        flex: none;
-        overflow: visible;
-    }
-    
-    .logo {
-        padding-bottom: 0;
-        border-bottom: none;
-        justify-content: flex-start;
-        flex-shrink: 0;
-    }
-
-    .logo img {
-        height: 35px;
-        max-width: 140px;
-    }
-    
-    .main-nav {
-        flex-direction: row;
-        overflow-x: auto;
-        overflow-y: hidden;
-        gap: 8px;
-        margin-top: 0;
-        flex: none;
-        max-height: none;
-        padding-right: 0;
-    }
-    
-    .nav-link {
-        white-space: nowrap;
-        font-size: 13px;
-        padding: 8px 12px;
-        flex-shrink: 0;
-    }
-    
-    .header-right {
-        flex-direction: row;
-        margin-top: 0;
-        padding-bottom: 0;
-        width: auto;
-        gap: 12px;
-        flex-shrink: 0;
-        border-top: none;
-        padding: 0;
     }
     
     .main-content {
+        margin-left: 0;
+        width: 100%;
         margin-top: 65px;
         padding: 20px;
+        height: calc(100vh - 65px); /* Account for header height */
     }
     
-    .notifications-dropdown.show {
-        top: 65px;
-        left: 15px;
+    .app-container.sidebar-collapsed .main-content {
+        margin-left: 0;
+        width: 100%;
     }
     
-    .user-dropdown.show {
-        top: 65px;
-        left: auto;
+    /* Adjust menu toggle for mobile */
+    .menu-toggle {
+        top: 10px;
         right: 15px;
-        bottom: auto;
-    }
-    
-    .page-header h1 {
-        font-size: 2rem;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-    
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .pagination-container {
-        flex-direction: column;
-        text-align: center;
-        gap: 1rem;
-    }
-    
-    .contacts-table {
-        font-size: 0.9rem;
-    }
-    
-    .contacts-table th,
-    .contacts-table td {
-        padding: 1rem 1.25rem;
-    }
-    
-    .modal-content {
-        margin: 1rem;
-        max-height: calc(100vh - 2rem);
-    }
-    
-    .modal-header,
-    .modal-body,
-    .modal-actions {
-        padding: 1.5rem;
+        width: 40px;
+        height: 40px;
     }
 }
 
