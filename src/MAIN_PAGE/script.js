@@ -1021,6 +1021,21 @@ function renderDealsTable() {
     updatePagination();
 }
 
+function toggleSidebar() {
+    const appContainer = document.querySelector('.app-container');
+    appContainer.classList.toggle('sidebar-collapsed');
+    
+    // Update the menu toggle icon
+    const menuToggleIcon = document.querySelector('.menu-toggle i');
+    if (appContainer.classList.contains('sidebar-collapsed')) {
+        menuToggleIcon.className = 'fas fa-bars';
+    } else {
+        menuToggleIcon.className = 'fas fa-bars';
+    }
+}
+
+
+
 function getDaysUntilClose(closeDate) {
     if (!closeDate) return '';
     
@@ -1211,7 +1226,7 @@ function toggleActionMenu(event, id) {
 }
 
 function closeAllDropdowns() {
-    const dropdowns = document.querySelectorAll('.dropdown-menu');
+    const dropdowns = document.querySelectorAll('.user-dropdown, .notifications-dropdown');
     dropdowns.forEach(dropdown => {
         dropdown.classList.remove('show');
     });
@@ -1359,7 +1374,6 @@ function getNotificationIcon(type) {
     return icons[type] || icons.info;
 }
 
-// ✅ ADD: Dashboard functions for navigation
 function toggleUserMenu() {
     const dropdown = document.getElementById('userDropdown');
     const isVisible = dropdown.classList.contains('show');
@@ -1369,6 +1383,7 @@ function toggleUserMenu() {
     }
 }
 
+// Toggle notifications
 function toggleNotifications() {
     const dropdown = document.getElementById('notificationsDropdown');
     const isVisible = dropdown.classList.contains('show');
@@ -1393,6 +1408,7 @@ function openHelp() {
     showNotification('Opening help center...', 'info');
 }
 
+// Logout
 function logout() {
     closeAllDropdowns();
     if (confirm('Are you sure you want to logout?')) {
@@ -1423,5 +1439,6 @@ function viewNotification(id) {
     closeAllDropdowns();
     showNotification(`Viewing notification ${id}`, 'info');
 }
+
 
 console.log('Deal Management System initialized with enhanced table styling and pagination');
