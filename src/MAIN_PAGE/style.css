@@ -705,10 +705,8 @@ nav-link.active:hover i,
 
 /* ===== MAIN CONTENT STYLING ===== */
 .main-content {
-    position: relative; /* ADD THIS */
     flex: 1;
-    padding: 40px;
-    padding-top: 90px; /* Increased to make room for menu toggle */
+    padding: 30px 40px 40px 40px; /* Reduced top padding */
     max-width: 1800px;
     margin: 0 auto;
     width: 100%;
