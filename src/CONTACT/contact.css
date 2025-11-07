@@ -771,7 +771,7 @@ html, body {
 
 .contacts-table th:nth-child(1), /* Name column */
 .contacts-table td:nth-child(1) {
-    min-width: 200px; /* Increased from default */
+    min-width: 250px; /* Increased from default */
     width: 25%;
 }
 
