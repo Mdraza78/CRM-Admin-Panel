@@ -368,9 +368,7 @@ nav-link.active:hover i,
 
 /* ===== MENU TOGGLE BUTTON - MOVED TO MAIN CONTENT ===== */
 .menu-toggle {
-    background: transparent;
-    border: 2px solid #495057;
-    color: #495057;
+    background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
     width: 45px;
     height: 45px;
     border-radius: 10px;
