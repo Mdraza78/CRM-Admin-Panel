@@ -851,41 +851,46 @@ nav-link.active:hover i,
         flex-direction: column;
     }
     
-    /* Sidebar becomes full-width top bar */
+    /* Sidebar becomes horizontal top bar */
     .header {
         width: 100%;
         height: auto;
-        border-right: none;
-        border-bottom: 1px solid #e9ecef;
-        position: sticky;
+        position: fixed;
         top: 0;
         z-index: 1000;
+        border-right: none;
+        border-bottom: 1px solid #e9ecef;
     }
     
     .header-content {
         flex-direction: row;
-        padding: 12px 20px;
-        height: auto;
+        padding: 10px 15px;
+        height: 60px;
+        overflow: visible;
     }
     
     .header-left {
         flex-direction: row;
         align-items: center;
-        gap: 20px;
-        padding: 0;
+        padding-top: 0;
+        gap: 15px;
+        flex: 1;
         overflow-x: auto;
+        overflow-y: hidden;
     }
     
     .logo {
         padding: 0;
         margin: 0;
-        border: none;
+        border-bottom: none;
+        justify-content: flex-start;
+        flex-shrink: 0;
         min-width: fit-content;
     }
-    
+
     .logo img {
-        height: 40px;
-        max-width: 150px;
+        height: 35px;
+        max-width: 140px;
     }
     
     /* Horizontal scrollable navigation */
@@ -893,177 +898,350 @@ nav-link.active:hover i,
         flex-direction: row;
         overflow-x: auto;
         overflow-y: hidden;
-        max-height: none;
-        padding: 0;
         gap: 8px;
         margin-top: 0;
+        flex: 1;
+        max-height: none;
+        padding: 0;
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
     }
     
     .main-nav::-webkit-scrollbar {
-        height: 4px;
+        height: 3px;
+    }
+    
+    .main-nav::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 10px;
     }
     
     .nav-link {
         white-space: nowrap;
-        padding: 10px 16px;
-        font-size: 14px;
+        font-size: 13px;
+        padding: 8px 14px;
+        flex-shrink: 0;
+        margin: 0;
+        width: auto;
+    }
+    
+    .nav-link.active {
+        transform: translateX(0); /* Remove translateX on mobile */
+    }
+    
+    .nav-link:hover {
+        transform: translateX(0); /* Remove translateX on mobile */
     }
     
     .header-right {
         flex-direction: row;
+        margin-top: 0;
         padding: 0;
-        margin: 0;
-        border: none;
-        gap: 15px;
+        width: auto;
+        gap: 10px;
+        flex-shrink: 0;
+        border-top: none;
     }
     
     .user-profile {
-        padding: 8px 12px;
+        padding: 6px 10px;
     }
     
     .user-avatar {
-        width: 35px;
-        height: 35px;
+        width: 32px;
+        height: 32px;
     }
     
     .user-name {
-        display: none;
+        display: none; /* Hide username on mobile */
     }
     
-    /* Main content adjustments */
+    /* Main content with proper spacing for fixed header */
     .main-content {
-        padding: 20px;
+        margin-top: 60px;
+        padding: 15px;
         width: 100%;
     }
     
     .dashboard-header {
-        padding: 0 0 15px 0;
-        margin-bottom: 20px;
+        padding: 0 0 12px 0;
+        margin-bottom: 15px;
     }
     
     .menu-toggle {
-        width: 40px;
-        height: 40px;
-        font-size: 16px;
+        width: 38px;
+        height: 38px;
+        font-size: 15px;
     }
     
-    /* KPI Cards - 2 columns */
+    /* KPI Cards - 2 columns on tablets */
     .kpi-section {
         grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
+        gap: 12px;
     }
     
     .kpi-card {
-        padding: 20px 15px;
-        min-height: 120px;
+        padding: 18px 15px;
+        min-height: 110px;
+        gap: 15px;
     }
     
     .kpi-icon {
-        width: 50px;
-        height: 50px;
-        font-size: 24px;
+        width: 48px;
+        height: 48px;
+        font-size: 22px;
     }
     
     .kpi-value {
-        font-size: 32px;
+        font-size: 28px;
     }
     
     .kpi-label {
-        font-size: 13px;
+        font-size: 12px;
+    }
+    
+    .kpi-change {
+        font-size: 11px;
+        padding: 4px 10px;
     }
     
     /* Pipeline stages - 2 columns */
     .pipeline-stages {
         grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
+        gap: 12px;
     }
     
-    /* Charts - single column */
-    .charts-container {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-    
-    /* Quick actions - 2 columns */
-    .quick-actions-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
-    }
-    
-    .quick-action-btn {
-        padding: 20px 15px;
-    }
-    
-    /* Modals */
-    .modal-content {
-        width: 95%;
-        margin: 10px;
-    }
-    
-    .modal-body {
-        padding: 20px;
-    }
-    
-    .field-row {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* Small Mobile - Single Column */
-@media (max-width: 480px) {
-    .main-content {
-        padding: 15px;
-    }
-    
-    /* KPI Cards - single column */
-    .kpi-section {
-        grid-template-columns: 1fr;
-    }
-    
-    .kpi-card {
-        flex-direction: column;
-        text-align: center;
-        align-items: center;
-    }
-    
-    .kpi-icon {
-        margin-bottom: 15px;
-    }
-    
-    /* Pipeline - single column */
-    .pipeline-stages {
-        grid-template-columns: 1fr;
+    .pipeline-stage {
+        padding: 18px 15px;
     }
     
     .pipeline-section,
     .reports-section,
     .quick-actions-section {
         padding: 20px;
-    }
-    
-    .section-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
+        border-radius: 10px;
     }
     
     .section-header h3 {
         font-size: 18px;
     }
     
-    .pipeline-total {
-        font-size: 16px;
+    /* Charts - single column */
+    .charts-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
     }
     
-    /* Quick actions - single column */
+    /* Quick actions - 2 columns */
     .quick-actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+    .quick-action-btn {
+        padding: 18px 12px;
+    }
+    
+    .quick-action-btn i {
+        font-size: 24px;
+    }
+    
+    .quick-action-btn span {
+        font-size: 12px;
+    }
+    
+    /* Modals */
+    .modal-content {
+        width: 95%;
+        margin: 10px;
+        border-radius: 10px;
+    }
+    
+    .modal-header {
+        padding: 18px 20px;
+    }
+    
+    .modal-body {
+        padding: 18px 20px;
+    }
+    
+    .modal-actions {
+        padding: 15px 20px;
+    }
+    
+    .field-row {
         grid-template-columns: 1fr;
     }
     
-    /* User dropdown positioning */
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* Dropdowns positioning */
+    .notifications-dropdown.show {
+        top: 60px;
+        left: 10px;
+        width: calc(100vw - 20px);
+        max-width: 350px;
+    }
+    
+    .user-dropdown.show {
+        top: 60px;
+        left: auto;
+        right: 10px;
+        bottom: auto;
+    }
+}
+
+
+/* Small Mobile - Single Column */
+@media (max-width: 480px) {
+    .main-content {
+        padding: 12px;
+    }
+    
+    .dashboard-header {
+        padding: 0 0 10px 0;
+        margin-bottom: 12px;
+    }
+    
+    .menu-toggle {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+    
+    /* KPI Cards - single column for phones */
+    .kpi-section {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .kpi-card {
+        flex-direction: row; /* Keep horizontal layout */
+        text-align: left;
+        padding: 16px 12px;
+        min-height: 100px;
+        align-items: center;
+    }
+    
+    .kpi-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 20px;
+        margin-bottom: 0;
+    }
+    
+    .kpi-value {
+        font-size: 26px;
+    }
+    
+    .kpi-label {
+        font-size: 11px;
+    }
+    
+    .kpi-change {
+        font-size: 10px;
+        padding: 3px 8px;
+    }
+    
+    /* Pipeline - single column */
+    .pipeline-stages {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .pipeline-stage {
+        padding: 16px 12px;
+    }
+    
+    .stage-header h4 {
+        font-size: 14px;
+    }
+    
+    .pipeline-section,
+    .reports-section,
+    .quick-actions-section {
+        padding: 16px;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .section-header h3 {
+        font-size: 16px;
+    }
+    
+    .pipeline-total {
+        font-size: 14px;
+        padding: 6px 12px;
+    }
+    
+    /* Quick actions - single column on small phones */
+    .quick-actions-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .quick-action-btn {
+        padding: 16px;
+    }
+    
+    .quick-action-btn i {
+        font-size: 22px;
+    }
+    
+    .quick-action-btn span {
+        font-size: 13px;
+    }
+    
+    /* Charts */
+    .charts-container {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .chart-item {
+        padding: 16px;
+    }
+    
+    /* Modals on small screens */
+    .modal-content {
+        width: 98%;
+        margin: 5px;
+    }
+    
+    .modal-header h3 {
+        font-size: 18px;
+    }
+    
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .profile-actions,
+    .modal-actions {
+        flex-direction: column;
+    }
+    
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+        padding: 12px;
+    }
+    
+    /* User dropdown full width on mobile */
     .user-dropdown.show {
         right: 10px;
-        left: auto;
+        left: 10px;
+        width: calc(100vw - 20px);
     }
     
     .notifications-dropdown.show {
@@ -1071,6 +1249,7 @@ nav-link.active:hover i,
         width: calc(100vw - 20px);
     }
 }
+
 
 @media (max-width: 768px) {
     .app-container.sidebar-collapsed .header {
@@ -2178,11 +2357,43 @@ nav-link.active:hover i,
         gap: 20px;
     }
     
+    .kpi-card {
+        padding: 25px 20px;
+        min-height: 130px;
+    }
+    
+    .kpi-icon {
+        width: 55px;
+        height: 55px;
+        font-size: 26px;
+    }
+    
+    .kpi-value {
+        font-size: 36px;
+    }
+    
     .pipeline-stages {
         grid-template-columns: repeat(3, 1fr);
     }
     
     .charts-container {
         grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .quick-actions-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .app-container.sidebar-collapsed .header {
+        transform: translateY(-100%);
+        height: 0;
+        overflow: hidden;
+    }
+    
+    .app-container.sidebar-collapsed .main-content {
+        margin-top: 0;
+        padding-top: 15px;
     }
 }
