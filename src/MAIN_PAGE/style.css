@@ -370,7 +370,7 @@ nav-link.active:hover i,
 .menu-toggle {
     position: fixed;
     top: 25px;
-    right: 25px;
+    left: 25px;
     width: 45px;
     height: 45px;
     background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
@@ -390,15 +390,15 @@ nav-link.active:hover i,
     transform: scale(1.05);
     box-shadow: 0 6px 18px rgba(0, 188, 212, 0.5);
 }
-
 .menu-toggle:active {
     transform: scale(0.95);
 }
 
 /* Sidebar collapsed state */
 .app-container.sidebar-collapsed .header {
-    width: 70px;
-    transform: translateX(-150px);
+    transform: translateX(-100%);
+    width: 0;
+    overflow: hidden;
 }
 
 .app-container.sidebar-collapsed .logo img {
@@ -449,6 +449,10 @@ nav-link.active:hover i,
 .main-content,
 .nav-link,
 .logo img {
+    transition: all 0.3s ease;
+}
+.header,
+.main-content {
     transition: all 0.3s ease;
 }
 
