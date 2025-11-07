@@ -368,30 +368,37 @@ nav-link.active:hover i,
 
 /* ===== MENU TOGGLE BUTTON - MOVED TO MAIN CONTENT ===== */
 .menu-toggle {
-    position: absolute; /* Changed from fixed to absolute */
-    top: 20px; /* Adjusted positioning */
-    left: 20px;
+    background: transparent;
+    border: 2px solid #495057;
+    color: #495057;
     width: 45px;
     height: 45px;
-    background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
-    border: none;
     border-radius: 10px;
-    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    z-index: 100; /* Reduced from 1001 to stay within main content context */
-    box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4);
+    font-size: 18px;
+}
+
+.menu-toggle i {
+    transition: transform 0.3s ease;
+}
+
+.menu-toggle:hover i {
+    transform: scale(1.1);
 }
 
 .menu-toggle:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 18px rgba(0, 188, 212, 0.5);
+    border-color: #00BCD4;
+    color: #00BCD4;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 188, 212, 0.2);
 }
+
 .menu-toggle:active {
-    transform: scale(0.95);
+    transform: translateY(0);
 }
 /* Sidebar collapsed state */
 .app-container.sidebar-collapsed .header {
@@ -707,6 +714,14 @@ nav-link.active:hover i,
     width: 100%;
     background: #f8f9fa;
     transition: all 0.3s ease;
+}
+.dashboard-header {
+    background: transparent;
+    padding: 0 0 20px 0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e9ecef;
+    display: flex;
+    align-items: center;
 }
 
 /* ===== PROFESSIONAL KPI CARDS ===== */
