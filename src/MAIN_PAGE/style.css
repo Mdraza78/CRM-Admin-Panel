@@ -142,12 +142,12 @@ body {
     box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3);
     transform: translateX(0);
     border: none;
-    margin: 2px 0; /* Remove negative margins */
-    padding: 14px 16px; /* Standard padding */
-    width: 100%; /* Don't extend beyond container */
+    margin: 2px 0;
+    padding: 14px 16px;
+    width: 100%;
     position: relative;
-    left: 0; /* Reset left positioning */
-    border-radius: 10px; /* Ensure rounded corners */
+    left: 0;
+    border-radius: 10px;
 }
 
 
@@ -189,6 +189,10 @@ body {
 
 .nav-link.active i {
     color: white !important;
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+    -webkit-text-fill-color: white !important;
 }
 
 .nav-link.active::before {
@@ -203,7 +207,14 @@ body {
     z-index: 1;
     display: none;
 }
-
+nav-link.active:hover i,
+.nav-link.active:hover span {
+    color: white !important;
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+    -webkit-text-fill-color: white !important;
+}
 
 /* Ensure hover states don't override active state */
 .nav-link.active:hover {
@@ -289,6 +300,15 @@ body {
     margin-left: 2px;
     margin-right: 2px;
 }
+
+.nav-link.active span {
+    color: white !important;
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+    -webkit-text-fill-color: white !important;
+}
+
 
 /* Active state with full width */
 .nav-link.active {
