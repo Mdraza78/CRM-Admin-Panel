@@ -6,6 +6,11 @@
     box-sizing: border-box;
 }
 
+.dashboard-header {
+  position: relative;
+  height: 60px;
+}
+
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background-color: #f8f9fa;
@@ -24,7 +29,8 @@ body {
 .header {
     background: #ffffff;
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-    position: sticky;
+    position: fixed;
+    left: 0;
     top: 0;
     z-index: 1000;
     height: 100vh;
@@ -562,6 +568,8 @@ body {
     width: 100%;
     background: #f8f9fa;
     transition: all 0.3s ease;
+    margin-left: 240px;
+  transition: margin-left 0.3s;
 }
 
 /* ===== MENU TOGGLE BUTTON - MOVED TO MAIN CONTENT ===== */
@@ -597,7 +605,7 @@ body {
 /* Sidebar collapsed state */
 .app-container.sidebar-collapsed .header {
     width: 70px;
-    transform: translateX(-150px);
+    transform: none;
 }
 
 .app-container.sidebar-collapsed .logo img {
@@ -629,6 +637,9 @@ body {
 }
 
 .app-container.sidebar-collapsed .main-content {
+    position: absolute;  /* not fixed */
+  left: 25px;
+  top: 25px;
     margin-left: 0;
     width: 100%;
 }
