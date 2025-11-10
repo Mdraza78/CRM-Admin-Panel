@@ -205,7 +205,7 @@ loginForm.addEventListener('submit', async function(e) {
                 showNotification('Login successful! Redirecting...', 'success');
 
                 setTimeout(() => {
-                    window.location.href = '/dashboard'; // Matches backend route for dashboard page
+                    window.location.href = '/MAIN_PAGE'; // Matches backend route for dashboard page
                 }, 1500);
             } else {
                 throw new Error(data.msg || data.error || 'Login failed');
