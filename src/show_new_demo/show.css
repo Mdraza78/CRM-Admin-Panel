@@ -8,10 +8,10 @@
 
 .dashboard-header {
     position: relative;
-    margin-top: 35px;
-    height: 60px;
+    margin-top: 45px;
+    height: 90px; /* or more, to push content down */
     display: flex;
-    align-items: center;
+    align-items: flex-start;
 }
 
 
@@ -38,11 +38,20 @@ body {
     top: 0;
     z-index: 1000;
     height: 100vh;
-    width: 240px; /* Reduced from 280px */
+    width: 180px;
     border-right: 1px solid #e9ecef;
     display: flex;
     flex-direction: column;
     transition: all 0.3s ease;
+}
+
+.app-container.sidebar-collapsed .header-content,
+.app-container.sidebar-collapsed .header-left,
+.app-container.sidebar-collapsed .logo,
+.app-container.sidebar-collapsed .main-nav,
+.app-container.sidebar-collapsed .user-profile,
+.app-container.sidebar-collapsed .header-right {
+    display: none !important;
 }
 
 .header-content {
@@ -572,20 +581,18 @@ body {
     width: 100%;
     background: #f8f9fa;
     transition: all 0.3s ease;
-    margin-left: 240px;
+    margin-left: 180px;
   transition: margin-left 0.3s;
 }
 .toggle-hr {
-    width: 100%;
-    border: none;
-    height: 4px; /* Increased thickness */
-    background: #e0e6ed;
-    margin-left: 0;
-    margin-top: 12px;
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 0;
+    top: 70px; /* Adjust as needed to move line down */
+    height: 3px; /* moderate thickness */
+    background: #e0e6ed;
+    border: none;
+    width: 100%;
 }
 
 
@@ -622,8 +629,13 @@ body {
 
 /* Sidebar collapsed state */
 .app-container.sidebar-collapsed .header {
-    width: 70px;
-    transform: none;
+    width: 0;
+    min-width: 0;
+    overflow: hidden;
+    border: none;
+    box-shadow: none;
+    transition: width 0.3s;
+    padding: 0;
 }
 
 .app-container.sidebar-collapsed .logo img {
@@ -658,7 +670,7 @@ body {
     position: absolute;  /* not fixed */
   left: 25px;
   top: 25px;
-    margin-left: 0;
+ margin-left: 0 !important;
     width: 100%;
 }
 
@@ -788,7 +800,7 @@ body {
     align-items: flex-start;
     margin-bottom: 30px;
     padding-bottom: 20px;
-    margin-top: 35px;
+    margin-top: 45px;
     border-bottom: none;
 }
 
@@ -1726,7 +1738,10 @@ body {
 /* Responsive Design */
 @media (max-width: 1400px) {
     .header {
-        width: 220px; /* Maintain reduced width */
+        width: 160px; /* Maintain reduced width */
+    }
+      .main-content {
+        margin-left: 160px;
     }
 }
 
