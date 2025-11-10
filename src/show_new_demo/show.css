@@ -8,10 +8,10 @@
 
 .dashboard-header {
     position: relative;
-    margin-top: 45px;
-    height: 90px; /* or more, to push content down */
+    margin-top: 35px;
+    height: 60px;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
 }
 
 
@@ -585,14 +585,16 @@ body {
   transition: margin-left 0.3s;
 }
 .toggle-hr {
+    width: 100%;
+    border: none;
+    height: 4px; /* Increased thickness */
+    background: #e0e6ed;
+    margin-left: 0;
+    margin-top: 12px;
     position: absolute;
     left: 0;
     right: 0;
-    top: 70px; /* Adjust as needed to move line down */
-    height: 3px; /* moderate thickness */
-    background: #e0e6ed;
-    border: none;
-    width: 100%;
+    bottom: 0;
 }
 
 
@@ -670,7 +672,7 @@ body {
     position: absolute;  /* not fixed */
   left: 25px;
   top: 25px;
- margin-left: 0 !important;
+    margin-left: 0;
     width: 100%;
 }
 
@@ -800,7 +802,7 @@ body {
     align-items: flex-start;
     margin-bottom: 30px;
     padding-bottom: 20px;
-    margin-top: 45px;
+    margin-top: 35px;
     border-bottom: none;
 }
 
