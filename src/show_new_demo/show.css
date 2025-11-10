@@ -593,6 +593,7 @@ body {
     transform: scale(0.95);
 }
 
+
 /* Sidebar collapsed state */
 .app-container.sidebar-collapsed .header {
     width: 70px;
