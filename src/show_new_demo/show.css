@@ -8,6 +8,7 @@
 
 .dashboard-header {
     position: relative;
+    margin-top: 35px;
     height: 60px;
     display: flex;
     align-items: center;
@@ -577,7 +578,7 @@ body {
 .toggle-hr {
     width: 100%;
     border: none;
-    height: 1px;
+    height: 4px; /* Increased thickness */
     background: #e0e6ed;
     margin-left: 0;
     margin-top: 12px;
@@ -586,6 +587,7 @@ body {
     right: 0;
     bottom: 0;
 }
+
 
 /* ===== MENU TOGGLE BUTTON - MOVED TO MAIN CONTENT ===== */
 .menu-toggle {
@@ -786,7 +788,8 @@ body {
     align-items: flex-start;
     margin-bottom: 30px;
     padding-bottom: 20px;
-    border-bottom: 2px solid #e9ecef;
+    margin-top: 35px;
+    border-bottom: none;
 }
 
 .page-header .header-left h1 {
