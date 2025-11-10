@@ -1531,10 +1531,13 @@ function downloadCSV(content, filename) {
 // Dashboard Functions
 function toggleSidebar() {
     const appContainer = document.querySelector('.app-container');
-    appContainer.classList.toggle('sidebar-collapsed');
-    localStorage.setItem('sidebarCollapsed', appContainer.classList.contains('sidebar-collapsed'));
-    console.log('📱 Sidebar toggled');
+    if (appContainer.classList.contains('sidebar-collapsed')) {
+        appContainer.classList.remove('sidebar-collapsed');
+    } else {
+        appContainer.classList.add('sidebar-collapsed');
+    }
 }
+
 
 function toggleUserMenu() {
     const dropdown = document.getElementById('userDropdown');
