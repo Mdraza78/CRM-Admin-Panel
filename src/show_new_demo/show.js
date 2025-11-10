@@ -1530,13 +1530,9 @@ function downloadCSV(content, filename) {
 
 // Dashboard Functions
 function toggleSidebar() {
-    const appContainer = document.querySelector('.app-container');
-    if (appContainer.classList.contains('sidebar-collapsed')) {
-        appContainer.classList.remove('sidebar-collapsed');
-    } else {
-        appContainer.classList.add('sidebar-collapsed');
-    }
+    document.querySelector('.app-container').classList.toggle('sidebar-collapsed');
 }
+
 
 
 function toggleUserMenu() {
