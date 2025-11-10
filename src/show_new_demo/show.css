@@ -8,12 +8,16 @@
 
 .dashboard-header {
     position: relative;
-    margin-top: 35px;
-    height: 60px;
+    height: 72px;              /* adjust as needed for spacing */
     display: flex;
-    align-items: center;
+    align-items: flex-start;   /* stick toggle to top */
+    margin-top: 0;             /* remove margin if leftover */
+    padding-top: 0;            /* remove padding if leftover */
 }
 
+body, html {
+    overflow-x: hidden; /* Prevent accidental scrolling */
+}
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -38,7 +42,7 @@ body {
     top: 0;
     z-index: 1000;
     height: 100vh;
-    width: 180px;
+    width: 240px;
     border-right: 1px solid #e9ecef;
     display: flex;
     flex-direction: column;
@@ -581,22 +585,19 @@ body {
     width: 100%;
     background: #f8f9fa;
     transition: all 0.3s ease;
-    margin-left: 180px;
+    margin-left: 240px;
   transition: margin-left 0.3s;
 }
 .toggle-hr {
-    width: 100%;
-    border: none;
-    height: 4px; /* Increased thickness */
-    background: #e0e6ed;
-    margin-left: 0;
-    margin-top: 12px;
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 0;
+    top: 56px;  /* or 60px, increases gap between button and line */
+    height: 4px;
+    background: #e0e6ed;
+    border: none;
+    width: 100%;
 }
-
 
 /* ===== MENU TOGGLE BUTTON - MOVED TO MAIN CONTENT ===== */
 .menu-toggle {
@@ -630,15 +631,15 @@ body {
 
 
 /* Sidebar collapsed state */
-.app-container.sidebar-collapsed .header {
-    width: 0;
-    min-width: 0;
-    overflow: hidden;
-    border: none;
-    box-shadow: none;
-    transition: width 0.3s;
-    padding: 0;
+.app-container.sidebar-collapsed .main-content {
+    margin-left: 0 !important;
+    position: static !important; /* Remove absolute or fixed positioning */
+    width: 100%; /* Let it fill naturally */
+    left: 0 !important;          /* Remove left offset if present */
+    top: 0 !important;           /* Remove top offset if present */
+    overflow-x: auto;
 }
+
 
 .app-container.sidebar-collapsed .logo img {
     width: 40px;
@@ -1740,10 +1741,10 @@ body {
 /* Responsive Design */
 @media (max-width: 1400px) {
     .header {
-        width: 160px; /* Maintain reduced width */
+        width: 180px; /* Maintain reduced width */
     }
       .main-content {
-        margin-left: 160px;
+        margin-left: 180px;
     }
 }
 
