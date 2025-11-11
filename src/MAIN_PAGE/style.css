@@ -368,31 +368,27 @@ nav-link.active:hover i,
 
 /* ===== MENU TOGGLE BUTTON - MOVED TO MAIN CONTENT ===== */
 .menu-toggle {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  width: 45px;
-  height: 45px;
-  background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
-  border: none;
-  border-radius: 10px;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  z-index: 1001;
-  box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4);
+    background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
+    border: none;
+    color: white;
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 18px;
+    box-shadow: 0 2px 8px rgba(0, 188, 212, 0.3);
 }
 
 .menu-toggle i {
     transition: transform 0.3s ease;
 }
 
-.menu-toggle:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 18px rgba(0, 188, 212, 0.5);
+.menu-toggle:hover i {
+    transform: scale(1.1);
 }
 
 .menu-toggle:hover {
@@ -404,9 +400,8 @@ nav-link.active:hover i,
 
 
 .menu-toggle:active {
-  transform: scale(0.95);
+    transform: translateY(0);
 }
-
 /* Sidebar collapsed state */
 .app-container.sidebar-collapsed .header {
     transform: translateX(-100%);
@@ -721,12 +716,12 @@ nav-link.active:hover i,
     transition: all 0.3s ease;
 }
 .dashboard-header {
-  position: relative;
-  height: 72px;
-  display: flex;
-  align-items: flex-start;
-  margin-top: 0;
-  padding-top: 0;
+    background: transparent;
+    padding: 0 0 20px 0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e9ecef;
+    display: flex;
+    align-items: center;
 }
 
 /* ===== PROFESSIONAL KPI CARDS ===== */
@@ -1735,17 +1730,6 @@ nav-link.active:hover i,
     margin-top: 5px;
     display: block;
     font-family: 'Inter', sans-serif;
-}
-
-.toggle-hr {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 56px;
-  height: 4px;
-  background: #e0e6ed;
-  border: none;
-  width: 100%;
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
