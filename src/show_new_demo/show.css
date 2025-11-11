@@ -7,12 +7,12 @@
 }
 
 .dashboard-header {
-    position: relative;
-    height: 72px;              /* adjust as needed for spacing */
-    display: flex;
-    align-items: flex-start;   /* stick toggle to top */
-    margin-top: 0;             /* remove margin if leftover */
-    padding-top: 0;            /* remove padding if leftover */
+  position: relative;
+  height: 72px;
+  display: flex;
+  align-items: flex-start;
+  margin-top: 0;
+  padding-top: 0;
 }
 
 body, html {
@@ -599,24 +599,23 @@ body {
     width: 100%;
 }
 
-/* ===== MENU TOGGLE BUTTON - MOVED TO MAIN CONTENT ===== */
 .menu-toggle {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    width: 45px;
-    height: 45px;
-    background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
-    border: none;
-    border-radius: 10px;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    z-index: 1001;
-    box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4);
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 45px;
+  height: 45px;
+  background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 1001;
+  box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4);
 }
 
 
@@ -627,6 +626,17 @@ body {
 
 .menu-toggle:active {
     transform: scale(0.95);
+}
+
+.toggle-hr {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 56px;
+  height: 4px;
+  background: #e0e6ed;
+  border: none;
+  width: 100%;
 }
 
 
