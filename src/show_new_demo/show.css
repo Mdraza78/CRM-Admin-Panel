@@ -42,7 +42,7 @@ body {
     top: 0;
     z-index: 1000;
     height: 100vh;
-    width: 240px;
+    width: 300px;
     border-right: 1px solid #e9ecef;
     display: flex;
     flex-direction: column;
@@ -585,7 +585,7 @@ body {
     width: 100%;
     background: #f8f9fa;
     transition: all 0.3s ease;
-    margin-left: 240px;
+    margin-left: 300px;
   transition: margin-left 0.3s;
 }
 .toggle-hr {
