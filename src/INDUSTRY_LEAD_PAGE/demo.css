@@ -645,8 +645,8 @@ body {
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 30px;
-    padding-bottom: 20px;
-    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 0;
+    border-bottom: none;
 }
 
 .dashboard-header {
@@ -655,7 +655,7 @@ body {
     margin-bottom: 20px;
     border-bottom: 2px solid #e9ecef;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 20px;
 }
  .dashboard-header .page-header .header-actions {
