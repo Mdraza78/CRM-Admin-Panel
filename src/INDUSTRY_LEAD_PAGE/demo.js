@@ -1420,7 +1420,14 @@ function getNotificationColor(type) {
 function toggleSidebar() {
     const appContainer = document.querySelector('.app-container');
     appContainer.classList.toggle('sidebar-collapsed');
-    localStorage.setItem('sidebarCollapsed', appContainer.classList.contains('sidebar-collapsed'));
+    
+    // Update the menu toggle icon
+    const menuToggleIcon = document.querySelector('.menu-toggle i');
+    if (appContainer.classList.contains('sidebar-collapsed')) {
+        menuToggleIcon.className = 'fas fa-bars';
+    } else {
+        menuToggleIcon.className = 'fas fa-bars';
+    }
 }
 
 function toggleUserMenu() {
