@@ -32,13 +32,18 @@ body {
     display: flex;
     flex-direction: row;
 }
-
+.app-container.sidebar-collapsed .header {
+    width: 64px !important;
+    min-width: 64px !important;
+}
 .header {
     position: fixed;
     left: 0;
     top: 0;
     height: 100vh;
-    width: 300px; /* Match MAIN_PAGE */
+    width: 240px; /* Match MAIN_PAGE */
+    min-width: 240px;
+    max-width: 300px;
     z-index: 1000;
     background: #ffffff;
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
@@ -630,7 +635,7 @@ body {
 
 /* Sidebar collapsed state */
 .app-container.sidebar-collapsed .main-content {
-    margin-left: 0 !important;
+    margin-left: 64px !important;
     position: static !important; /* Remove absolute or fixed positioning */
     width: 100%; /* Let it fill naturally */
     left: 0 !important;          /* Remove left offset if present */
