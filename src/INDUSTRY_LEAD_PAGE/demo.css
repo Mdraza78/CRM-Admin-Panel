@@ -652,7 +652,7 @@ body {
     left: 0;
     right: 0;
     top: 56px;
-    height: 4px;
+    height: 2px; /* Decreased from 4px to 2px */
     background: #e0e6ed;
     border: none;
     width: 100%;
@@ -664,16 +664,15 @@ body {
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 30px;
-    padding-bottom: 20px;
+    padding-bottom: 0; /* Remove padding that was creating space for border */
     margin-top: 35px;
-    border-bottom: none;
+    border-bottom: none; /* Remove the border-bottom line */
 }
 
 .dashboard-header {
     background: transparent;
     padding: 0 0 20px 0;
     margin-bottom: 20px;
-    border-bottom: 2px solid #e9ecef;
     display: flex;
     align-items: center;
     position: relative;
