@@ -481,6 +481,7 @@ body {
     margin-top: 0;
 }
 
+
 .menu-toggle i {
     transition: transform 0.3s ease;
 }
@@ -646,18 +647,21 @@ body {
     margin-bottom: 30px; /* keep space below for separation */
 }
 
-.dashboard-header {
-    border-bottom: 2px solid #e9ecef;
-    padding-bottom: 20px;
-    margin-bottom: 20px;
+.dashboard-header .page-header {
+    flex: 1;
     display: flex;
-    align-items: center;
-    gap: 20px;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
 }
- .dashboard-header .page-header .header-actions {
+
+.dashboard-header .page-header .header-actions {
     display: flex;
     gap: 15px;
     align-items: center;
+    margin-top: 0;
 }
 
 .dashboard-header .page-header {
@@ -687,14 +691,8 @@ body {
     margin: 0;
 }
 
-.page-header .header-left h1 {
-    font-size: 32px;
-    font-weight: 700;
-    color: #2c3e50;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
+.dashboard-header .page-header .header-left {
+    flex: 1;
 }
 
 .page-header .header-left h1 i {
@@ -824,7 +822,7 @@ body {
     }
     
     .dashboard-header .page-header .header-actions {
-        flex-wrap: wrap;
+        align-self: flex-end;
     }
 }
 
@@ -1311,7 +1309,7 @@ body {
 
 /* Buttons */
 .btn-primary {
-       background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important;
+    background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important;
     color: white;
     border: none;
     padding: 12px 24px;
@@ -1330,6 +1328,7 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0, 188, 212, 0.3);
 }
+
 .btn-secondary {
     background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
     color: white;
@@ -1349,7 +1348,6 @@ body {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
 }
-
 .btn-danger {
     background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
     color: white;
@@ -1813,6 +1811,7 @@ body {
     }
     
     .dashboard-header .page-header .header-actions {
+        align-self: stretch;
         flex-direction: column;
         width: 100%;
     }
