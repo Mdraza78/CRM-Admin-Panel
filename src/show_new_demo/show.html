@@ -123,32 +123,31 @@
         </header>
 
         <!-- Main Content -->
+               <!-- Main Content -->
         <main class="main-content">
-            <!-- Menu Toggle Button -->
-                <div class="dashboard-header">
-                    <button class="menu-toggle" onclick="toggleSidebar()">
-                        <i class="fas fa-bars"></i>
-                    </button>
-    </div>
-
-
-            
-            <!-- Page Header -->
-            <div class="page-header">
-                <div class="header-left">
-                    <h1><i class="fas fa-calendar-check"></i> Show Leads Management</h1>
-                    <p>Manage leads from trade shows, exhibitions, and events</p>
-                </div>
-                <div class="header-actions">
-                    <button class="btn-secondary" onclick="exportShowLeads()">
-                        <i class="fas fa-download"></i> Export Leads
-                    </button>
-                    <button class="btn-secondary" onclick="importShowLeads()">
-                        <i class="fas fa-upload"></i> Import Leads
-                    </button>
-                    <button class="btn-primary" onclick="addNewShowLead()">
-                        <i class="fas fa-plus"></i> Add Show Lead
-                    </button>
+            <!-- Menu Toggle Button - Moved to Main Content on LEFT side -->
+            <div class="dashboard-header">
+                <button class="menu-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div class="header-left">
+                        <h1><i class="fas fa-headset"></i> Industry Leads Management</h1>
+                        <p>Manage leads from trade shows, exhibitions, and events</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn-secondary" onclick="exportLeads()">
+                            <i class="fas fa-download"></i> Export Leads
+                        </button>
+                        <button class="btn-secondary" onclick="importLeads()">
+                            <i class="fas fa-upload"></i> Import Leads
+                        </button>
+                        <button class="btn-primary" onclick="addNewLead()">
+                            <i class="fas fa-plus"></i> Add Industry Lead
+                        </button>
+                    </div>
                 </div>
             </div>
 

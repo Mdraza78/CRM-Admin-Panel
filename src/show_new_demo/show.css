@@ -642,12 +642,12 @@ body {
 
 /* Sidebar collapsed state */
 .app-container.sidebar-collapsed .main-content {
-    margin-left: 0 !important;
-    position: static !important;
-    width: 100% !important;
-    left: 0 !important;
-    top: 0 !important;
-    transition: all 0.3s ease;
+    margin-left: 64px !important;
+    position: static !important; /* Remove absolute or fixed positioning */
+    width: 100%; /* Let it fill naturally */
+    left: 0 !important;          /* Remove left offset if present */
+    top: 0 !important;           /* Remove top offset if present */
+    overflow-x: auto;
 }
 
 

@@ -502,7 +502,7 @@ body {
 
 .app-container.sidebar-collapsed .sidebar {
     transform: translateX(-100%);
-    width: 0px!important;
+    width: 0;
     overflow: hidden;
 }
 
@@ -649,6 +649,21 @@ body {
     border-bottom: 2px solid #e9ecef;
 }
 
+.dashboard-header {
+    background: transparent;
+    padding: 0 0 20px 0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e9ecef;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+ .dashboard-header .page-header .header-actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
 .dashboard-header .page-header {
     flex: 1;
     display: flex;
@@ -668,6 +683,7 @@ body {
     align-items: center;
     gap: 15px;
 }
+
 
 .dashboard-header .page-header .header-left p {
     color: #6c757d;
@@ -801,6 +817,19 @@ body {
     background: white;
     color: #667eea;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+@media (max-width: 1024px) {
+    .dashboard-header .page-header {
+        flex-direction: column;
+        gap: 20px;
+        align-items: flex-start;
+    }
+    
+    .dashboard-header .page-header .header-actions {
+        flex-wrap: wrap;
+    }
 }
 
 /* Industry Leads Section */
@@ -1286,7 +1315,7 @@ body {
 
 /* Buttons */
 .btn-primary {
-    background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important;
+       background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important;
     color: white;
     border: none;
     padding: 12px 24px;
@@ -1296,13 +1325,15 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
     font-family: 'Inter', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0, 188, 212, 0.3);
 }
-
 .btn-secondary {
     background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
     color: white;
@@ -1770,144 +1801,37 @@ body {
 }
 
 @media (max-width: 768px) {
-    .app-container {
+    .dashboard-header {
         flex-direction: column;
+        gap: 15px;
+        padding: 0 0 15px 0;
     }
     
-    .sidebar {
+    .menu-toggle {
+        align-self: flex-start;
+    }
+    
+    .dashboard-header .page-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .dashboard-header .page-header .header-actions {
+        flex-direction: column;
         width: 100%;
-        height: auto;
-        position: fixed;
-        top: 0;
-        z-index: 1000;
     }
     
-    .sidebar-content {
-        flex-direction: row;
-        padding: 12px 15px;
-        height: 65px;
-        overflow: visible;
+    .dashboard-header .page-header .header-actions button {
+        width: 100%;
+        justify-content: center;
     }
     
-    .sidebar-top {
-        flex-direction: row;
-        align-items: center;
-        padding-top: 0;
-        gap: 15px;
-        flex: none;
-        overflow: visible;
+    .dashboard-header .page-header .header-left h1 {
+        font-size: 24px;
     }
     
-    .logo-head {
-        padding-bottom: 0;
-        border-bottom: none;
-        justify-content: flex-start;
-        flex-shrink: 0;
-    }
-
-    .logo-img {
-        height: 35px;
-        max-width: 140px;
-    }
-    
-    .sidebar-nav {
-        flex-direction: row;
-        overflow-x: auto;
-        overflow-y: hidden;
-        gap: 8px;
-        margin-top: 0;
-        flex: none;
-        max-height: none;
-        padding-right: 0;
-    }
-    
-    .nav-link {
-        white-space: nowrap;
-        font-size: 13px;
-        padding: 8px 12px;
-        flex-shrink: 0;
-    }
-    
-    .sidebar-bottom {
-        flex-direction: row;
-        margin-top: 0;
-        padding-bottom: 0;
-        width: auto;
-        gap: 12px;
-        flex-shrink: 0;
-        border-top: none;
-        padding: 0;
-    }
-    
-    .main-content {
-        margin-top: 65px;
-        padding: 20px;
-    }
-    
-    .notifications-dropdown.show {
-        top: 65px;
-        left: 15px;
-    }
-    
-    .user-dropdown.show {
-        top: 65px;
-        left: auto;
-        right: 15px;
-        bottom: auto;
-    }
-    
-    .kpi-section {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 15px;
-    }
-    
-    .page-header {
-        flex-direction: column;
-        gap: 20px;
-        align-items: stretch;
-    }
-    
-    .header-actions {
-        flex-direction: column;
-    }
-    
-    .filters-bar {
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    .view-controls {
-        flex-direction: column;
-        gap: 15px;
-        align-items: stretch;
-    }
-    
-    .industry-leads-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .modal-content {
-        padding: 25px;
-        margin: 20px;
-        max-width: none;
-    }
-    
-    .form-sections {
-        gap: 20px;
-    }
-    
-    .form-section {
-        padding: 20px;
-    }
-    
-    .pagination-container {
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    .pagination-controls {
-        flex-direction: column;
-        gap: 10px;
+    .dashboard-header .page-header .header-left p {
+        font-size: 14px;
     }
 }
 
