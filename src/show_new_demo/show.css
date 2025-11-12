@@ -1441,6 +1441,19 @@ body {
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
+@media (max-width: 900px) {
+    .header {
+        width: 100vw;      /* Or switch to a drawer style for tablet/mobile */
+        min-width: 0;
+        position: fixed;
+        height: auto;
+    }
+    .main-content {
+        margin-left: 0;
+        margin-top: 65px;  /* If your header becomes horizontal */
+    }
+}
+
 .modal-content.large {
     max-width: 900px;
 }
@@ -1744,10 +1757,11 @@ body {
 /* Responsive Design */
 @media (max-width: 1400px) {
     .header {
-        width: 180px; /* Maintain reduced width */
+        width: 240px;      /* Keep as big as needed, e.g., 240-260px, not 180px! */
+        min-width: 240px;
     }
-      .main-content {
-        margin-left: 180px;
+    .main-content {
+        margin-left: 240px;
     }
 }
 
@@ -1799,14 +1813,16 @@ body {
         gap: 8px;
         margin-top: 0;
         flex: none;
+        width: 100%;
+        min-width:195px;
         max-height: none;
         padding-right: 0;
     }
     
     .nav-link {
         white-space: nowrap;
-        font-size: 13px;
-        padding: 8px 12px;
+        font-size: 15px;
+        padding: 14px 18px;
         flex-shrink: 0;
     }
     
