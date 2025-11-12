@@ -33,15 +33,22 @@ body {
     flex-direction: row;
 }
 .app-container.sidebar-collapsed .header {
-    width: 64px !important;
-    min-width: 64px !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    transition: all 0.3s ease;
 }
+
 .header {
     position: fixed;
     left: 0;
     top: 0;
     height: 100vh;
-    width: 240px; /* Match MAIN_PAGE */
+    width: 220px; /* Match MAIN_PAGE */
     min-width: 240px;
     max-width: 300px;
     z-index: 1000;
@@ -589,7 +596,7 @@ body {
     width: 100%;
     background: #f8f9fa;
     transition: all 0.3s ease;
-    margin-left: 300px;
+    margin-left: 220px;
   transition: margin-left 0.3s;
 }
 .toggle-hr {
@@ -635,12 +642,12 @@ body {
 
 /* Sidebar collapsed state */
 .app-container.sidebar-collapsed .main-content {
-    margin-left: 64px !important;
-    position: static !important; /* Remove absolute or fixed positioning */
-    width: 100%; /* Let it fill naturally */
-    left: 0 !important;          /* Remove left offset if present */
-    top: 0 !important;           /* Remove top offset if present */
-    overflow-x: auto;
+    margin-left: 0 !important;
+    position: static !important;
+    width: 100% !important;
+    left: 0 !important;
+    top: 0 !important;
+    transition: all 0.3s ease;
 }
 
 
