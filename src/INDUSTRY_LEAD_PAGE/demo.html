@@ -127,80 +127,81 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Menu Toggle Button - Moved to Main Content on LEFT side -->
-                <div class="dashboard-header">
-                    <button class="menu-toggle" onclick="toggleSidebar()">
-                        <i class="fas fa-bars"></i>
+            <!-- Menu Toggle Button with Horizontal Line -->
+            <div class="dashboard-header">
+                <button class="menu-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <hr class="toggle-hr">
+            </div>
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="header-left">
+                    <h1><i class="fas fa-headset"></i> Industry Leads Management</h1>
+                    <p>Manage leads from trade shows, exhibitions, and events</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-primary" onclick="addNewLead()">
+                        <i class="fas fa-plus"></i> Add New Lead
                     </button>
                 </div>
-
-                <div class="page-header">
-                    <div class="header-left">
-                        <h1><i class="fas fa-headset"></i> Industry Leads Management</h1>
-                        <p>Manage leads from trade shows, exhibitions, and events</p>
-                    </div>
-                    <div class="header-actions">
-                       
-                        <button class="btn-primary" onclick="addNewLead()">
-                            <i class="fas fa-plus"></i> Add New Lead
-                        </button>
-                    </div>
-                </div>
+            </div>
 
 <!-- Stats Cards -->
 <section class="kpi-section">
-    <div class="kpi-card leads">
-        <div class="kpi-icon">
-            <i class="fas fa-users"></i>
-        </div>
-        <div class="kpi-content">
-            <div class="kpi-value" id="totalLeads">0</div>
-            <div class="kpi-label">Total Leads</div>
-            <div class="kpi-change positive">
-                <i class="fas fa-arrow-up"></i> +12% this month
-            </div>
-        </div>
-    </div>
-    
-    <div class="kpi-card deals">
-        <div class="kpi-icon">
-            <i class="fas fa-star"></i>
-        </div>
-        <div class="kpi-content">
-            <div class="kpi-value" id="qualifiedLeads">0</div>
-            <div class="kpi-label">Qualified Leads</div>
-            <div class="kpi-change positive">
-                <i class="fas fa-arrow-up"></i> +8% this month
-            </div>
-        </div>
-    </div>
-    
-    <div class="kpi-card revenue">
-        <div class="kpi-icon">
-            <i class="fas fa-handshake"></i>
-        </div>
-        <div class="kpi-content">
-            <div class="kpi-value" id="convertedLeads">0</div>
-            <div class="kpi-label">Converted</div>
-            <div class="kpi-change positive">
-                <i class="fas fa-arrow-up"></i> +15% this month
-            </div>
-        </div>
-    </div>
-    
-    <div class="kpi-card tasks">
-        <div class="kpi-icon">
-            <i class="fas fa-percentage"></i>
-        </div>
-        <div class="kpi-content">
-            <div class="kpi-value" id="conversionRate">0%</div>
-            <div class="kpi-label">Conversion Rate</div>
-            <div class="kpi-change positive">
-                <i class="fas fa-arrow-up"></i> +20% this month
-            </div>
-        </div>
-    </div>
-</section>
+                <div class="kpi-card leads">
+                    <div class="kpi-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <div class="kpi-value" id="totalLeads">0</div>
+                        <div class="kpi-label">Total Leads</div>
+                        <div class="kpi-change positive">
+                            <i class="fas fa-arrow-up"></i> +12% this month
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="kpi-card deals">
+                    <div class="kpi-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <div class="kpi-value" id="qualifiedLeads">0</div>
+                        <div class="kpi-label">Qualified Leads</div>
+                        <div class="kpi-change positive">
+                            <i class="fas fa-arrow-up"></i> +8% this month
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="kpi-card revenue">
+                    <div class="kpi-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <div class="kpi-value" id="convertedLeads">0</div>
+                        <div class="kpi-label">Converted</div>
+                        <div class="kpi-change positive">
+                            <i class="fas fa-arrow-up"></i> +15% this month
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="kpi-card tasks">
+                    <div class="kpi-icon">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <div class="kpi-value" id="conversionRate">0%</div>
+                        <div class="kpi-label">Conversion Rate</div>
+                        <div class="kpi-change positive">
+                            <i class="fas fa-arrow-up"></i> +20% this month
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             <!-- Filters and Controls -->
             <section class="controls-section">
