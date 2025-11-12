@@ -464,37 +464,46 @@ body {
 
 /* ===== MENU TOGGLE BUTTON ===== */
 .menu-toggle {
-    position: fixed;
-    top: 25px;
-    right: 25px;
-    width: 45px;
-    height: 45px;
     background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
     border: none;
-    border-radius: 10px;
     color: white;
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    z-index: 1001;
-    box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4);
+    font-size: 18px;
+    box-shadow: 0 2px 8px rgba(0, 188, 212, 0.3);
+    flex-shrink: 0;
+    margin-top: 0;
+}
+
+.menu-toggle i {
+    transition: transform 0.3s ease;
+}
+
+.menu-toggle:hover i {
+    transform: scale(1.1);
 }
 
 .menu-toggle:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 18px rgba(0, 188, 212, 0.5);
+    background: linear-gradient(135deg, #00a8c0 0%, #1976d2 100%);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4);
 }
 
 .menu-toggle:active {
-    transform: scale(0.95);
+    transform: translateY(0);
 }
 
-/* Sidebar collapsed state */
 .app-container.sidebar-collapsed .sidebar {
-  width: 70px; /* Adjust as per your design */
-  overflow: hidden;
+    transform: translateX(-100%);
+    width: 0px!important;
+    overflow: hidden;
 }
 
 .app-container.sidebar-collapsed .logo-img {
@@ -528,7 +537,6 @@ body {
 .app-container.sidebar-collapsed .main-content {
     margin-left: 0;
     width: 100%;
-    transition: all 0.3s ease;
 }
 
 /* Smooth transitions */
@@ -639,6 +647,32 @@ body {
     margin-bottom: 30px;
     padding-bottom: 20px;
     border-bottom: 2px solid #e9ecef;
+}
+
+.dashboard-header .page-header {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.dashboard-header .page-header .header-left h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.dashboard-header .page-header .header-left p {
+    color: #6c757d;
+    font-size: 16px;
+    margin: 0;
 }
 
 .page-header .header-left h1 {
