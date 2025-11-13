@@ -466,32 +466,39 @@ body {
 
 /* ===== MENU TOGGLE BUTTON - MOVED TO MAIN CONTENT ===== */
 .menu-toggle {
-    position: fixed;
-    top: 25px;
-    right: 25px;
-    width: 45px;
-    height: 45px;
     background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
     border: none;
-    border-radius: 10px;
     color: white;
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    z-index: 1001;
-    box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4);
+    font-size: 18px;
+    box-shadow: 0 2px 8px rgba(0, 188, 212, 0.3);
+    flex-shrink: 0;
+    margin-top: 0;
 }
 
 .menu-toggle:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 18px rgba(0, 188, 212, 0.5);
+    background: linear-gradient(135deg, #00a8c0 0%, #1976d2 100%);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4);
 }
 
 .menu-toggle:active {
-    transform: scale(0.95);
+    transform: translateY(0);
 }
+
+/* Hide the old menu toggle style */
+.menu-toggle[style*="position: fixed"] {
+    display: none;
+}
+
 
 /* Sidebar collapsed state */
 .app-container.sidebar-collapsed .header {
@@ -1060,6 +1067,27 @@ body {
     border-top: 1px solid #eee;
 }
 
+.dashboard-header {
+    background: transparent;
+    padding: 0 0 20px 0;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.toggle-hr {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 56px;
+    height: 2px;
+    background: #e0e6ed;
+    border: none;
+    width: 100%;
+    margin: 0;
+}
+
 .invoice-footer p {
     margin-bottom: 20px;
     color: #555;
@@ -1240,7 +1268,19 @@ body {
         height: 35px;
         max-width: 140px;
     }
+     .dashboard-header {
+        flex-direction: column;
+        gap: 15px;
+        padding: 0 0 15px 0;
+    }
     
+    .menu-toggle {
+        align-self: flex-start;
+    }
+    
+    .toggle-hr {
+        top: 50px;
+    }
     .main-nav {
         flex-direction: row;
         overflow-x: auto;
