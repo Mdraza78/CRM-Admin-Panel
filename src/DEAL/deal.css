@@ -42,6 +42,32 @@ body {
     flex-direction: row;
 }
 
+.app-container.sidebar-collapsed .header {
+    transform: translateX(-100%);
+    width: 0;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.header,
+.main-layout,
+.nav-link,
+.logo img {
+    transition: all 0.3s ease;
+}
+
+
+.app-container.sidebar-collapsed .header-content,
+.app-container.sidebar-collapsed .header-left,
+.app-container.sidebar-collapsed .logo,
+.app-container.sidebar-collapsed .main-nav,
+.app-container.sidebar-collapsed .user-profile,
+.app-container.sidebar-collapsed .header-right {
+    display: none !important;
+}
+
 /* ===== ENHANCED SIDEBAR STYLING WITH INCREASED WIDTH ===== */
 .header {
     background: #ffffff;
@@ -54,6 +80,12 @@ body {
     border-right: 1px solid #e9ecef;
     display: flex;
     flex-direction: column;
+    transition: all 0.3s ease;
+}
+
+.app-container.sidebar-collapsed .main-layout {
+    margin-left: 0;
+    width: 100%;
     transition: all 0.3s ease;
 }
 

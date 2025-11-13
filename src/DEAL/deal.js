@@ -1424,7 +1424,7 @@ function toggleSidebar() {
     // Update the menu toggle icon
     const menuToggleIcon = document.querySelector('.menu-toggle i');
     if (appContainer.classList.contains('sidebar-collapsed')) {
-        menuToggleIcon.className = 'fas fa-bars';
+        menuToggleIcon.className = 'fas fa-chevron-right';
     } else {
         menuToggleIcon.className = 'fas fa-bars';
     }
