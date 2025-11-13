@@ -1417,6 +1417,9 @@ function openHelp() {
     closeAllDropdowns();
     showNotification('Opening help center...', 'info');
 }
+function toggleSidebar() {
+    document.querySelector('.app-container').classList.toggle('sidebar-collapsed');
+}
 
 function logout() {
     closeAllDropdowns();
