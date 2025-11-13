@@ -1418,7 +1418,16 @@ function openHelp() {
     showNotification('Opening help center...', 'info');
 }
 function toggleSidebar() {
-    document.querySelector('.app-container').classList.toggle('sidebar-collapsed');
+    const appContainer = document.querySelector('.app-container');
+    appContainer.classList.toggle('sidebar-collapsed');
+    
+    // Update the menu toggle icon
+    const menuToggleIcon = document.querySelector('.menu-toggle i');
+    if (appContainer.classList.contains('sidebar-collapsed')) {
+        menuToggleIcon.className = 'fas fa-bars';
+    } else {
+        menuToggleIcon.className = 'fas fa-bars';
+    }
 }
 
 function logout() {
