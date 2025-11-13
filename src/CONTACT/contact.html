@@ -126,16 +126,30 @@
         </header>
 
         <!-- Main Content -->
+        <!-- Main Content -->
         <main class="main-content">
-            <!-- Menu Toggle Button -->
-            <div class="menu-toggle" onclick="toggleSidebar()">
-                <i class="fas fa-bars"></i>
+            <!-- Menu Toggle Button with Horizontal Line -->
+            <div class="dashboard-header">
+                <button class="menu-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <hr class="toggle-hr">
             </div>
-            
+
             <!-- Page Header -->
             <div class="page-header">
-                <h1><i class="fas fa-address-book"></i> Contact Management</h1>
-                <p>Manage your contacts and customer relationships</p>
+                <div class="header-left">
+                    <h1><i class="fas fa-address-book"></i> Contact Management</h1>
+                    <p>Manage your contacts and customer relationships</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-primary" onclick="addNewContact()">
+                        <i class="fas fa-plus"></i> Add Contact
+                    </button>
+                    <button class="btn-secondary" onclick="exportContacts()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
             </div>
 
             <!-- Search and Actions Bar -->
@@ -146,12 +160,8 @@
                 </div>
                 
                 <div class="action-buttons">
-                    <button class="btn-primary" onclick="addNewContact()">
-                        <i class="fas fa-plus"></i> Add Contact
-                    </button>
-                    <button class="btn-secondary" onclick="exportContacts()">
-                        <i class="fas fa-download"></i> Export
-                    </button>
+                    <!-- Additional action buttons can go here if needed -->
+                    <!-- The main action buttons are now in the page header -->
                 </div>
             </div>
 
