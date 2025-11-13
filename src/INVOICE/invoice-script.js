@@ -812,8 +812,14 @@ function showLoading(show) {
 function toggleSidebar() {
     const appContainer = document.querySelector('.app-container');
     appContainer.classList.toggle('sidebar-collapsed');
-    localStorage.setItem('sidebarCollapsed', appContainer.classList.contains('sidebar-collapsed'));
-    console.log('📱 Sidebar toggled');
+    
+    // Update the menu toggle icon
+    const menuToggleIcon = document.querySelector('.menu-toggle i');
+    if (appContainer.classList.contains('sidebar-collapsed')) {
+        menuToggleIcon.className = 'fas fa-chevron-right';
+    } else {
+        menuToggleIcon.className = 'fas fa-bars';
+    }
 }
 
 function toggleUserMenu() {
