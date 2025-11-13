@@ -836,8 +836,33 @@ function closeAllModals() {
 function toggleSidebar() {
     const appContainer = document.querySelector('.app-container');
     appContainer.classList.toggle('sidebar-collapsed');
-    localStorage.setItem('sidebarCollapsed', appContainer.classList.contains('sidebar-collapsed'));
-    console.log('📱 Sidebar toggled');
+    
+    // Update the menu toggle icon
+    const menuToggleIcon = document.querySelector('.menu-toggle i');
+    if (appContainer.classList.contains('sidebar-collapsed')) {
+        menuToggleIcon.className = 'fas fa-chevron-right';
+    } else {
+        menuToggleIcon.className = 'fas fa-bars';
+    }
+}
+
+// Also add other necessary functions
+function toggleUserMenu() {
+    document.getElementById('userDropdown').classList.toggle('show');
+}
+
+function toggleNotifications() {
+    document.getElementById('notificationsDropdown').classList.toggle('show');
+}
+
+// Close dropdowns when clicking outside
+window.onclick = function(event) {
+    if (!event.target.matches('.user-profile') && !event.target.closest('.user-profile')) {
+        document.getElementById('userDropdown').classList.remove('show');
+    }
+    if (!event.target.matches('.notifications') && !event.target.closest('.notifications')) {
+        document.getElementById('notificationsDropdown').classList.remove('show');
+    }
 }
 
 function toggleUserMenu() {
