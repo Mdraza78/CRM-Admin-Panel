@@ -693,8 +693,8 @@ body {
 }
 
 .deals-table tr:hover {
-    background: #f8fdff;
-    cursor: pointer;
+    background: inherit; /* or background: white; */
+    cursor: pointer; /* or cursor: pointer; */
 }
 
 .actions-col {

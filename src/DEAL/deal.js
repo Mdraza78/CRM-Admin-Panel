@@ -1011,22 +1011,18 @@ function renderDealsTable() {
             </td>
             <td><span class="priority-badge ${deal.priority.toLowerCase()}">${deal.priority}</span></td>
             <td>${deal.assignedOwner || '-'}</td>
-            <td class="actions-cell">
-                <div class="dropdown">
-                    <button class="action-btn" onclick="toggleActionMenu(event, '${deal.id}')">⋯</button>
-                    <div class="dropdown-menu" id="actionMenu${deal.id}">
-                        <div class="dropdown-item" onclick="viewDeal('${deal.id}')">
-                            <i class="fas fa-eye"></i> View
-                        </div>
-                        <div class="dropdown-item" onclick="editDeal('${deal.id}')">
-                            <i class="fas fa-edit"></i> Edit
-                        </div>
-                        <div class="dropdown-item danger" onclick="deleteDeal('${deal.id}')">
-                            <i class="fas fa-trash"></i> Delete
-                        </div>
-                    </div>
-                </div>
-            </td>
+<td class="actions-cell">
+    <button class="action-btn" title="View" onclick="viewDeal(deal.id)">
+        <i class="fas fa-eye"></i>
+    </button>
+    <button class="action-btn" title="Edit" onclick="editDeal(deal.id)">
+        <i class="fas fa-edit"></i>
+    </button>
+    <button class="action-btn" title="Delete" onclick="deleteDeal(deal.id)">
+        <i class="fas fa-trash"></i>
+    </button>
+</td>
+
         `;
         
         tbody.appendChild(row);
