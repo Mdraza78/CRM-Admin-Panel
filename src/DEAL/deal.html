@@ -69,67 +69,67 @@
                 <hr class="toggle-hr">
             </div>
 
-            <!-- Page Header - Updated to match contact page style -->
+            <!-- Page Header -->
             <div class="page-header">
-                <h1><i class="fas fa-handshake"></i> Deals Management</h1>
-                <p>Manage your sales pipeline and track deal progress</p>
-            </div>
-
-            <!-- Search and Actions Bar - Updated to match contact page style -->
-            <div class="actions-bar">
-                <div class="search-container">
-                    <i class="fas fa-search"></i>
-                    <input type="search" class="search-input" placeholder="Search deals..." onkeyup="searchDeals(this.value)">
+                <div class="header-left">
+                    <h1><i class="fas fa-handshake"></i> Deals Management</h1>
+                    <p>Manage your sales pipeline and track deal progress</p>
                 </div>
-                
-                <div class="action-buttons">
+                <div class="header-actions">
+                    <button class="btn-secondary" onclick="exportDeals()">
+                        <i class="fas fa-download"></i> Export 
+                    </button>
                     <button class="btn-primary" onclick="AddDeals()">
                         <i class="fas fa-plus"></i> Add Deal
                     </button>
-                    <button class="btn-secondary" onclick="exportDeals()">
-                        <i class="fas fa-download"></i> Export
-                    </button>
                 </div>
             </div>
 
-            <!-- Filters -->
-            <div class="filters-bar">
-                <div class="filter-group">
-                    <select id="stageFilter" class="form-select" onchange="filterDeals()">
-                        <option value="">All Stages</option>
-                        <option value="Prospecting">Prospecting</option>
-                        <option value="Qualification">Qualification</option>
-                        <option value="Proposal">Proposal</option>
-                        <option value="Negotiation">Negotiation</option>
-                        <option value="Won">Won</option>
-                        <option value="Lost">Lost</option>
-                    </select>
-                </div>
-                
-                <div class="filter-group">
-                    <select id="priorityFilter" class="form-select" onchange="filterDeals()">
-                        <option value="">All Priorities</option>
-                        <option value="High">High</option>
-                        <option value="Medium">Medium</option>
-                        <option value="Low">Low</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Deals List View - Updated table structure to match contact page -->
+            <!-- Deals List View -->
             <div class="deals-list" id="dealsList">
+                <div class="list-header">
+                    <div class="list-controls">
+                        <select class="filter-select" id="stageFilter" onchange="filterDeals()">
+                            <option value="">All Stages</option>
+                            <option value="Prospecting">Prospecting</option>
+                            <option value="Qualification">Qualification</option>
+                            <option value="Proposal">Proposal</option>
+                            <option value="Negotiation">Negotiation</option>
+                            <option value="Won">Won</option>
+                            <option value="Lost">Lost</option>
+                        </select>
+                        <select class="filter-select" id="priorityFilter" onchange="filterDeals()">
+                            <option value="">All Priorities</option>
+                            <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low">Low</option>
+                        </select>
+                        <div class="search-container">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="search" class="search-input" placeholder="Search deals..." onkeyup="searchDeals(this.value)">
+                        </div>
+                    </div>
+                    <div class="pagination-info">
+                        <span id="recordCount">0-0 / 0</span>
+                        <div class="pagination-controls">
+                            <button class="page-btn" id="prevBtn" onclick="previousPage()" disabled>‹</button>
+                            <button class="page-btn" id="nextBtn" onclick="nextPage()" disabled>›</button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="table-container">
                     <table class="deals-table">
                         <thead>
                             <tr>
-                                <th>Deal Title</th>
-                                <th>Company</th>
-                                <th>Value</th>
-                                <th>Stage</th>
-                                <th>Close Date</th>
-                                <th>Priority</th>
-                                <th>Owner</th>
-                                <th>Actions</th>
+                                <th onclick="sortTable(0)">Deal Title</th>
+                                <th onclick="sortTable(1)">Company</th>
+                                <th onclick="sortTable(2)">Value</th>
+                                <th onclick="sortTable(3)">Stage</th>
+                                <th onclick="sortTable(4)">Close Date</th>
+                                <th onclick="sortTable(5)">Priority</th>
+                                <th onclick="sortTable(6)">Owner</th>
+                                <th class="actions-col">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="dealsTableBody">
@@ -137,39 +137,29 @@
                         </tbody>
                     </table>
                 </div>
-                
-                <!-- Loading State -->
-                <div id="loadingState" class="loading-state">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    <p>Loading deals...</p>
-                </div>
-                
-                <!-- Empty State -->
-                <div id="emptyState" class="empty-state" style="display: none;">
-                    <i class="fas fa-handshake"></i>
-                    <h3>No Deals Found</h3>
-                    <p>Start by creating your first deal to get started</p>
-                    <button class="btn-primary" onclick="AddDeals()">
-                        <i class="fas fa-plus"></i> Create Deal
-                    </button>
-                </div>
-            </div>
 
-            <!-- Pagination - Updated to match contact page style -->
-            <div class="pagination-container">
-                <div class="pagination-info">
-                    Showing <span id="paginationStart">0</span> to <span id="paginationEnd">0</span> of <span id="paginationTotal">0</span> deals
-                </div>
-                <div class="pagination-controls">
-                    <button class="pagination-btn" onclick="changePage(-1)" id="prevBtn" disabled>
-                        <i class="fas fa-chevron-left"></i> Previous
-                    </button>
-                    <div class="pagination-numbers" id="paginationNumbers">
-                        <!-- Page numbers will be populated by JavaScript -->
+                <div class="pagination-container">
+                    <div class="pagination-info-bottom">
+                        <span id="recordCountBottom">Showing 0-0 of 0 records</span>
                     </div>
-                    <button class="pagination-btn" onclick="changePage(1)" id="nextBtn" disabled>
-                        Next <i class="fas fa-chevron-right"></i>
-                    </button>
+                    <div class="pagination-buttons">
+                        <button class="pagination-btn" id="firstBtn" onclick="goToPage(1)" disabled>«</button>
+                        <button class="pagination-btn" id="prevBtnBottom" onclick="previousPage()" disabled>‹</button>
+                        <div class="page-numbers" id="pageNumbers"></div>
+                        <button class="pagination-btn" id="nextBtnBottom" onclick="nextPage()" disabled>›</button>
+                        <button class="pagination-btn" id="lastBtn" onclick="goToLastPage()" disabled>»</button>
+                    </div>
+                </div>
+
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <div class="empty-content">
+                        <i class="fas fa-handshake empty-icon"></i>
+                        <h3>No deals found</h3>
+                        <p>Start by creating your first deal to get started</p>
+                        <button class="btn-primary" onclick="AddDeals()">
+                            <i class="fas fa-plus"></i> Create Deal
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -416,7 +406,8 @@
             </div>
 
             <!-- Activity Modal -->
-            <div class="modal-overlay" id="activityModal" style="display: none;">
+                       <div class="modal-overlay" id="activityModal" style="display: none;">
+
                 <div class="modal-content">
                     <div class="modal-header">
                         <h3 id="activityModalTitle">Add Activity</h3>
