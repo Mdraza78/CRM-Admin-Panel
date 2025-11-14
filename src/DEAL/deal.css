@@ -703,15 +703,23 @@ body {
     gap: 10px; /* Space between icons, decrease/increase as preferred */
 }
 
+.actions-cell {
+    display: flex;
+    flex-direction: row;    /* Make children horizontal */
+    align-items: center;    /* Vertical align center */
+    justify-content: center; /* or flex-start if you prefer left align */
+    gap: 10px;              /* Space between icons */
+}
+
 
 .action-btn {
     background: none;
     border: none;
-    width: 30px;  /* Decreased width */
-    height: 30px; /* Decreased height */
-    font-size: 16px; /* Smaller icon */
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
     cursor: pointer;
-    padding: 0; /* Remove extra padding */
+    padding: 0;
     border-radius: 6px;
     color: #64748b;
     transition: color 0.2s, background 0.3s, transform 0.3s;
@@ -719,6 +727,7 @@ body {
     align-items: center;
     justify-content: center;
 }
+
 
 
 .action-btn:hover {
@@ -729,9 +738,11 @@ body {
 .action-btn .fa-edit:hover {
     color: #f6c700;
 }
+
 .action-btn .fa-trash:hover {
     color: #dc3545;
 }
+
 
 .action-btn:hover i {
     transform: scale(1.12);

@@ -1023,6 +1023,7 @@ function renderDealsTable() {
     </button>
 </td>
 
+
         `;
         
         tbody.appendChild(row);
