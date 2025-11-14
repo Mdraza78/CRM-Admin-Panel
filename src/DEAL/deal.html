@@ -86,83 +86,86 @@
             </div>
 
             <!-- Deals List View -->
-            <div class="deals-list" id="dealsList">
-                <div class="list-header">
-                    <div class="list-controls">
-                        <select class="filter-select" id="stageFilter" onchange="filterDeals()">
-                            <option value="">All Stages</option>
-                            <option value="Prospecting">Prospecting</option>
-                            <option value="Qualification">Qualification</option>
-                            <option value="Proposal">Proposal</option>
-                            <option value="Negotiation">Negotiation</option>
-                            <option value="Won">Won</option>
-                            <option value="Lost">Lost</option>
-                        </select>
-                        <select class="filter-select" id="priorityFilter" onchange="filterDeals()">
-                            <option value="">All Priorities</option>
-                            <option value="High">High</option>
-                            <option value="Medium">Medium</option>
-                            <option value="Low">Low</option>
-                        </select>
-                        <div class="search-container">
-                            <i class="fas fa-search search-icon"></i>
-                            <input type="search" class="search-input" placeholder="Search deals..." onkeyup="searchDeals(this.value)">
-                        </div>
-                    </div>
-                    <div class="pagination-info">
-                        <span id="recordCount">0-0 / 0</span>
-                        <div class="pagination-controls">
-                            <button class="page-btn" id="prevBtn" onclick="previousPage()" disabled>‹</button>
-                            <button class="page-btn" id="nextBtn" onclick="nextPage()" disabled>›</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="table-container">
-                    <table class="deals-table">
-                        <thead>
-                            <tr>
-                                <th onclick="sortTable(0)">Deal Title</th>
-                                <th onclick="sortTable(1)">Company</th>
-                                <th onclick="sortTable(2)">Value</th>
-                                <th onclick="sortTable(3)">Stage</th>
-                                <th onclick="sortTable(4)">Close Date</th>
-                                <th onclick="sortTable(5)">Priority</th>
-                                <th onclick="sortTable(6)">Owner</th>
-                                <th class="actions-col">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dealsTableBody">
-                            <!-- Table content will be populated by JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="pagination-container">
-                    <div class="pagination-info-bottom">
-                        <span id="recordCountBottom">Showing 0-0 of 0 records</span>
-                    </div>
-                    <div class="pagination-buttons">
-                        <button class="pagination-btn" id="firstBtn" onclick="goToPage(1)" disabled>«</button>
-                        <button class="pagination-btn" id="prevBtnBottom" onclick="previousPage()" disabled>‹</button>
-                        <div class="page-numbers" id="pageNumbers"></div>
-                        <button class="pagination-btn" id="nextBtnBottom" onclick="nextPage()" disabled>›</button>
-                        <button class="pagination-btn" id="lastBtn" onclick="goToLastPage()" disabled>»</button>
-                    </div>
-                </div>
-
-                <div class="empty-state" id="emptyState" style="display: none;">
-                    <div class="empty-content">
-                        <i class="fas fa-handshake empty-icon"></i>
-                        <h3>No deals found</h3>
-                        <p>Start by creating your first deal to get started</p>
-                        <button class="btn-primary" onclick="AddDeals()">
-                            <i class="fas fa-plus"></i> Create Deal
-                        </button>
-                    </div>
-                </div>
+<!-- Deals List View -->
+<div class="deals-list" id="dealsList">
+    <div class="list-header">
+        <div class="list-controls">
+            <select class="filter-select" id="stageFilter" onchange="filterDeals()">
+                <option value="">All Stages</option>
+                <option value="Prospecting">Prospecting</option>
+                <option value="Qualification">Qualification</option>
+                <option value="Proposal">Proposal</option>
+                <option value="Negotiation">Negotiation</option>
+                <option value="Won">Won</option>
+                <option value="Lost">Lost</option>
+            </select>
+            <select class="filter-select" id="priorityFilter" onchange="filterDeals()">
+                <option value="">All Priorities</option>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+            </select>
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="search" class="search-input" placeholder="Search deals..." onkeyup="searchDeals(this.value)">
             </div>
+        </div>
+        <div class="pagination-info">
+            <span id="recordCount">0-0 / 0</span>
+            <div class="pagination-controls">
+                <button class="page-btn" id="prevBtn" onclick="previousPage()" disabled>‹</button>
+                <button class="page-btn" id="nextBtn" onclick="nextPage()" disabled>›</button>
+            </div>
+        </div>
+    </div>
 
+    <!-- Updated Table Structure to match Salary Page -->
+    <div class="table-wrapper">
+        <div class="table-container">
+            <table class="deals-table">
+                <thead>
+                    <tr>
+                        <th>DEAL TITLE</th>
+                        <th>COMPANY</th>
+                        <th>VALUE</th>
+                        <th>STAGE</th>
+                        <th>CLOSE DATE</th>
+                        <th>PRIORITY</th>
+                        <th>OWNER</th>
+                        <th>ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody id="dealsTableBody">
+                    <!-- Table content will be populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="pagination-container">
+        <div class="pagination-info-bottom">
+            <span id="recordCountBottom">Showing 0-0 of 0 records</span>
+        </div>
+        <div class="pagination-buttons">
+            <button class="pagination-btn" id="firstBtn" onclick="goToPage(1)" disabled>«</button>
+            <button class="pagination-btn" id="prevBtnBottom" onclick="previousPage()" disabled>‹</button>
+            <div class="page-numbers" id="pageNumbers"></div>
+            <button class="pagination-btn" id="nextBtnBottom" onclick="nextPage()" disabled>›</button>
+            <button class="pagination-btn" id="lastBtn" onclick="goToLastPage()" disabled>»</button>
+        </div>
+    </div>
+
+    <div class="empty-state" id="emptyState" style="display: none;">
+        <div class="empty-content">
+            <i class="fas fa-handshake empty-icon"></i>
+            <h3>No deals found</h3>
+            <p>Start by creating your first deal to get started</p>
+            <button class="btn-primary" onclick="AddDeals()">
+                <i class="fas fa-plus"></i> Create Deal
+            </button>
+        </div>
+    </div>
+</div>
             <!-- Deal Detail/Edit Form -->
             <div class="deal-form" id="dealForm" style="display: none;">
                 <div class="form-header">
