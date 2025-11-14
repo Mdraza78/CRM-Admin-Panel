@@ -693,35 +693,46 @@ body {
 }
 
 .deals-table tr:hover {
-    background: inherit; /* or background: white; */
     cursor: pointer; /* or cursor: pointer; */
 }
 
 .actions-col {
-    width: 120px;
-    text-align: center;
+    display: flex;
+    justify-content: flex-start; /* or center if you prefer */
+    align-items: center;
+    gap: 18px; /* space between icons */
 }
+
 
 .action-btn {
     background: none;
     border: none;
-    font-size: 16px;
+    font-size: 22px;
     cursor: pointer;
     padding: 8px;
     border-radius: 6px;
     color: #64748b;
-    transition: all 0.3s ease;
-    width: 36px;
-    height: 36px;
+    transition: color 0.2s, background 0.3s, transform 0.3s;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
+
 .action-btn:hover {
     background-color: #f8fafc;
     color: #1E88E5;
     transform: scale(1.1);
+}
+.action-btn .fa-edit:hover {
+    color: #f6c700;
+}
+.action-btn .fa-trash:hover {
+    color: #dc3545;
+}
+
+.action-btn:hover i {
+    transform: scale(1.18);
 }
 
 /* ===== PROFESSIONAL PAGINATION ===== */
