@@ -698,18 +698,20 @@ body {
 
 .actions-col {
     display: flex;
-    justify-content: flex-start; /* or center if you prefer */
+    flex-direction: row; /* Ensures buttons are horizontal */
     align-items: center;
-    gap: 18px; /* space between icons */
+    gap: 10px; /* Space between icons, decrease/increase as preferred */
 }
 
 
 .action-btn {
     background: none;
     border: none;
-    font-size: 22px;
+    width: 30px;  /* Decreased width */
+    height: 30px; /* Decreased height */
+    font-size: 16px; /* Smaller icon */
     cursor: pointer;
-    padding: 8px;
+    padding: 0; /* Remove extra padding */
     border-radius: 6px;
     color: #64748b;
     transition: color 0.2s, background 0.3s, transform 0.3s;
@@ -732,7 +734,7 @@ body {
 }
 
 .action-btn:hover i {
-    transform: scale(1.18);
+    transform: scale(1.12);
 }
 
 /* ===== PROFESSIONAL PAGINATION ===== */
