@@ -234,68 +234,68 @@
     </div>
 
     <!-- Add/Edit Contact Modal -->
-    <div class="modal-overlay" id="contactModal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="contactModalTitle">Add New Contact</h3>
-                <button class="modal-close" onclick="closeContactModal()">×</button>
-            </div>
-            <div class="modal-body">
-                <form id="contactForm" class="contact-form">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="firstName">First Name *</label>
-                            <input type="text" id="firstName" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="lastName">Last Name *</label>
-                            <input type="text" id="lastName" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="jobTitle">Job Title</label>
-                            <input type="text" id="jobTitle" class="form-input">
-                        </div>
-                        <div class="form-group">
-                            <label for="company">Company *</label>
-                            <input type="text" id="company" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Email *</label>
-                            <input type="email" id="email" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="phone">Phone</label>
-                            <input type="tel" id="phone" class="form-input">
-                        </div>
-                        <div class="form-group">
-                            <label for="status">Status *</label>
-                            <select id="status" class="form-select" required>
-                                <option value="Lead">Lead</option>
-                                <option value="Prospect">Prospect</option>
-                                <option value="Customer">Customer</option>
-                                <option value="Inactive">Inactive</option>
-                            </select>
-                        </div>
-                       <!-- In the contact form inside the modal -->
-                        <div class="form-group">
-                            <label for="owner">Owner</label>
-                            <input type="text" id="owner" class="form-input" placeholder="Enter owner name">
-                        </div>
+<!-- Add/Edit Contact Modal -->
+<div class="modal-overlay" id="contactModal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="contactModalTitle">Add New Contact</h3>
+            <button class="modal-close" onclick="closeContactModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <form id="contactForm" class="contact-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="firstName">First Name *</label>
+                        <input type="text" id="firstName" class="form-input" required>
                     </div>
-                    <div class="form-group full-width">
-                        <label for="notes">Notes</label>
-                        <textarea id="notes" class="form-textarea" rows="3" placeholder="Add any additional notes..."></textarea>
+                    <div class="form-group">
+                        <label for="lastName">Last Name *</label>
+                        <input type="text" id="lastName" class="form-input" required>
                     </div>
-                </form>
-            </div>
-            <div class="modal-actions">
-                <button class="btn-primary" onclick="saveContact()">
-                    <i class="fas fa-save"></i> Save Contact
-                </button>
-                <button class="btn-secondary" onclick="closeContactModal()">Cancel</button>
-            </div>
+                    <div class="form-group">
+                        <label for="jobTitle">Job Title</label>
+                        <input type="text" id="jobTitle" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="company">Company *</label>
+                        <input type="text" id="company" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input type="tel" id="phone" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="status">Status *</label>
+                        <select id="status" class="form-select" required>
+                            <option value="Lead">Lead</option>
+                            <option value="Prospect">Prospect</option>
+                            <option value="Customer">Customer</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="owner">Owner</label>
+                        <input type="text" id="owner" class="form-input" placeholder="Enter owner name">
+                    </div>
+                </div>
+                <div class="form-group full-width">
+                    <label for="notes">Notes</label>
+                    <textarea id="notes" class="form-textarea" rows="3" placeholder="Add any additional notes..."></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-primary" onclick="saveContact()">
+                <i class="fas fa-save"></i> Save Contact
+            </button>
+            <button class="btn-secondary" onclick="closeContactModal()">Cancel</button>
         </div>
     </div>
+</div>
 
     <!-- Delete Confirmation Modal -->
     <div class="modal-overlay" id="deleteModal" style="display: none;">
