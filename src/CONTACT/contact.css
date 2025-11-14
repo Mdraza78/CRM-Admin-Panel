@@ -621,13 +621,13 @@ html, body {
 /* ===== ENHANCED PAGE HEADER ===== */
 .page-header {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
     margin-bottom: 2rem;
     padding-bottom: 0;
     margin-top: 35px;
     border-bottom: none;
-    text-align: center; /* Override the center alignment */
 }
 
 .page-header h1 {
@@ -639,12 +639,16 @@ html, body {
     align-items: center;
     justify-content: center;
     gap: 1rem;
+    width: 100%;
 }
 
 
 .page-header p {
     color: #64748b;
     font-size: 1.1rem;
+    text-align: center;
+    width: 100%;
+    margin: 0;
 }
 
 /* ===== ENHANCED ACTIONS BAR ===== */
@@ -895,6 +899,21 @@ html, body {
     width: 15%;
 }
 
+#ownerFilter {
+    background-image: none !important;
+    padding-right: 1.25rem;
+}
+
+#ownerFilter {
+    cursor: text;
+}
+
+#ownerFilter:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
 .contacts-table th:nth-child(7), /* Actions column */
 .contacts-table td:nth-child(7) {
     min-width: 80px;
@@ -902,17 +921,24 @@ html, body {
 }
 
 .contacts-table th {
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    padding: 1.25rem 1.5rem;
+    background: #f8fafc !important;
+    padding: 1rem 1.5rem;
     text-align: left;
-    color: #374151;
-    border: none;
-    font-size: 0.85rem;
+    font-weight: 600;
+    color: #475569;
+    border-bottom: 2px solid #e2e8f0;
+    font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     white-space: nowrap;
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.contacts-table th {
+    background: #f8fafc !important;
+    background-image: none !important;
 }
 
 .contacts-table td {
@@ -1170,11 +1196,11 @@ html, body {
 }
 
 .page-number.active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-color: #667eea;
+    background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
+    border-color: #00BCD4;
     color: white;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 188, 212, 0.3);
 }
 
 /* ===== MODAL STYLES ===== */
