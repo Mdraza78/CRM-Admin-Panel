@@ -1162,6 +1162,41 @@ body {
     margin: 20px 0;
 }
 
+/* Enhanced Letter Avatar Styling for Industry Leads */
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 16px;
+    color: white;
+    background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.avatar-letter {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Hover effects */
+.user-profile:hover .user-avatar {
+    border-color: #2D5BFF;
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3);
+}
+
+/* Remove the old image-based avatar styles if they exist */
+.user-profile img {
+    display: none; /* Hide the old image avatar */
+}
+
 .selected-count {
     font-weight: 600;
     color: #2c3e50;
