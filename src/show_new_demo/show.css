@@ -830,7 +830,7 @@ body {
 }
 
 .page-header .header-left h1 i {
-    color: #667eea;
+    color:linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important;;
 }
 
 .page-header .header-left p {
@@ -870,7 +870,7 @@ body {
 }
 
 .section-header h3 i {
-    color: #667eea;
+    color: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important;;
 }
 
 .filters-bar {
@@ -943,7 +943,7 @@ body {
 
 .view-btn.active {
     background: white;
-    color: #667eea;
+    color: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important;;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -1121,12 +1121,12 @@ body {
 
 .lead-source-badge.email {
     background-color: #e3f2fd;
-    color: #1976d2;
+    color: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important;;
 }
 
 .lead-source-badge.linkedin {
     background-color: #e8f5e8;
-    color: #0077b5;
+    color: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important;;
 }
 
 .show-lead-card-body {
@@ -1149,7 +1149,7 @@ body {
 
 .detail-item i {
     width: 16px;
-    color: #667eea;
+    color: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important;;
     font-size: 14px;
 }
 
@@ -1182,10 +1182,10 @@ body {
 }
 
 .show-info h4 i {
-    color: #667eea;
+    color: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important;;
 }
 .show-date {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important;
     color: white;
     padding: 4px 8px;
     border-radius: 12px;
@@ -1491,14 +1491,13 @@ body {
 }
 
 .page-number.active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-color: #667eea;
+    background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important;
     color: white;
 }
 
 .page-number:hover:not(.active) {
-    border-color: #667eea;
-    color: #667eea;
+    border-color: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important;;
+    color: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important;;
 }
 
 /* Buttons */
@@ -1784,13 +1783,13 @@ body {
 }
 
 .file-upload-area:hover {
-    border-color: #667eea;
+    border-color: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important;;
     background: rgba(102, 126, 234, 0.05);
 }
 
 .upload-info i {
     font-size: 32px;
-    color: #667eea;
+    color: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important;;
     margin-bottom: 10px;
 }
 
@@ -1831,7 +1830,7 @@ body {
 }
 
 .file-info i {
-    color: #667eea;
+    color: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important;;
     font-size: 16px;
 }
 
@@ -1932,7 +1931,7 @@ body {
 }
 
 .tag {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important;
     color: white;
     padding: 4px 8px;
     border-radius: 12px;
