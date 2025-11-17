@@ -430,6 +430,98 @@ function setupEventListeners() {
         }
     });
 
+
+    // Function to generate consistent color based on name
+function getAvatarColor(name) {
+    const colors = [
+        '#00BCD4', '#1E88E5', '#2D5BFF', '#667eea', '#764ba2',
+        '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899',
+        '#00BCD4', '#1E88E5', '#2D5BFF', '#667eea', '#764ba2'
+    ];
+    if (!name || name === 'User' || name === 'Loading...') {
+        return '#00BCD4'; // Default color
+    }
+    const colorIndex = name.charCodeAt(0) % colors.length;
+    return colors[colorIndex];
+}
+
+// Function to create letter avatar
+function createLetterAvatar(name, element) {
+    if (!name || name === 'User' || name === 'Loading...') {
+        name = 'User';
+    }
+
+    // Get first letter of the name
+    const firstLetter = name.charAt(0).toUpperCase();
+    const backgroundColor = getAvatarColor(name);
+
+    if (element.tagName === 'IMG') {
+        // For image elements, create canvas avatar
+        const canvas = document.createElement('canvas');
+        const size = 200;
+        canvas.width = size;
+        canvas.height = size;
+        const context = canvas.getContext('2d');
+
+        // Draw background
+        context.fillStyle = backgroundColor;
+        context.fillRect(0, 0, size, size);
+
+        // Draw letter
+        context.fillStyle = '#FFFFFF';
+        context.font = `bold ${size * 0.4}px Inter, Arial, sans-serif`;
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(firstLetter, size / 2, size / 2);
+
+        element.src = canvas.toDataURL();
+        element.alt = name;
+    } else {
+        // For div elements (like in sidebar), update directly
+        element.style.background = backgroundColor;
+        const letterSpan = element.querySelector('.avatar-letter');
+        if (letterSpan) {
+            letterSpan.textContent = firstLetter;
+        }
+    }
+}
+
+// Function to update all user avatars
+function updateUserAvatar() {
+    try {
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        const userName = userData ? (userData.name || userData.username || userData.email || 'User') : 'User';
+        
+        console.log('Updating avatar for user:', userName);
+        
+        // Update sidebar avatar (div element)
+        const sidebarAvatar = document.getElementById('userAvatar');
+        if (sidebarAvatar) {
+            createLetterAvatar(userName, sidebarAvatar);
+        }
+        
+        // Update profile modal avatars (image elements)
+        const avatarImages = document.querySelectorAll('.user-avatar-large');
+        avatarImages.forEach(avatar => {
+            if (avatar.tagName === 'IMG') {
+                createLetterAvatar(userName, avatar);
+            }
+        });
+
+    } catch (error) {
+        console.error('Error updating avatar:', error);
+        // Fallback
+        const sidebarAvatar = document.getElementById('userAvatar');
+        if (sidebarAvatar) {
+            sidebarAvatar.style.background = '#00BCD4';
+            const letterSpan = sidebarAvatar.querySelector('.avatar-letter');
+            if (letterSpan) {
+                letterSpan.textContent = 'U';
+            }
+        }
+    }
+}
+
     function updateKpiCards() {
     // Calculate real metrics from your deals data
     const totalLeads = deals.length;
@@ -501,33 +593,69 @@ async function fetchAndStoreUserData() {
     }
 }
 
+// Initialize the application
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Dashboard - DOM Content Loaded');
+    
+    // Check for authentication
+    const token = localStorage.getItem('authToken');
+    const userData = localStorage.getItem('userData');
+    
+    console.log('Auth check:', { 
+        hasToken: !!token, 
+        hasUserData: !!userData,
+        userData: userData ? JSON.parse(userData) : null
+    });
+    
+    if (!token) {
+        console.log('No auth token, redirecting to login');
+        window.location.href = '/';
+        return;
+    }
+    
+    initializeApp();
+    setupEventListeners();
+    
+    // Display user data immediately from localStorage
+    displayUserName();
+    
+    // Then try to fetch fresh user data
+    fetchAndStoreUserData();
+    
+    loadDeals();
+});
+
 function displayUserName() {
     try {
         const userData = JSON.parse(localStorage.getItem('userData'));
         const userNameElement = document.getElementById('userDisplayName');
         
+        let displayName = 'User';
+        
         if (userData) {
             // Priority: name -> username -> email -> 'User'
-            const displayName = userData.name || userData.username || userData.email || 'User';
-            userNameElement.textContent = displayName;
-            
-            // Update avatar with letter
-            updateUserAvatar();
-            
-            console.log('User data loaded and avatar updated:', {
-                name: userData.name,
-                username: userData.username,
-                email: userData.email
+            displayName = userData.name || userData.username || userData.email || 'User';
+            console.log('User data found:', { 
+                name: userData.name, 
+                username: userData.username, 
+                email: userData.email,
+                displayName: displayName
             });
         } else {
             console.warn('No user data found in localStorage');
-            userNameElement.textContent = 'User';
-            updateUserAvatar(); // Update with default
         }
+        
+        // Always update the display name
+        userNameElement.textContent = displayName;
+        
+        // Update avatar with letter
+        updateUserAvatar();
+        
     } catch (error) {
         console.error('Error displaying user name:', error);
-        document.getElementById('userDisplayName').textContent = 'User';
-        updateUserAvatar(); // Update with default
+        const userNameElement = document.getElementById('userDisplayName');
+        userNameElement.textContent = 'User';
+        updateUserAvatar();
     }
 }
 
@@ -1810,7 +1938,7 @@ function loadUserProfile() {
             document.getElementById('editEmail').value = userData.email || '';
             
             // Update avatar in profile modal
-            const profileAvatar = document.querySelector('.user-avatar-large');
+            const profileAvatar = document.getElementById('profileModalAvatar');
             if (profileAvatar) {
                 createLetterAvatar(displayName, profileAvatar);
             }
@@ -1822,9 +1950,6 @@ function loadUserProfile() {
             // Set last login
             const lastLogin = userData.lastLogin ? formatDate(userData.lastLogin) : 'Just now';
             document.getElementById('profileLastLogin').textContent = lastLogin;
-            
-            // Update user display name in sidebar
-            document.getElementById('userDisplayName').textContent = displayName;
         }
     } catch (error) {
         console.error('Error loading user profile:', error);

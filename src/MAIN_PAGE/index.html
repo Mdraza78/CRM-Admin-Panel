@@ -59,19 +59,16 @@
                     </nav>
                 </div>
                 
-                <div class="header-right">
-                    <!-- <div class="notifications" onclick="toggleNotifications()">
-                        <i class="fas fa-bell"></i>
-                        <span>Notification</span>
-                        <span class="notification-badge" id="notificationCount">5</span>
-                    </div> -->
-                    
-                    <div class="user-profile" onclick="toggleUserMenu()">
-                        <img src="/Logo.png" alt="User" class="user-avatar">
-                        <span class="user-name" id="userDisplayName">Md Raza</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                </div>
+              <div class="header-right">
+    <div class="user-profile" onclick="toggleUserMenu()">
+        <!-- Letter Avatar will be inserted here by JavaScript -->
+        <div class="user-avatar" id="userAvatar">
+            <span class="avatar-letter" id="avatarLetter">U</span>
+        </div>
+        <span class="user-name" id="userDisplayName">Loading...</span>
+        <i class="fas fa-chevron-down"></i>
+    </div>
+</div>
             </div>
             
             <!-- User Dropdown Menu -->
@@ -487,9 +484,11 @@
                 <div id="profileViewMode">
                     <div class="profile-header">
                         <div class="profile-avatar">
-                            <img src="/Logo.png" alt="Profile" class="user-avatar-large">
-                            <div class="profile-status online"></div>
-                        </div>
+    <div class="user-avatar-large" id="profileModalAvatar">
+        <span class="avatar-letter">U</span>
+    </div>
+    <div class="profile-status online"></div>
+</div>
                         <div class="profile-info">
                             <h2 id="profileName">Loading...</h2>
                             <p class="profile-role">CRM User</p>
