@@ -958,6 +958,14 @@ body {
     margin-bottom: 30px;
 }
 
+.table-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    margin-bottom: 1rem;
+}
+
 .show-leads-cards-view,
 .show-leads-table-view {
     display: none;
@@ -1181,24 +1189,55 @@ body {
 
 .data-table {
     width: 100%;
+    background: white;
     border-collapse: collapse;
+    font-family: 'Inter', sans-serif;
+    min-width: 1200px; /* Ensure table has minimum width for scrolling */
+}
+
+.data-table thead {
+    background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important;
+    border: none;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 .data-table th {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 15px 12px;
+    padding: 18px 20px;
     text-align: left;
     font-weight: 600;
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    font-size: 12px;
     cursor: pointer;
     user-select: none;
+    position: relative;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border: none;
+    border-right: none;
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+}
+
+.data-table th::after {
+    content: '↕';
+    margin-left: 8px;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.7);
+    opacity: 0.8;
+    transition: all 0.3s ease;
+    font-weight: 400;
+}
+
+.data-table th:hover::after {
+    color: rgba(255, 255, 255, 0.7); /* No change on hover */
+    opacity: 0.8;
 }
 
 .data-table th:hover {
-    background: linear-gradient(135deg, #5a67d8 0%, #667eea 100%);
+    background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important; /* Same color, no change */
 }
 
 .data-table th i {
@@ -1207,14 +1246,22 @@ body {
 }
 
 .data-table td {
-    padding: 15px 12px;
-    border-bottom: 1px solid #e9ecef;
+    padding: 16px 20px;
+    border-bottom: 1px solid #f1f5f9;
     font-size: 14px;
+    color: #475569;
     vertical-align: middle;
+    transition: all 0.2s ease;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+.data-table tr {
+    transition: all 0.3s ease;
 }
 
 .data-table tr:hover {
-    background-color: #f8f9fa;
+    background-color: #f8fafc;
 }
 
 .data-table tr:last-child td {
@@ -1223,23 +1270,65 @@ body {
 
 .table-actions {
     display: flex;
-    gap: 8px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
 }
 
 .table-action-btn {
-    background: none;
-    border: 1px solid #e9ecef;
-    color: #6c757d;
-    padding: 6px 8px;
-    border-radius: 4px;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    padding: 0;
+    font-size: 13px;
+    border: none;
+    transition: color 0.2s, background 0.3s, transform 0.3s;
     cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 12px;
+}
+
+.table-action-btn i {
+    font-size: 15px;
+    color: inherit;
 }
 
 .table-action-btn:hover {
-    border-color: #667eea;
-    color: #667eea;
+    background-color: #e0e6ed;
+    color: #1E88E5;
+    transform: scale(1.07);
+}
+
+.table-action-btn.edit:hover {
+    color: #f59e0b;
+}
+
+.table-action-btn.delete:hover {
+    color: #ef4444;
+}
+
+.table-wrapper::-webkit-scrollbar {
+    height: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+    margin: 0 10px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+    border: 2px solid #f1f5f9;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
 }
 
 /* Bulk Actions */
@@ -1387,7 +1476,12 @@ body {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
 }
-
+.data-table input[type="checkbox"] {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    accent-color: #1E88E5;
+}
 /* Search Container */
 .search-container {
     position: relative;
@@ -1702,6 +1796,10 @@ body {
     justify-content: space-between;
     padding: 8px 0;
     border-bottom: 1px solid #e9ecef;
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: none;
 }
 
 .detail-row:last-child {
