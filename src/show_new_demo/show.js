@@ -15,6 +15,7 @@ let totalLeadsCount = 0;
 const API_BASE_URL = 'https://crm-admin-panel-production.up.railway.app/api';
 
 // Initialize the application
+// Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🎪 Show Leads System initializing...');
     
@@ -28,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     initializeShowLeads();
     setupEventListeners();
-    displayUserName();
+    displayUserName(); // This will now also update the avatar
     initializePagination();
     loadShowLeads();
     
@@ -223,6 +224,90 @@ class ActiveMenuManager {
         return titles[page] || page.replace('-', ' ');
     }
 }
+function getAvatarColor() {
+    return 'linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%)';
+}
+
+function createLetterAvatar(name, element) {
+    if (!name || name === 'User' || name === 'Loading...') {
+        name = 'User';
+    }
+
+    // Get first letter of the name
+    const firstLetter = name.charAt(0).toUpperCase();
+    const backgroundColor = getAvatarColor();
+
+    if (element.tagName === 'IMG') {
+        // For image elements, create canvas avatar
+        const canvas = document.createElement('canvas');
+        const size = 200;
+        canvas.width = size;
+        canvas.height = size;
+        const context = canvas.getContext('2d');
+
+        // Create gradient for canvas
+        const gradient = context.createLinearGradient(0, 0, size, size);
+        gradient.addColorStop(0, '#00BCD4');
+        gradient.addColorStop(1, '#1E88E5');
+
+        // Draw background with gradient
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, size, size);
+
+        // Draw letter
+        context.fillStyle = '#FFFFFF';
+        context.font = `bold ${size * 0.4}px Inter, Arial, sans-serif`;
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(firstLetter, size / 2, size / 2);
+
+        element.src = canvas.toDataURL();
+        element.alt = name;
+    } else {
+        // For div elements (like in sidebar), use CSS gradient directly
+        element.style.background = backgroundColor;
+        const letterSpan = element.querySelector('.avatar-letter');
+        if (letterSpan) {
+            letterSpan.textContent = firstLetter;
+        } else {
+            // If no span exists, create one (for sidebar avatar)
+            const newLetterSpan = document.createElement('span');
+            newLetterSpan.className = 'avatar-letter';
+            newLetterSpan.textContent = firstLetter;
+            element.innerHTML = '';
+            element.appendChild(newLetterSpan);
+        }
+    }
+}
+
+function updateUserAvatar() {
+    try {
+        const userData = getUserData();
+        const userName = userData ? (userData.name || userData.username || userData.email || 'User') : 'User';
+        
+        console.log('Updating avatar for user:', userName);
+        
+        // Update sidebar avatar (div element)
+        const sidebarAvatar = document.getElementById('userAvatar');
+        if (sidebarAvatar) {
+            createLetterAvatar(userName, sidebarAvatar);
+        }
+
+    } catch (error) {
+        console.error('Error updating avatar:', error);
+        // Fallback with gradient color
+        const sidebarAvatar = document.getElementById('userAvatar');
+        if (sidebarAvatar) {
+            sidebarAvatar.style.background = 'linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%)';
+            const letterSpan = sidebarAvatar.querySelector('.avatar-letter');
+            if (letterSpan) {
+                letterSpan.textContent = 'U';
+            }
+        }
+    }
+}
+
+
 
 // Navigation function
 // Update the handleNavigation function in script.js
@@ -271,30 +356,38 @@ function getPageTitle(page) {
 }
 
 function displayUserName() {
-    const userData = getUserData();
-    const userNameElement = document.getElementById('userDisplayName');
-    
-    console.log('👤 Displaying user name for:', userData);
-    
-    if (userData && userData.name) {
-        userNameElement.textContent = userData.name;
-        console.log('✅ User name displayed:', userData.name);
-    } else {
-        // If no name found, try other fields
-        const displayName = userData?.username || userData?.email || 'User';
-        userNameElement.textContent = displayName;
-        console.log('✅ Fallback name displayed:', displayName);
+    try {
+        const userData = getUserData();
+        const userNameElement = document.getElementById('userDisplayName');
+        
+        console.log('👤 Displaying user name for:', userData);
+        
+        let displayName = 'User';
+        
+        if (userData) {
+            // Priority: name -> username -> email -> 'User'
+            displayName = userData.name || userData.username || userData.email || 'User';
+            console.log('✅ User name found:', displayName);
+        } else {
+            console.warn('❌ No user data found in localStorage');
+        }
+        
+        // Always update the display name
+        if (userNameElement) {
+            userNameElement.textContent = displayName;
+        }
+        
+        // Update avatar with letter
+        updateUserAvatar();
+        
+    } catch (error) {
+        console.error('❌ Error displaying user name:', error);
+        const userNameElement = document.getElementById('userDisplayName');
+        if (userNameElement) {
+            userNameElement.textContent = 'User';
+        }
+        updateUserAvatar();
     }
-    
-    // Make the name clickable to open profile
-    userNameElement.style.cursor = 'pointer';
-    userNameElement.title = 'Click to view profile';
-    
-    // Add click event to open profile
-    userNameElement.onclick = function(e) {
-        e.stopPropagation();
-        showNotification('Profile feature coming soon', 'info');
-    };
 }
 
 // API Functions

@@ -989,6 +989,77 @@ body {
     align-items: flex-start;
 }
 
+/* Enhanced Letter Avatar Styling for Show Leads */
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 16px;
+    color: white;
+    background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.user-avatar-large {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 4px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 32px;
+    color: white;
+    background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
+    flex-shrink: 0;
+}
+
+.avatar-letter {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Hover effects */
+.user-profile:hover .user-avatar {
+    border-color: #2D5BFF;
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3);
+}
+
+/* User Profile Section */
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #495057;
+    cursor: pointer;
+    padding: 12px 15px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.user-profile:hover {
+    color: #2D5BFF;
+    transform: translateY(-2px);
+}
+
+.user-name {
+    font-size: 14px;
+    font-weight: 500;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
 
 .show-leads-cards-view {
