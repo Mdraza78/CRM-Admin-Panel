@@ -78,37 +78,153 @@ function setupNavigationEventListeners() {
     });
 }
 
-// Initialize KPI card animations
-function initializeKpiAnimations() {
-    console.log('Initializing KPI card animations...');
-    
-    // Add animation classes to KPI cards
-    const kpiCards = document.querySelectorAll('.kpi-card');
+function updateKpiCardsWithRealData() {
+    // Calculate real metrics from your deals data
+    const totalLeads = deals.length;
+    const activeDeals = deals.filter(deal => 
+        deal.stage !== 'Won' && deal.stage !== 'Lost'
+    ).length;
+    const revenue = deals
+        .filter(deal => deal.stage === 'Won')
+        .reduce((sum, deal) => sum + (deal.value || 0), 0);
+    const tasksDue = deals.filter(deal => {
+        if (!deal.closeDate) return false;
+        const closeDate = new Date(deal.closeDate);
+        const today = new Date();
+        const diffTime = closeDate - today;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays <= 7 && diffDays >= 0;
+    }).length;
+
+    // Get KPI value elements
     const kpiValues = document.querySelectorAll('.kpi-value');
     
-    kpiCards.forEach((card, index) => {
-        // Reset animation
-        card.style.animation = 'none';
-        card.offsetHeight; // Trigger reflow
-        
-        // Apply staggered animation
+    if (kpiValues.length >= 4) {
+        // Animate each value with counting effect
         setTimeout(() => {
-            card.style.animation = `fadeInUp 0.6s ease-out ${index * 0.1}s both`;
-        }, 100);
-    });
-    
-    kpiValues.forEach((value, index) => {
-        // Reset animation
-        value.style.animation = 'none';
-        value.offsetHeight; // Trigger reflow
+            animateNumberCounter(kpiValues[0], 0, totalLeads, 2000);
+        }, 500);
         
-        // Apply counting animation
         setTimeout(() => {
-            value.style.animation = `countUp 0.8s ease-out ${index * 0.1 + 0.2}s both`;
-            value.classList.add('animated');
-        }, 300);
-    });
+            animateNumberCounter(kpiValues[1], 0, activeDeals, 2000);
+        }, 1000);
+        
+        setTimeout(() => {
+            animateCurrencyCounter(kpiValues[2], 0, revenue, 2500);
+        }, 1500);
+        
+        setTimeout(() => {
+            animateNumberCounter(kpiValues[3], 0, tasksDue, 1500);
+        }, 2000);
+    }
 }
+
+function animateNumberCounter(element, startValue, endValue, duration = 2000) {
+    const startTime = performance.now();
+    const valueDifference = endValue - startValue;
+    
+    function updateNumber(currentTime) {
+        const elapsedTime = currentTime - startTime;
+        const progress = Math.min(elapsedTime / duration, 1);
+        
+        // Easing function for smooth animation
+        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+        
+        const currentValue = Math.floor(startValue + (valueDifference * easeOutQuart));
+        
+        // Format number with commas
+        element.textContent = formatNumber(currentValue);
+        
+        // Add visual effects during counting
+        if (progress < 1) {
+            element.classList.add('counting');
+            element.classList.remove('counted');
+            
+            // Scale effect based on progress
+            const scale = 1 + (0.3 * progress);
+            element.style.transform = `scale(${scale})`;
+        } else {
+            element.classList.remove('counting');
+            element.classList.add('counted');
+            element.style.transform = 'scale(1)';
+            
+            // Final celebration pulse
+            setTimeout(() => {
+                element.style.animation = 'pulse 0.5s ease 2';
+                setTimeout(() => {
+                    element.style.animation = '';
+                }, 1000);
+            }, 200);
+        }
+        
+        if (progress < 1) {
+            requestAnimationFrame(updateNumber);
+        }
+    }
+    
+    requestAnimationFrame(updateNumber);
+}
+function formatNumber(num) {
+    if (num >= 1000000) {
+        return (num / 1000000).toFixed(1) + 'M';
+    } else if (num >= 1000) {
+        return (num / 1000).toFixed(1) + 'K';
+    }
+    return num.toLocaleString();
+}
+
+function animateCurrencyCounter(element, startValue, endValue, duration = 2000) {
+    const startTime = performance.now();
+    const valueDifference = endValue - startValue;
+    
+    function updateCurrency(currentTime) {
+        const elapsedTime = currentTime - startTime;
+        const progress = Math.min(elapsedTime / duration, 1);
+        
+        // Easing function
+        const easeOutBack = 1 - Math.pow(1 - progress, 4);
+        
+        const currentValue = Math.floor(startValue + (valueDifference * easeOutBack));
+        
+        // Format as currency
+        element.textContent = `$${currentValue.toLocaleString()}`;
+        
+        // Enhanced visual effects for money
+        if (progress < 1) {
+            element.classList.add('counting', 'money-effect');
+            element.classList.remove('counted');
+            
+            // More dramatic scale for money
+            const scale = 1 + (0.5 * Math.sin(progress * Math.PI));
+            element.style.transform = `scale(${scale})`;
+            
+            // Color transition
+            const greenValue = Math.floor(16 + (239 * progress));
+            const blueValue = Math.floor(185 + (68 * (1 - progress)));
+            element.style.color = `rgb(16, ${greenValue}, ${blueValue})`;
+        } else {
+            element.classList.remove('counting', 'money-effect');
+            element.classList.add('counted');
+            element.style.transform = 'scale(1)';
+            element.style.color = '';
+            
+            // Money celebration effect
+            setTimeout(() => {
+                element.style.animation = 'cashRegister 0.8s ease';
+                setTimeout(() => {
+                    element.style.animation = '';
+                }, 800);
+            }, 300);
+        }
+        
+        if (progress < 1) {
+            requestAnimationFrame(updateCurrency);
+        }
+    }
+    
+    requestAnimationFrame(updateCurrency);
+}
+
 function animateKpiValues() {
     const kpiValues = document.querySelectorAll('.kpi-value');
     
