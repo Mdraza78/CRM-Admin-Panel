@@ -962,6 +962,10 @@ body {
     margin-bottom: 30px;
     width: 100%;
 }
+
+.show-leads-container .show-leads-cards-view.active ~ .show-leads-table-view {
+    display: none !important;
+}
 .table-wrapper {
     width: 100%;
     overflow-x: auto;
@@ -986,16 +990,17 @@ body {
 
 
 .show-leads-cards-view {
-    display: block !important;  /* Show cards by default */
+    display: block;  /* Show cards by default */
 }
 
 .show-leads-table-view {
     display: none !important;  /* Hide table by default */
 }
-.show-leads-table-view.active {
-    display: block !important;  /* Show only when active */
+.show-leads-cards-view.active {
+    display: block !important;
 }
 .show-leads-table-view {
+    display: none;
     width: 100%;
     background: white;
     border-radius: 0;  /* Remove rounded corners when active in section */
@@ -2054,6 +2059,10 @@ body {
         gap: 10px;
     }
 }
+.show-leads-table-view.active {
+    display: block !important;  /* Show ONLY when active */
+}
+
 
 @media (max-width: 480px) {
     .show-leads-table-view {
