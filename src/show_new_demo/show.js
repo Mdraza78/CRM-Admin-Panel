@@ -871,12 +871,17 @@ function renderShowLeadDetails(lead) {
 
 // Rendering Functions
 function renderShowLeads() {
+    console.log('Rendering show leads. Current view:', currentView);
+    
     if (currentView === 'cards') {
+        console.log('Rendering cards view');
         renderShowLeadsCards();
-    } else {
+    } else if (currentView === 'table') {
+        console.log('Rendering table view');
         renderShowLeadsTable();
     }
 }
+
 
 function renderShowLeadsCards() {
     const grid = document.getElementById('showLeadsGrid');
@@ -1076,6 +1081,7 @@ function initializePagination() {
 // View Management
 
 function switchView(view) {
+    console.log('Switching view to:', view);
     currentView = view;
     
     // Update view buttons
@@ -1088,25 +1094,29 @@ function switchView(view) {
     const cardsView = document.getElementById('cardsView');
     const tableView = document.getElementById('tableView');
     
-    // IMPORTANT: Hide both first
-    cardsView.style.display = 'none';
-    tableView.style.display = 'none';
+    if (!cardsView || !tableView) {
+        console.error('View containers not found!');
+        return;
+    }
     
-    // Then show only the selected one
+    // CRITICAL: Reset itemsPerPage based on view
     if (view === 'cards') {
+        itemsPerPage = 4;
         cardsView.style.display = 'block';
         cardsView.classList.add('active');
+        tableView.style.display = 'none';
         tableView.classList.remove('active');
-        itemsPerPage = 4;
     } else if (view === 'table') {
+        itemsPerPage = 15;
         tableView.style.display = 'block';
         tableView.classList.add('active');
+        cardsView.style.display = 'none';
         cardsView.classList.remove('active');
-        itemsPerPage = 15;
     }
     
     currentPage = 1;
-    loadShowLeads();
+    console.log('View switched. CurrentView:', currentView, 'ItemsPerPage:', itemsPerPage);
+    renderShowLeads();
 }
 
 
