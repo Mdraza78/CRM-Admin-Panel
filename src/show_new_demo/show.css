@@ -597,8 +597,9 @@ body {
     background: #f8f9fa;
     transition: all 0.3s ease;
     margin-left: 220px;
-  transition: margin-left 0.3s;
+    overflow-x: hidden;  /* Prevent main content horizontal overflow */
 }
+
 .toggle-hr {
     position: absolute;
     left: 0;
@@ -952,8 +953,8 @@ body {
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     border: 1px solid #e9ecef;
+    overflow: hidden;  /* Prevent content overflow */
 }
-
 .show-leads-container {
     margin-bottom: 30px;
 }
@@ -964,8 +965,9 @@ body {
     border: 1px solid #e2e8f0;
     background: white;
     margin-bottom: 1rem;
+    width: 100%;  /* Ensure full width */
+    box-sizing: border-box;  /* Include borders in width calculation */
 }
-
 .show-leads-cards-view,
 .show-leads-table-view {
     display: none;
@@ -1181,10 +1183,9 @@ body {
 
 /* Table View */
 .table-container {
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
+    min-width: 100%;
+    width: max-content;
+    overflow-x: auto;  /* Allow horizontal scroll ONLY in this container */
 }
 
 .data-table {
@@ -1192,14 +1193,13 @@ body {
     background: white;
     border-collapse: collapse;
     font-family: 'Inter', sans-serif;
-    min-width: 1200px; /* Ensure table has minimum width for scrolling */
+    min-width: 1200px;
 }
-
 .data-table thead {
     background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important;
     border: none;
-    position: sticky;
-    top: 0;
+    position: relative;  /* Changed from sticky to relative */
+    top: auto;  /* Remove top positioning */
     z-index: 10;
 }
 
@@ -1215,11 +1215,11 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.8px;
     border: none;
-    border-right: none;
-    transition: none;  /* Disable transitions */
+    transition: none;
     font-family: 'Inter', sans-serif;
     white-space: nowrap;
 }
+
 
 
 .data-table th::after {
@@ -1251,21 +1251,22 @@ body {
     font-size: 14px;
     color: #475569;
     vertical-align: middle;
-    transition: none;  /* Disable transitions */
+    transition: none;
     font-family: 'Inter', sans-serif;
     line-height: 1.4;
     white-space: nowrap;
 }
+
 .data-table tr {
-    transition: none;  /* Disable transitions */
+    transition: none;
 }
+
 
 
 
 .data-table tr:last-child td {
     border-bottom: none;
 }
-
 .table-actions {
     display: flex;
     flex-direction: row;
@@ -1286,7 +1287,7 @@ body {
     padding: 0;
     font-size: 13px;
     border: none;
-    transition: none;  /* Disable transitions */
+    transition: none;
     cursor: pointer;
 }
 
@@ -1305,7 +1306,7 @@ body {
 }
 
 .table-wrapper::-webkit-scrollbar {
-    height: 10px;  /* Make scrollbar more visible */
+    height: 10px;
 }
 .table-wrapper::-webkit-scrollbar-track {
     background: #f1f5f9;
@@ -1793,6 +1794,7 @@ body {
 .data-table tbody {
     background: white;
 }
+
 
 .data-table tbody tr:last-child td {
     border-bottom: none;
