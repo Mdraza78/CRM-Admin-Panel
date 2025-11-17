@@ -822,6 +822,158 @@ function toggleSidebar() {
     }
 }
 
+// Add these functions to your invoice-script.js file
+
+// Update user avatar function
+function updateUserAvatar() {
+    try {
+        const userData = getUserData();
+        const userName = userData ? (userData.name || userData.username || userData.email || 'User') : 'User';
+        
+        console.log('Updating avatar for user:', userName);
+        
+        // Update sidebar avatar (div element)
+        const sidebarAvatar = document.getElementById('userAvatar');
+        if (sidebarAvatar) {
+            createLetterAvatar(userName, sidebarAvatar);
+        }
+
+    } catch (error) {
+        console.error('Error updating avatar:', error);
+        // Fallback with gradient color
+        const sidebarAvatar = document.getElementById('userAvatar');
+        if (sidebarAvatar) {
+            sidebarAvatar.style.background = 'linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%)';
+            const letterSpan = sidebarAvatar.querySelector('.avatar-letter');
+            if (letterSpan) {
+                letterSpan.textContent = 'U';
+            }
+        }
+    }
+}
+
+// Create letter avatar function
+function createLetterAvatar(name, element) {
+    if (!name || name === 'User' || name === 'Loading...') {
+        name = 'User';
+    }
+
+    // Get first letter of the name
+    const firstLetter = name.charAt(0).toUpperCase();
+    const backgroundColor = getAvatarColor();
+
+    if (element.tagName === 'IMG') {
+        // For image elements, create canvas avatar
+        const canvas = document.createElement('canvas');
+        const size = 200;
+        canvas.width = size;
+        canvas.height = size;
+        const context = canvas.getContext('2d');
+
+        // Create gradient for canvas
+        const gradient = context.createLinearGradient(0, 0, size, size);
+        gradient.addColorStop(0, '#00BCD4');
+        gradient.addColorStop(1, '#1E88E5');
+
+        // Draw background with gradient
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, size, size);
+
+        // Draw letter
+        context.fillStyle = '#FFFFFF';
+        context.font = `bold ${size * 0.4}px Inter, Arial, sans-serif`;
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(firstLetter, size / 2, size / 2);
+
+        element.src = canvas.toDataURL();
+        element.alt = name;
+    } else {
+        // For div elements (like in sidebar), use CSS gradient directly
+        element.style.background = backgroundColor;
+        const letterSpan = element.querySelector('.avatar-letter');
+        if (letterSpan) {
+            letterSpan.textContent = firstLetter;
+        } else {
+            // If no span exists, create one (for sidebar avatar)
+            const newLetterSpan = document.createElement('span');
+            newLetterSpan.className = 'avatar-letter';
+            newLetterSpan.textContent = firstLetter;
+            element.innerHTML = '';
+            element.appendChild(newLetterSpan);
+        }
+    }
+}
+
+// Avatar color function
+function getAvatarColor() {
+    return 'linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%)';
+}
+
+// Update the displayUserName function to include avatar
+function displayUserName() {
+    try {
+        const userData = getUserData();
+        const userNameElement = document.getElementById('userDisplayName');
+        
+        console.log('👤 Displaying user name for:', userData);
+        
+        let displayName = 'User';
+        
+        if (userData) {
+            // Priority: name -> username -> email -> 'User'
+            displayName = userData.name || userData.username || userData.email || 'User';
+            console.log('✅ User name found:', displayName);
+        } else {
+            console.warn('❌ No user data found in localStorage');
+        }
+        
+        // Always update the display name
+        if (userNameElement) {
+            userNameElement.textContent = displayName;
+        }
+        
+        // Update avatar with letter
+        updateUserAvatar();
+        
+    } catch (error) {
+        console.error('❌ Error displaying user name:', error);
+        const userNameElement = document.getElementById('userDisplayName');
+        if (userNameElement) {
+            userNameElement.textContent = 'User';
+        }
+        updateUserAvatar();
+    }
+}
+
+// Get user data function (you might already have this, but adding it for completeness)
+function getUserData() {
+    try {
+        const userDataString = localStorage.getItem('userData');
+        console.log('👤 Raw userData from localStorage:', userDataString);
+        
+        if (!userDataString) {
+            console.warn('❌ No user data found in localStorage');
+            return null;
+        }
+        
+        const userData = JSON.parse(userDataString);
+        console.log('👤 Parsed userData:', userData);
+        
+        // Validate required fields
+        if (userData && userData.id && userData.name) {
+            return userData;
+        } else {
+            console.warn('❌ User data missing required fields');
+            return null;
+        }
+        
+    } catch (error) {
+        console.error('❌ Error parsing user data:', error);
+        return null;
+    }
+}
+
 function toggleUserMenu() {
     const dropdown = document.getElementById('userDropdown');
     const isVisible = dropdown.classList.contains('show');
