@@ -78,360 +78,7 @@ function setupNavigationEventListeners() {
     });
 }
 
-function updateKpiCardsWithRealData() {
-    // Calculate real metrics from your deals data
-    const totalLeads = deals.length;
-    const activeDeals = deals.filter(deal => 
-        deal.stage !== 'Won' && deal.stage !== 'Lost'
-    ).length;
-    const revenue = deals
-        .filter(deal => deal.stage === 'Won')
-        .reduce((sum, deal) => sum + (deal.value || 0), 0);
-    const tasksDue = deals.filter(deal => {
-        if (!deal.closeDate) return false;
-        const closeDate = new Date(deal.closeDate);
-        const today = new Date();
-        const diffTime = closeDate - today;
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        return diffDays <= 7 && diffDays >= 0;
-    }).length;
-
-    // Get KPI value elements
-    const kpiValues = document.querySelectorAll('.kpi-value');
-    
-    if (kpiValues.length >= 4) {
-        // Animate each value with counting effect
-        setTimeout(() => {
-            animateNumberCounter(kpiValues[0], 0, totalLeads, 2000);
-        }, 500);
-        
-        setTimeout(() => {
-            animateNumberCounter(kpiValues[1], 0, activeDeals, 2000);
-        }, 1000);
-        
-        setTimeout(() => {
-            animateCurrencyCounter(kpiValues[2], 0, revenue, 2500);
-        }, 1500);
-        
-        setTimeout(() => {
-            animateNumberCounter(kpiValues[3], 0, tasksDue, 1500);
-        }, 2000);
-    }
-}
-
-function animateNumberCounter(element, startValue, endValue, duration = 2000) {
-    const startTime = performance.now();
-    const valueDifference = endValue - startValue;
-    
-    function updateNumber(currentTime) {
-        const elapsedTime = currentTime - startTime;
-        const progress = Math.min(elapsedTime / duration, 1);
-        
-        // Easing function for smooth animation
-        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-        
-        const currentValue = Math.floor(startValue + (valueDifference * easeOutQuart));
-        
-        // Format number with commas
-        element.textContent = formatNumber(currentValue);
-        
-        // Add visual effects during counting
-        if (progress < 1) {
-            element.classList.add('counting');
-            element.classList.remove('counted');
-            
-            // Scale effect based on progress
-            const scale = 1 + (0.3 * progress);
-            element.style.transform = `scale(${scale})`;
-        } else {
-            element.classList.remove('counting');
-            element.classList.add('counted');
-            element.style.transform = 'scale(1)';
-            
-            // Final celebration pulse
-            setTimeout(() => {
-                element.style.animation = 'pulse 0.5s ease 2';
-                setTimeout(() => {
-                    element.style.animation = '';
-                }, 1000);
-            }, 200);
-        }
-        
-        if (progress < 1) {
-            requestAnimationFrame(updateNumber);
-        }
-    }
-    
-    requestAnimationFrame(updateNumber);
-}
-function formatNumber(num) {
-    if (num >= 1000000) {
-        return (num / 1000000).toFixed(1) + 'M';
-    } else if (num >= 1000) {
-        return (num / 1000).toFixed(1) + 'K';
-    }
-    return num.toLocaleString();
-}
-
-function animateCurrencyCounter(element, startValue, endValue, duration = 2000) {
-    const startTime = performance.now();
-    const valueDifference = endValue - startValue;
-    
-    function updateCurrency(currentTime) {
-        const elapsedTime = currentTime - startTime;
-        const progress = Math.min(elapsedTime / duration, 1);
-        
-        // Easing function
-        const easeOutBack = 1 - Math.pow(1 - progress, 4);
-        
-        const currentValue = Math.floor(startValue + (valueDifference * easeOutBack));
-        
-        // Remove the extra $ prefix since it's already in the HTML
-        element.textContent = `${currentValue.toLocaleString()}`;
-        
-        // Enhanced visual effects for money
-        if (progress < 1) {
-            element.classList.add('counting', 'money-effect');
-            element.classList.remove('counted');
-            
-            // More dramatic scale for money
-            const scale = 1 + (0.5 * Math.sin(progress * Math.PI));
-            element.style.transform = `scale(${scale})`;
-            
-            // Color transition
-            const greenValue = Math.floor(16 + (239 * progress));
-            const blueValue = Math.floor(185 + (68 * (1 - progress)));
-            element.style.color = `rgb(16, ${greenValue}, ${blueValue})`;
-        } else {
-            element.classList.remove('counting', 'money-effect');
-            element.classList.add('counted');
-            element.style.transform = 'scale(1)';
-            element.style.color = '';
-            
-            // Money celebration effect
-            setTimeout(() => {
-                element.style.animation = 'cashRegister 0.8s ease';
-                setTimeout(() => {
-                    element.style.animation = '';
-                }, 800);
-            }, 300);
-        }
-        
-        if (progress < 1) {
-            requestAnimationFrame(updateCurrency);
-        }
-    }
-    
-    requestAnimationFrame(updateCurrency);
-}
-function animateKpiValues() {
-    const kpiValues = document.querySelectorAll('.kpi-value');
-    
-    kpiValues.forEach((value, index) => {
-        // Store current value for counting animation
-        const currentValue = value.textContent;
-        
-        // Reset to 0 for counting effect (optional)
-        // value.textContent = '0';
-        
-        // Trigger animation
-        value.style.animation = 'none';
-        value.offsetHeight; // Trigger reflow
-        
-        setTimeout(() => {
-            value.style.animation = `countUp 0.8s ease-out ${index * 0.1}s both, pulse 1s ease ${index * 0.1 + 0.5}s`;
-            value.classList.add('animated');
-            
-            // Restore actual value after animation
-            setTimeout(() => {
-                value.textContent = currentValue;
-            }, 500);
-        }, 100);
-    });
-}
-
-// Hover animation enhancement
-function setupKpiHoverEffects() {
-    const kpiCards = document.querySelectorAll('.kpi-card');
-    
-    kpiCards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            const value = this.querySelector('.kpi-value');
-            const icon = this.querySelector('.kpi-icon');
-            const label = this.querySelector('.kpi-label');
-            const change = this.querySelector('.kpi-change');
-            
-            // Add hover animations
-            if (value) {
-                value.style.animation = 'pulse 0.5s ease, numberGlow 2s ease-in-out';
-            }
-            if (icon) {
-                icon.style.transform = 'scale(1.1) rotate(5deg)';
-            }
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            const icon = this.querySelector('.kpi-icon');
-            
-            // Reset icon transform
-            if (icon) {
-                icon.style.transform = 'scale(1) rotate(0deg)';
-            }
-        });
-    });
-}
-
-
-
-// Initialize the application
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Deal.js - DOM Content Loaded');
-    initializeApp();
-    setupEventListeners();
-    
-    // First try to display existing user data
-    displayUserName();
-    
-    // Then try to fetch fresh user data if we have a token
-    if (localStorage.getItem('authToken')) {
-        fetchAndStoreUserData();
-    }
-    
-    loadDeals();
-});
-function initializeApp() {
-    console.log('Deal Management System initialized with backend integration');
-    setupNavigationEventListeners();
-    showDealsList();
-    updatePagination();
-    setMinCloseDate();
-    
-    // Initialize animations
-    setTimeout(() => {
-        initializeKpiAnimations();
-        setupKpiHoverEffects();
-    }, 1000);
-}
-
-// Function to create letter avatar
-function createLetterAvatar(name, element) {
-    if (!name || name === 'User') {
-        // Use default avatar if no name
-        element.src = '/Logo.png';
-        element.alt = 'User';
-        return;
-    }
-
-    // Get first letter of the name
-    const firstLetter = name.charAt(0).toUpperCase();
-    
-    // Create canvas for letter avatar
-    const canvas = document.createElement('canvas');
-    const size = 200; // Higher resolution for better quality
-    canvas.width = size;
-    canvas.height = size;
-    const context = canvas.getContext('2d');
-
-    // Generate consistent color based on name
-    const colors = [
-        '#00BCD4', '#1E88E5', '#2D5BFF', '#667eea', '#764ba2',
-        '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'
-    ];
-    const colorIndex = name.charCodeAt(0) % colors.length;
-    const backgroundColor = colors[colorIndex];
-
-    // Draw background
-    context.fillStyle = backgroundColor;
-    context.fillRect(0, 0, size, size);
-
-    // Draw letter
-    context.fillStyle = '#FFFFFF';
-    context.font = `bold ${size * 0.4}px Inter, Arial, sans-serif`;
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
-    context.fillText(firstLetter, size / 2, size / 2);
-
-    // Convert to data URL and set as image source
-    element.src = canvas.toDataURL();
-    element.alt = name;
-}
-
-// Function to update all user avatars
-function updateUserAvatar() {
-    try {
-        const userData = JSON.parse(localStorage.getItem('userData'));
-        const userName = userData ? (userData.name || userData.username || userData.email || 'User') : 'User';
-        
-        // Update all avatar elements
-        const avatarElements = document.querySelectorAll('.user-avatar, .user-avatar-large');
-        
-        avatarElements.forEach(avatar => {
-            if (avatar.tagName === 'IMG') {
-                createLetterAvatar(userName, avatar);
-            }
-        });
-
-        console.log('Avatar updated for user:', userName);
-    } catch (error) {
-        console.error('Error updating avatar:', error);
-        // Fallback to default image
-        const avatarElements = document.querySelectorAll('.user-avatar, .user-avatar-large');
-        avatarElements.forEach(avatar => {
-            if (avatar.tagName === 'IMG') {
-                avatar.src = '/Logo.png';
-            }
-        });
-    }
-}
-
-// Function to get display name
-function getDisplayName() {
-    try {
-        const userData = JSON.parse(localStorage.getItem('userData'));
-        return userData ? (userData.name || userData.username || userData.email || 'User') : 'User';
-    } catch (error) {
-        console.error('Error getting display name:', error);
-        return 'User';
-    }
-}
-
-function setupEventListeners() {
-    // File upload
-    const fileInput = document.getElementById('dealAttachments');
-    if (fileInput) {
-        fileInput.addEventListener('change', handleFileSelect);
-    }
-
-    // Drag and drop
-    const uploadArea = document.querySelector('.file-upload-area');
-    if (uploadArea) {
-        uploadArea.addEventListener('dragover', handleDragOver);
-        uploadArea.addEventListener('drop', handleFileDrop);
-        uploadArea.addEventListener('dragleave', handleDragLeave);
-    }
-
-    // Close dropdowns when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('.dropdown')) {
-            closeAllDropdowns();
-        }
-    });
-
-    // Form validation
-    document.addEventListener('input', handleFormValidation);
-
-    // Pipeline stage click events
-    document.addEventListener('click', function(e) {
-        if (e.target.closest('.pipeline-stage')) {
-            const stage = e.target.closest('.pipeline-stage');
-            const stageValue = stage.getAttribute('data-stage');
-            document.getElementById('dealStage').value = stageValue;
-            updatePipelineVisual(stageValue);
-        }
-    });
-
-
-    // Function to generate consistent color based on name
+// Function to generate consistent color based on name
 function getAvatarColor(name) {
     const colors = [
         '#00BCD4', '#1E88E5', '#2D5BFF', '#667eea', '#764ba2',
@@ -482,6 +129,13 @@ function createLetterAvatar(name, element) {
         const letterSpan = element.querySelector('.avatar-letter');
         if (letterSpan) {
             letterSpan.textContent = firstLetter;
+        } else {
+            // If no span exists, create one (for sidebar avatar)
+            const newLetterSpan = document.createElement('span');
+            newLetterSpan.className = 'avatar-letter';
+            newLetterSpan.textContent = firstLetter;
+            element.innerHTML = '';
+            element.appendChild(newLetterSpan);
         }
     }
 }
@@ -500,13 +154,11 @@ function updateUserAvatar() {
             createLetterAvatar(userName, sidebarAvatar);
         }
         
-        // Update profile modal avatars (image elements)
-        const avatarImages = document.querySelectorAll('.user-avatar-large');
-        avatarImages.forEach(avatar => {
-            if (avatar.tagName === 'IMG') {
-                createLetterAvatar(userName, avatar);
-            }
-        });
+        // Update profile modal avatars
+        const profileModalAvatar = document.getElementById('profileModalAvatar');
+        if (profileModalAvatar) {
+            createLetterAvatar(userName, profileModalAvatar);
+        }
 
     } catch (error) {
         console.error('Error updating avatar:', error);
@@ -522,45 +174,124 @@ function updateUserAvatar() {
     }
 }
 
-    function updateKpiCards() {
-    // Calculate real metrics from your deals data
-    const totalLeads = deals.length;
-    const activeDeals = deals.filter(deal => 
-        deal.stage !== 'Won' && deal.stage !== 'Lost'
-    ).length;
-    const revenue = deals
-        .filter(deal => deal.stage === 'Won')
-        .reduce((sum, deal) => sum + (deal.value || 0), 0);
-    const tasksDue = deals.filter(deal => {
-        if (!deal.closeDate) return false;
-        const closeDate = new Date(deal.closeDate);
-        const today = new Date();
-        const diffTime = closeDate - today;
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        return diffDays <= 7 && diffDays >= 0; // Tasks due within 7 days
-    }).length;
-
-    // Update KPI cards
-    const kpiValues = document.querySelectorAll('.kpi-value');
-    if (kpiValues.length >= 4) {
-        kpiValues[0].textContent = totalLeads.toLocaleString();
-        kpiValues[1].textContent = activeDeals.toLocaleString();
-        kpiValues[2].textContent = `$${revenue.toLocaleString()}`;
-        kpiValues[3].textContent = tasksDue.toLocaleString();
-        
-        // Trigger animations
-        animateKpiValues();
+// Function to get display name
+function getDisplayName() {
+    try {
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        return userData ? (userData.name || userData.username || userData.email || 'User') : 'User';
+    } catch (error) {
+        console.error('Error getting display name:', error);
+        return 'User';
     }
 }
 
-
-    // Escape key to close modals
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeAllModals();
+function displayUserName() {
+    try {
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        const userNameElement = document.getElementById('userDisplayName');
+        
+        let displayName = 'User';
+        
+        if (userData) {
+            // Priority: name -> username -> email -> 'User'
+            displayName = userData.name || userData.username || userData.email || 'User';
+            console.log('User data found:', { 
+                name: userData.name, 
+                username: userData.username, 
+                email: userData.email,
+                displayName: displayName
+            });
+        } else {
+            console.warn('No user data found in localStorage');
         }
-    });
+        
+        // Always update the display name
+        if (userNameElement) {
+            userNameElement.textContent = displayName;
+        }
+        
+        // Update avatar with letter
+        updateUserAvatar();
+        
+    } catch (error) {
+        console.error('Error displaying user name:', error);
+        const userNameElement = document.getElementById('userDisplayName');
+        if (userNameElement) {
+            userNameElement.textContent = 'User';
+        }
+        updateUserAvatar();
+    }
 }
+
+// Debug function to check user data
+function debugUserData() {
+    console.log('=== USER DATA DEBUG ===');
+    console.log('LocalStorage userData:', localStorage.getItem('userData'));
+    console.log('LocalStorage authToken:', localStorage.getItem('authToken') ? 'Exists' : 'Missing');
+    
+    try {
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        console.log('Parsed userData:', userData);
+        if (userData) {
+            console.log('Name:', userData.name);
+            console.log('Username:', userData.username);
+            console.log('Email:', userData.email);
+        }
+    } catch (error) {
+        console.error('Error parsing userData:', error);
+    }
+    console.log('=======================');
+}
+
+// Initialize the application
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Dashboard - DOM Content Loaded');
+    
+    // Check for authentication
+    const token = localStorage.getItem('authToken');
+    const userData = localStorage.getItem('userData');
+    
+    console.log('Auth check:', { 
+        hasToken: !!token, 
+        hasUserData: !!userData,
+        userData: userData ? JSON.parse(userData) : null
+    });
+    
+    if (!token) {
+        console.log('No auth token, redirecting to login');
+        window.location.href = '/';
+        return;
+    }
+    
+    // Debug user data
+    debugUserData();
+    
+    initializeApp();
+    setupEventListeners();
+    
+    // Display user data immediately from localStorage
+    displayUserName();
+    
+    // Then try to fetch fresh user data
+    fetchAndStoreUserData();
+    
+    loadDeals();
+});
+
+function initializeApp() {
+    console.log('Deal Management System initialized with backend integration');
+    setupNavigationEventListeners();
+    showDealsList();
+    updatePagination();
+    setMinCloseDate();
+    
+    // Initialize animations
+    setTimeout(() => {
+        initializeKpiAnimations();
+        setupKpiHoverEffects();
+    }, 1000);
+}
+
 async function fetchAndStoreUserData() {
     try {
         const token = localStorage.getItem('authToken');
@@ -584,7 +315,7 @@ async function fetchAndStoreUserData() {
             
             // Update the UI immediately
             displayUserName();
-            updateUserAvatar(); // This will now create letter avatars
+            updateUserAvatar();
         } else {
             console.error('Failed to fetch user data:', response.status);
         }
@@ -593,78 +324,47 @@ async function fetchAndStoreUserData() {
     }
 }
 
-// Initialize the application
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Dashboard - DOM Content Loaded');
-    
-    // Check for authentication
-    const token = localStorage.getItem('authToken');
-    const userData = localStorage.getItem('userData');
-    
-    console.log('Auth check:', { 
-        hasToken: !!token, 
-        hasUserData: !!userData,
-        userData: userData ? JSON.parse(userData) : null
-    });
-    
-    if (!token) {
-        console.log('No auth token, redirecting to login');
-        window.location.href = '/';
-        return;
+function setupEventListeners() {
+    // File upload
+    const fileInput = document.getElementById('dealAttachments');
+    if (fileInput) {
+        fileInput.addEventListener('change', handleFileSelect);
     }
-    
-    initializeApp();
-    setupEventListeners();
-    
-    // Display user data immediately from localStorage
-    displayUserName();
-    
-    // Then try to fetch fresh user data
-    fetchAndStoreUserData();
-    
-    loadDeals();
-});
 
-function displayUserName() {
-    try {
-        const userData = JSON.parse(localStorage.getItem('userData'));
-        const userNameElement = document.getElementById('userDisplayName');
-        
-        let displayName = 'User';
-        
-        if (userData) {
-            // Priority: name -> username -> email -> 'User'
-            displayName = userData.name || userData.username || userData.email || 'User';
-            console.log('User data found:', { 
-                name: userData.name, 
-                username: userData.username, 
-                email: userData.email,
-                displayName: displayName
-            });
-        } else {
-            console.warn('No user data found in localStorage');
+    // Drag and drop
+    const uploadArea = document.querySelector('.file-upload-area');
+    if (uploadArea) {
+        uploadArea.addEventListener('dragover', handleDragOver);
+        uploadArea.addEventListener('drop', handleFileDrop);
+        uploadArea.addEventListener('dragleave', handleDragLeave);
+    }
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.dropdown')) {
+            closeAllDropdowns();
         }
-        
-        // Always update the display name
-        userNameElement.textContent = displayName;
-        
-        // Update avatar with letter
-        updateUserAvatar();
-        
-    } catch (error) {
-        console.error('Error displaying user name:', error);
-        const userNameElement = document.getElementById('userDisplayName');
-        userNameElement.textContent = 'User';
-        updateUserAvatar();
-    }
-}
+    });
 
-function setMinCloseDate() {
-    const closeDateInput = document.getElementById('closeDate');
-    if (closeDateInput) {
-        const today = new Date().toISOString().split('T')[0];
-        closeDateInput.min = today;
-    }
+    // Form validation
+    document.addEventListener('input', handleFormValidation);
+
+    // Pipeline stage click events
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.pipeline-stage')) {
+            const stage = e.target.closest('.pipeline-stage');
+            const stageValue = stage.getAttribute('data-stage');
+            document.getElementById('dealStage').value = stageValue;
+            updatePipelineVisual(stageValue);
+        }
+    });
+
+    // Escape key to close modals
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeAllModals();
+        }
+    });
 }
 
 // API Functions
@@ -740,11 +440,6 @@ async function loadDeals() {
             updatePagination();
             updateRecordCount();
             
-            // Trigger KPI animations after data loads
-            setTimeout(() => {
-                animateKpiValues();
-            }, 500);
-            
         } else {
             throw new Error('Failed to load deals');
         }
@@ -758,7 +453,6 @@ async function loadDeals() {
         showLoading(false);
     }
 }
-
 
 async function saveDealToAPI(dealData, isUpdate = false) {
     try {
@@ -1545,8 +1239,6 @@ function toggleSidebar() {
     }
 }
 
-
-
 function getDaysUntilClose(closeDate) {
     if (!closeDate) return '';
     
@@ -1919,6 +1611,7 @@ function openProfileModal() {
     // Ensure we're in view mode
     switchToViewMode();
 }
+
 function loadUserProfile() {
     try {
         const userData = JSON.parse(localStorage.getItem('userData'));
@@ -1950,12 +1643,15 @@ function loadUserProfile() {
             // Set last login
             const lastLogin = userData.lastLogin ? formatDate(userData.lastLogin) : 'Just now';
             document.getElementById('profileLastLogin').textContent = lastLogin;
+            
+            console.log('Profile loaded for:', displayName);
         }
     } catch (error) {
         console.error('Error loading user profile:', error);
         showNotification('Error loading profile data', 'error');
     }
 }
+
 function closeProfileModal() {
     document.getElementById('profileModal').style.display = 'none';
     switchToViewMode(); // Reset to view mode when closing
@@ -1965,7 +1661,6 @@ function switchToEditMode() {
     document.getElementById('profileViewMode').style.display = 'none';
     document.getElementById('profileEditMode').style.display = 'block';
 }
-
 
 function switchToViewMode() {
     document.getElementById('profileEditMode').style.display = 'none';
@@ -2062,6 +1757,7 @@ function handleAvatarUpload(files) {
         reader.readAsDataURL(file);
     }
 }
+
 function previewImage(input) {
     const preview = document.getElementById('imagePreview');
     
@@ -2077,6 +1773,7 @@ function previewImage(input) {
         preview.innerHTML = '';
     }
 }
+
 function openSettings() {
     closeAllDropdowns();
     showNotification('Opening settings...', 'info');
@@ -2119,5 +1816,63 @@ function viewNotification(id) {
     showNotification(`Viewing notification ${id}`, 'info');
 }
 
+function setMinCloseDate() {
+    const closeDateInput = document.getElementById('closeDate');
+    if (closeDateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        closeDateInput.min = today;
+    }
+}
 
-console.log('Deal Management System initialized with enhanced table styling and pagination');
+// KPI Animation Functions
+function animateKpiValues() {
+    const kpiValues = document.querySelectorAll('.kpi-value');
+    
+    kpiValues.forEach((value, index) => {
+        const currentValue = value.textContent;
+        
+        value.style.animation = 'none';
+        value.offsetHeight; // Trigger reflow
+        
+        setTimeout(() => {
+            value.style.animation = `countUp 0.8s ease-out ${index * 0.1}s both, pulse 1s ease ${index * 0.1 + 0.5}s`;
+            value.classList.add('animated');
+            
+            setTimeout(() => {
+                value.textContent = currentValue;
+            }, 500);
+        }, 100);
+    });
+}
+
+function setupKpiHoverEffects() {
+    const kpiCards = document.querySelectorAll('.kpi-card');
+    
+    kpiCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            const value = this.querySelector('.kpi-value');
+            const icon = this.querySelector('.kpi-icon');
+            
+            if (value) {
+                value.style.animation = 'pulse 0.5s ease, numberGlow 2s ease-in-out';
+            }
+            if (icon) {
+                icon.style.transform = 'scale(1.1) rotate(5deg)';
+            }
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            const icon = this.querySelector('.kpi-icon');
+            
+            if (icon) {
+                icon.style.transform = 'scale(1) rotate(0deg)';
+            }
+        });
+    });
+}
+
+function initializeKpiAnimations() {
+    // Initialize any KPI animations if needed
+}
+
+console.log('Deal Management System initialized with enhanced user profile and avatar system');
