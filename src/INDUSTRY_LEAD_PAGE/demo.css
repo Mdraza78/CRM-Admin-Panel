@@ -669,6 +669,48 @@ body {
     border-bottom: none; /* Remove the border-bottom line */
 }
 
+.industry-leads-table-view.active .table-container {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e9ecef;
+}
+
+.industry-leads-table-view.active .data-table {
+    width: 100%;
+    min-width: 100%;
+    border-collapse: collapse;
+    font-family: 'Inter', sans-serif;
+    table-layout: auto;
+}
+.industry-leads-table-view.active .data-table thead {
+    background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important;
+    border: none;
+    position: relative;
+    top: auto;
+    z-index: 10;
+    display: table-header-group;
+}
+.industry-leads-table-view.active .data-table th {
+    color: white;
+    padding: 18px 20px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border: none;
+    transition: none;
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+}
+
 .dashboard-header {
     background: transparent;
     padding: 0 0 20px 0;
@@ -717,7 +759,7 @@ body {
 }
 
 .page-header .header-left h1 i {
-    color: #667eea;
+    color: #00BCD4 !important;
 }
 
 .page-header .header-left p {
@@ -758,7 +800,7 @@ body {
 }
 
 .section-header h3 i {
-    color: #667eea;
+    color: #00BCD4 !important;
 }
 
 .filters-bar {
@@ -831,7 +873,7 @@ body {
 
 .view-btn.active {
     background: white;
-    color: #667eea;
+    color: #00BCD4 !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -930,23 +972,23 @@ body {
 }
 
 .lead-source-badge.email {
-    background-color: #e3f2fd;
-    color: #1976d2;
+ background-color: #e3f2fd;
+    color: #1976d2 !important;
 }
 
 .lead-source-badge.linkedin {
     background-color: #e8f5e8;
-    color: #0077b5;
+    color: #0077b5 !important;
 }
 
 .lead-source-badge.website {
     background-color: #fff3e0;
-    color: #f57c00;
+    color: #f57c00 !important;
 }
 
 .lead-source-badge.referral {
     background-color: #f3e5f5;
-    color: #7b1fa2;
+    color: #7b1fa2 !important;
 }
 
 .industry-lead-card-body {
@@ -1066,7 +1108,7 @@ body {
 
 .status-badge.new {
     background-color: #e3f2fd;
-    color: #1976d2;
+    color: #1976d2 !important;
 }
 
 .status-badge.contacted {
@@ -1570,6 +1612,113 @@ body {
     outline: none;
     border-color: #667eea;
     box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+.industry-leads-table-view.active .data-table th::after {
+    content: '↕';
+    margin-left: 8px;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.7);
+    opacity: 0.8;
+    font-weight: 400;
+}
+
+.industry-leads-table-view.active .data-table th:hover::after {
+    color: rgba(255, 255, 255, 0.7);
+    opacity: 0.8;
+}
+
+.industry-leads-table-view.active .data-table th:hover {
+    background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important;
+}
+
+.industry-leads-table-view.active .data-table th i {
+    margin-left: 8px;
+    opacity: 0.7;
+}
+.industry-leads-table-view.active .data-table td {
+    padding: 16px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 14px;
+    color: #475569;
+    vertical-align: middle;
+    transition: none;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+.industry-leads-table-view.active .data-table tr {
+    transition: none;
+}
+
+.industry-leads-table-view.active .data-table tr:last-child td {
+    border-bottom: none;
+}
+
+.industry-leads-table-view.active .data-table tbody {
+    background: white;
+    display: table-row-group;
+}
+
+/* Table Actions */
+.industry-leads-table-view.active .table-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.industry-leads-table-view.active .table-action-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    padding: 0;
+    font-size: 13px;
+    border: none;
+    transition: none;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.industry-leads-table-view.active .table-action-btn i {
+    font-size: 15px;
+    color: inherit;
+}
+
+.industry-leads-table-view.active .table-action-btn.edit:hover {
+    color: #f59e0b;
+}
+
+.industry-leads-table-view.active .table-action-btn.delete:hover {
+    color: #ef4444;
+}
+
+/* Table Scrollbar */
+.industry-leads-table-view.active .table-container::-webkit-scrollbar {
+    height: 12px;
+}
+
+.industry-leads-table-view.active .table-container::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 6px;
+    margin: 0 5px;
+}
+
+.industry-leads-table-view.active .table-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 6px;
+    border: 2px solid #f1f5f9;
+}
+
+.industry-leads-table-view.active .table-container::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
 }
 
 .form-textarea {

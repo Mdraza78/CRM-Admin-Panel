@@ -880,7 +880,9 @@ function renderLeadsTable() {
 }
 
 // View Management
+// View Management
 function switchView(view) {
+    console.log('Switching view to:', view);
     currentView = view;
     
     // Update view buttons
@@ -889,20 +891,34 @@ function switchView(view) {
     });
     document.querySelector(`[data-view="${view}"]`).classList.add('active');
     
-    // Update view containers
-    document.querySelectorAll('.industry-leads-cards-view, .industry-leads-table-view').forEach(container => {
-        container.classList.remove('active');
-    });
+    // Get the containers
+    const cardsView = document.getElementById('cardsView');
+    const tableView = document.getElementById('tableView');
     
+    if (!cardsView || !tableView) {
+        console.error('View containers not found!');
+        return;
+    }
+    
+    // CRITICAL: Reset itemsPerPage based on view
     if (view === 'cards') {
-        document.getElementById('cardsView').classList.add('active');
         itemsPerPage = 12;
-    } else {
-        document.getElementById('tableView').classList.add('active');
+        // Show cards, hide table
+        cardsView.style.display = 'block';
+        cardsView.classList.add('active');
+        tableView.style.display = 'none';
+        tableView.classList.remove('active');
+    } else if (view === 'table') {
         itemsPerPage = 15;
+        // Show table, hide cards
+        tableView.style.display = 'block';
+        tableView.classList.add('active');
+        cardsView.style.display = 'none';
+        cardsView.classList.remove('active');
     }
     
     currentPage = 1;
+    console.log('View switched. CurrentView:', currentView, 'ItemsPerPage:', itemsPerPage);
     loadLeads();
 }
 
