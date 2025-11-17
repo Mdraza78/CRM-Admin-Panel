@@ -186,8 +186,8 @@ function animateCurrencyCounter(element, startValue, endValue, duration = 2000) 
         
         const currentValue = Math.floor(startValue + (valueDifference * easeOutBack));
         
-        // Format as currency
-        element.textContent = `$${currentValue.toLocaleString()}`;
+        // Remove the extra $ prefix since it's already in the HTML
+        element.textContent = `${currentValue.toLocaleString()}`;
         
         // Enhanced visual effects for money
         if (progress < 1) {
@@ -224,7 +224,6 @@ function animateCurrencyCounter(element, startValue, endValue, duration = 2000) 
     
     requestAnimationFrame(updateCurrency);
 }
-
 function animateKpiValues() {
     const kpiValues = document.querySelectorAll('.kpi-value');
     
