@@ -694,6 +694,7 @@ body {
     z-index: 10;
     display: table-header-group;
 }
+
 .industry-leads-table-view.active .data-table th {
     color: white;
     padding: 18px 20px;
@@ -710,6 +711,7 @@ body {
     font-family: 'Inter', sans-serif;
     white-space: nowrap;
 }
+
 
 .dashboard-header {
     background: transparent;
@@ -1646,7 +1648,6 @@ body {
     line-height: 1.4;
     white-space: nowrap;
 }
-
 .industry-leads-table-view.active .data-table tr {
     transition: none;
 }
@@ -1687,6 +1688,7 @@ body {
     flex-shrink: 0;
 }
 
+
 .industry-leads-table-view.active .table-action-btn i {
     font-size: 15px;
     color: inherit;
@@ -1704,7 +1706,6 @@ body {
 .industry-leads-table-view.active .table-container::-webkit-scrollbar {
     height: 12px;
 }
-
 .industry-leads-table-view.active .table-container::-webkit-scrollbar-track {
     background: #f1f5f9;
     border-radius: 6px;
