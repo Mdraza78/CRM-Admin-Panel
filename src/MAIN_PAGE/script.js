@@ -78,6 +78,95 @@ function setupNavigationEventListeners() {
     });
 }
 
+// Initialize KPI card animations
+function initializeKpiAnimations() {
+    console.log('Initializing KPI card animations...');
+    
+    // Add animation classes to KPI cards
+    const kpiCards = document.querySelectorAll('.kpi-card');
+    const kpiValues = document.querySelectorAll('.kpi-value');
+    
+    kpiCards.forEach((card, index) => {
+        // Reset animation
+        card.style.animation = 'none';
+        card.offsetHeight; // Trigger reflow
+        
+        // Apply staggered animation
+        setTimeout(() => {
+            card.style.animation = `fadeInUp 0.6s ease-out ${index * 0.1}s both`;
+        }, 100);
+    });
+    
+    kpiValues.forEach((value, index) => {
+        // Reset animation
+        value.style.animation = 'none';
+        value.offsetHeight; // Trigger reflow
+        
+        // Apply counting animation
+        setTimeout(() => {
+            value.style.animation = `countUp 0.8s ease-out ${index * 0.1 + 0.2}s both`;
+            value.classList.add('animated');
+        }, 300);
+    });
+}
+function animateKpiValues() {
+    const kpiValues = document.querySelectorAll('.kpi-value');
+    
+    kpiValues.forEach((value, index) => {
+        // Store current value for counting animation
+        const currentValue = value.textContent;
+        
+        // Reset to 0 for counting effect (optional)
+        // value.textContent = '0';
+        
+        // Trigger animation
+        value.style.animation = 'none';
+        value.offsetHeight; // Trigger reflow
+        
+        setTimeout(() => {
+            value.style.animation = `countUp 0.8s ease-out ${index * 0.1}s both, pulse 1s ease ${index * 0.1 + 0.5}s`;
+            value.classList.add('animated');
+            
+            // Restore actual value after animation
+            setTimeout(() => {
+                value.textContent = currentValue;
+            }, 500);
+        }, 100);
+    });
+}
+
+// Hover animation enhancement
+function setupKpiHoverEffects() {
+    const kpiCards = document.querySelectorAll('.kpi-card');
+    
+    kpiCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            const value = this.querySelector('.kpi-value');
+            const icon = this.querySelector('.kpi-icon');
+            const label = this.querySelector('.kpi-label');
+            const change = this.querySelector('.kpi-change');
+            
+            // Add hover animations
+            if (value) {
+                value.style.animation = 'pulse 0.5s ease, numberGlow 2s ease-in-out';
+            }
+            if (icon) {
+                icon.style.transform = 'scale(1.1) rotate(5deg)';
+            }
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            const icon = this.querySelector('.kpi-icon');
+            
+            // Reset icon transform
+            if (icon) {
+                icon.style.transform = 'scale(1) rotate(0deg)';
+            }
+        });
+    });
+}
+
+
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Deal.js - DOM Content Loaded');
@@ -93,6 +182,12 @@ function initializeApp() {
     showDealsList();
     updatePagination();
     setMinCloseDate();
+    
+    // Initialize animations
+    setTimeout(() => {
+        initializeKpiAnimations();
+        setupKpiHoverEffects();
+    }, 1000);
 }
 
 function setupEventListeners() {
@@ -129,6 +224,38 @@ function setupEventListeners() {
             updatePipelineVisual(stageValue);
         }
     });
+
+    function updateKpiCards() {
+    // Calculate real metrics from your deals data
+    const totalLeads = deals.length;
+    const activeDeals = deals.filter(deal => 
+        deal.stage !== 'Won' && deal.stage !== 'Lost'
+    ).length;
+    const revenue = deals
+        .filter(deal => deal.stage === 'Won')
+        .reduce((sum, deal) => sum + (deal.value || 0), 0);
+    const tasksDue = deals.filter(deal => {
+        if (!deal.closeDate) return false;
+        const closeDate = new Date(deal.closeDate);
+        const today = new Date();
+        const diffTime = closeDate - today;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays <= 7 && diffDays >= 0; // Tasks due within 7 days
+    }).length;
+
+    // Update KPI cards
+    const kpiValues = document.querySelectorAll('.kpi-value');
+    if (kpiValues.length >= 4) {
+        kpiValues[0].textContent = totalLeads.toLocaleString();
+        kpiValues[1].textContent = activeDeals.toLocaleString();
+        kpiValues[2].textContent = `$${revenue.toLocaleString()}`;
+        kpiValues[3].textContent = tasksDue.toLocaleString();
+        
+        // Trigger animations
+        animateKpiValues();
+    }
+}
+
 
     // Escape key to close modals
     document.addEventListener('keydown', function(e) {
@@ -235,6 +362,12 @@ async function loadDeals() {
             renderDealsTable();
             updatePagination();
             updateRecordCount();
+            
+            // Trigger KPI animations after data loads
+            setTimeout(() => {
+                animateKpiValues();
+            }, 500);
+            
         } else {
             throw new Error('Failed to load deals');
         }
@@ -248,6 +381,7 @@ async function loadDeals() {
         showLoading(false);
     }
 }
+
 
 async function saveDealToAPI(dealData, isUpdate = false) {
     try {
