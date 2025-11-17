@@ -1644,9 +1644,172 @@ function toggleNotifications() {
 
 function viewProfile() {
     closeAllDropdowns();
-    showNotification('Profile feature coming soon', 'info');
+    openProfileModal();
 }
 
+function openProfileModal() {
+    // Load user data first
+    loadUserProfile();
+    
+    // Show the modal
+    document.getElementById('profileModal').style.display = 'flex';
+    
+    // Ensure we're in view mode
+    switchToViewMode();
+}
+function loadUserProfile() {
+    try {
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        
+        if (userData) {
+            // Update profile view mode
+            document.getElementById('profileName').textContent = userData.name || 'User';
+            document.getElementById('profileUsername').textContent = userData.username || '-';
+            document.getElementById('profileEmail').textContent = userData.email || '-';
+            document.getElementById('profileUserId').textContent = userData.id || userData._id || '-';
+            
+            // Update edit mode form fields
+            document.getElementById('editName').value = userData.name || '';
+            document.getElementById('editUsername').value = userData.username || '';
+            document.getElementById('editEmail').value = userData.email || '';
+            
+            // Set member since date
+            const memberSince = userData.createdAt ? new Date(userData.createdAt).getFullYear() : new Date().getFullYear();
+            document.getElementById('profileMemberSince').textContent = memberSince;
+            
+            // Set last login
+            const lastLogin = userData.lastLogin ? formatDate(userData.lastLogin) : 'Just now';
+            document.getElementById('profileLastLogin').textContent = lastLogin;
+            
+            // Update user display name in sidebar
+            document.getElementById('userDisplayName').textContent = userData.name || userData.username || 'User';
+        }
+    } catch (error) {
+        console.error('Error loading user profile:', error);
+        showNotification('Error loading profile data', 'error');
+    }
+}
+function closeProfileModal() {
+    document.getElementById('profileModal').style.display = 'none';
+    switchToViewMode(); // Reset to view mode when closing
+}
+
+function switchToEditMode() {
+    document.getElementById('profileViewMode').style.display = 'none';
+    document.getElementById('profileEditMode').style.display = 'block';
+}
+
+
+function switchToViewMode() {
+    document.getElementById('profileEditMode').style.display = 'none';
+    document.getElementById('profileViewMode').style.display = 'block';
+}
+
+function handleProfileUpdate(event) {
+    event.preventDefault();
+    
+    const name = document.getElementById('editName').value.trim();
+    const username = document.getElementById('editUsername').value.trim();
+    const email = document.getElementById('editEmail').value.trim();
+    const currentPassword = document.getElementById('editCurrentPassword').value;
+    const newPassword = document.getElementById('editNewPassword').value;
+    const confirmPassword = document.getElementById('editConfirmPassword').value;
+    
+    // Basic validation
+    if (!name || !username || !email) {
+        showNotification('Please fill in all required fields', 'error');
+        return;
+    }
+    
+    if (newPassword && newPassword !== confirmPassword) {
+        showNotification('New passwords do not match', 'error');
+        return;
+    }
+    
+    if (newPassword && newPassword.length < 6) {
+        showNotification('Password must be at least 6 characters long', 'error');
+        return;
+    }
+    
+    // Here you would typically make an API call to update the profile
+    // For now, we'll update localStorage and show a success message
+    
+    try {
+        const userData = JSON.parse(localStorage.getItem('userData')) || {};
+        
+        // Update user data
+        userData.name = name;
+        userData.username = username;
+        userData.email = email;
+        
+        // Save updated data
+        localStorage.setItem('userData', JSON.stringify(userData));
+        
+        // Update UI
+        document.getElementById('userDisplayName').textContent = name;
+        
+        showNotification('Profile updated successfully!', 'success');
+        switchToViewMode();
+        loadUserProfile(); // Refresh profile data
+        
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        showNotification('Error updating profile', 'error');
+    }
+}
+
+function triggerAvatarUpload() {
+    document.getElementById('avatarUpload').click();
+}
+
+function handleAvatarUpload(files) {
+    if (files && files[0]) {
+        const file = files[0];
+        
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            showNotification('Please select an image file', 'error');
+            return;
+        }
+        
+        // Validate file size (5MB max)
+        if (file.size > 5 * 1024 * 1024) {
+            showNotification('Image size must be less than 5MB', 'error');
+            return;
+        }
+        
+        // Create preview
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const userAvatar = document.querySelector('.user-avatar-large');
+            const profileAvatar = document.querySelector('.user-avatar');
+            
+            if (userAvatar) userAvatar.src = e.target.result;
+            if (profileAvatar) profileAvatar.src = e.target.result;
+            
+            showNotification('Profile picture updated!', 'success');
+        };
+        reader.readAsDataURL(file);
+        
+        // Here you would typically upload to server
+        // uploadAvatarToServer(file);
+    }
+}
+function previewImage(input) {
+    const preview = document.getElementById('imagePreview');
+    
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            preview.innerHTML = `<img src="${e.target.result}" style="max-width: 200px; max-height: 200px; border-radius: 8px;" alt="Preview">`;
+        };
+        
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        preview.innerHTML = '';
+    }
+}
 function openSettings() {
     closeAllDropdowns();
     showNotification('Opening settings...', 'info');
