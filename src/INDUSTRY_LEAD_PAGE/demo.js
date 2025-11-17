@@ -104,6 +104,33 @@ function initializeLeads() {
     setupNavigationEventListeners(); // ✅ ADD THIS LINE
 }
 
+function getUserData() {
+    try {
+        const userDataString = localStorage.getItem('userData');
+        console.log('👤 Raw userData from localStorage:', userDataString);
+        
+        if (!userDataString) {
+            console.warn('❌ No user data found in localStorage');
+            return null;
+        }
+        
+        const userData = JSON.parse(userDataString);
+        console.log('👤 Parsed userData:', userData);
+        
+        // Validate required fields
+        if (userData && userData.id && userData.name) {
+            return userData;
+        } else {
+            console.warn('❌ User data missing required fields');
+            return null;
+        }
+        
+    } catch (error) {
+        console.error('❌ Error parsing user data:', error);
+        return null;
+    }
+}
+
 function setupEventListeners() {
     // ✅ ADD: Navigation event listeners
     setupNavigationEventListeners();
