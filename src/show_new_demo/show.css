@@ -591,13 +591,14 @@ body {
 .main-content {
     flex: 1;
     padding: 40px;
-    max-width: 1800px;
-    margin: 0 auto;
+    max-width: none;  /* Remove max-width constraint */
+    margin: 0;
     width: 100%;
     background: #f8f9fa;
     transition: all 0.3s ease;
     margin-left: 220px;
-    overflow-x: hidden;  /* Prevent main content horizontal overflow */
+    overflow-x: hidden;  /* Hide any overflow from main-content */
+    box-sizing: border-box;
 }
 
 .toggle-hr {
@@ -953,24 +954,30 @@ body {
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     border: 1px solid #e9ecef;
-    overflow: hidden;  /* Prevent content overflow */
+    width: 100%;
+    box-sizing: border-box;
 }
 .show-leads-container {
     margin-bottom: 30px;
 }
 
 .table-wrapper {
-    overflow-x: auto;
+    width: 100%;
+    overflow-x: auto;  /* Enable horizontal scroll */
+    overflow-y: visible;
     border-radius: 12px;
     border: 1px solid #e2e8f0;
     background: white;
     margin-bottom: 1rem;
-    width: 100%;  /* Ensure full width */
-    box-sizing: border-box;  /* Include borders in width calculation */
+    -webkit-overflow-scrolling: touch;  /* Smooth scroll on iOS */
+        scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 #f1f5f9;
 }
-.show-leads-cards-view,
-.show-leads-table-view {
+.show-leads-cards-view{
     display: none;
+}
+.show-leads-table-view {
+    overflow: visible;  /* Allow overflow to be handled by wrapper */
 }
 
 .show-leads-cards-view.active,
@@ -1183,23 +1190,22 @@ body {
 
 /* Table View */
 .table-container {
+    display: inline-block;  /* Important: allows overflow */
     min-width: 100%;
-    width: max-content;
-    overflow-x: auto;  /* Allow horizontal scroll ONLY in this container */
+    width: auto;  /* Let it expand as needed */
 }
-
 .data-table {
-    width: 100%;
+    width: auto;  /* Auto width based on content */
+    min-width: 100%;  /* At least 100% of parent */
     background: white;
     border-collapse: collapse;
     font-family: 'Inter', sans-serif;
-    min-width: 1200px;
 }
 .data-table thead {
     background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important;
     border: none;
-    position: relative;  /* Changed from sticky to relative */
-    top: auto;  /* Remove top positioning */
+    position: relative;
+    top: auto;
     z-index: 10;
 }
 
@@ -1264,6 +1270,7 @@ body {
 
 
 
+
 .data-table tr:last-child td {
     border-bottom: none;
 }
@@ -1289,6 +1296,7 @@ body {
     border: none;
     transition: none;
     cursor: pointer;
+    flex-shrink: 0;
 }
 
 .table-action-btn i {
@@ -1306,17 +1314,22 @@ body {
 }
 
 .table-wrapper::-webkit-scrollbar {
-    height: 10px;
+    height: 12px;
 }
+
+
 .table-wrapper::-webkit-scrollbar-track {
     background: #f1f5f9;
-    border-radius: 4px;
+    border-radius: 6px;
+    margin: 0 5px;
 }
 
 .table-wrapper::-webkit-scrollbar-thumb {
     background: #cbd5e1;
-    border-radius: 4px;
+    border-radius: 6px;
+    border: 2px solid #f1f5f9;
 }
+
 
 
 .table-wrapper::-webkit-scrollbar-thumb:hover {
@@ -1473,6 +1486,7 @@ body {
     width: 18px;
     height: 18px;
     accent-color: #1E88E5;
+    flex-shrink: 0;
 }
 
 /* Search Container */
