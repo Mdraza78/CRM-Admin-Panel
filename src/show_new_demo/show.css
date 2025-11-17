@@ -1216,10 +1216,11 @@ body {
     letter-spacing: 0.8px;
     border: none;
     border-right: none;
-    transition: all 0.3s ease;
+    transition: none;  /* Disable transitions */
     font-family: 'Inter', sans-serif;
     white-space: nowrap;
 }
+
 
 .data-table th::after {
     content: '↕';
@@ -1227,7 +1228,6 @@ body {
     font-size: 10px;
     color: rgba(255, 255, 255, 0.7);
     opacity: 0.8;
-    transition: all 0.3s ease;
     font-weight: 400;
 }
 
@@ -1251,18 +1251,16 @@ body {
     font-size: 14px;
     color: #475569;
     vertical-align: middle;
-    transition: all 0.2s ease;
+    transition: none;  /* Disable transitions */
     font-family: 'Inter', sans-serif;
     line-height: 1.4;
     white-space: nowrap;
 }
 .data-table tr {
-    transition: all 0.3s ease;
+    transition: none;  /* Disable transitions */
 }
 
-.data-table tr:hover {
-    background-color: #f8fafc;
-}
+
 
 .data-table tr:last-child td {
     border-bottom: none;
@@ -1288,7 +1286,7 @@ body {
     padding: 0;
     font-size: 13px;
     border: none;
-    transition: color 0.2s, background 0.3s, transform 0.3s;
+    transition: none;  /* Disable transitions */
     cursor: pointer;
 }
 
@@ -1297,11 +1295,6 @@ body {
     color: inherit;
 }
 
-.table-action-btn:hover {
-    background-color: #e0e6ed;
-    color: #1E88E5;
-    transform: scale(1.07);
-}
 
 .table-action-btn.edit:hover {
     color: #f59e0b;
@@ -1312,23 +1305,21 @@ body {
 }
 
 .table-wrapper::-webkit-scrollbar {
-    height: 8px;
+    height: 10px;  /* Make scrollbar more visible */
 }
-
 .table-wrapper::-webkit-scrollbar-track {
     background: #f1f5f9;
     border-radius: 4px;
-    margin: 0 10px;
 }
 
 .table-wrapper::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
+    background: #cbd5e1;
     border-radius: 4px;
-    border: 2px solid #f1f5f9;
 }
 
+
 .table-wrapper::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
+    background: #94a3b8;
 }
 
 /* Bulk Actions */
@@ -1482,6 +1473,7 @@ body {
     height: 18px;
     accent-color: #1E88E5;
 }
+
 /* Search Container */
 .search-container {
     position: relative;
@@ -1796,6 +1788,10 @@ body {
     justify-content: space-between;
     padding: 8px 0;
     border-bottom: 1px solid #e9ecef;
+}
+
+.data-table tbody {
+    background: white;
 }
 
 .data-table tbody tr:last-child td {
