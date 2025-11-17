@@ -60,7 +60,7 @@ body {
 
 
 .app-container.sidebar-collapsed .header-content,
-.app-container.sidebar-collapsed .header-left,
+.app-container.sidebar-collapsed .header .header-left,
 .app-container.sidebar-collapsed .logo,
 .app-container.sidebar-collapsed .main-nav,
 .app-container.sidebar-collapsed .user-profile,
