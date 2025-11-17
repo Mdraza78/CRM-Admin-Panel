@@ -713,23 +713,31 @@ body {
 
 
 .action-btn {
-    width: 18px;     /* Smaller width */
-    height: 18px;    /* Smaller height */
-    font-size: 10px; /* Smaller font for icons */
-    border-radius: 3px;
-    padding: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    padding: 3px;         /* or padding: 3px; for more comfort */
+    font-size: 13px;
+    transition: color 0.2s, background 0.3s, transform 0.3s;
+    border: none;
 }
 
 .action-btn i {
-    font-size: 12px; /* Small icon size */
+    font-size: 15px;    /* Keep icon crisp but not too large */
+    color: inherit;
 }
 
 
 
 .action-btn:hover {
-    background-color: #f8fafc;
+    background-color: #e0e6ed;
     color: #1E88E5;
-    transform: scale(1.1);
+    transform: scale(1.07);
 }
 .action-btn .fa-edit:hover {
     color: #f6c700;
