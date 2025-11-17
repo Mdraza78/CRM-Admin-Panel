@@ -282,15 +282,23 @@ function setupKpiHoverEffects() {
 }
 
 
+
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Deal.js - DOM Content Loaded');
     initializeApp();
     setupEventListeners();
+    
+    // First try to display existing user data
     displayUserName();
+    
+    // Then try to fetch fresh user data if we have a token
+    if (localStorage.getItem('authToken')) {
+        fetchAndStoreUserData();
+    }
+    
     loadDeals();
 });
-
 function initializeApp() {
     console.log('Deal Management System initialized with backend integration');
     setupNavigationEventListeners();
@@ -303,6 +311,88 @@ function initializeApp() {
         initializeKpiAnimations();
         setupKpiHoverEffects();
     }, 1000);
+}
+
+// Function to create letter avatar
+function createLetterAvatar(name, element) {
+    if (!name || name === 'User') {
+        // Use default avatar if no name
+        element.src = '/Logo.png';
+        element.alt = 'User';
+        return;
+    }
+
+    // Get first letter of the name
+    const firstLetter = name.charAt(0).toUpperCase();
+    
+    // Create canvas for letter avatar
+    const canvas = document.createElement('canvas');
+    const size = 200; // Higher resolution for better quality
+    canvas.width = size;
+    canvas.height = size;
+    const context = canvas.getContext('2d');
+
+    // Generate consistent color based on name
+    const colors = [
+        '#00BCD4', '#1E88E5', '#2D5BFF', '#667eea', '#764ba2',
+        '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'
+    ];
+    const colorIndex = name.charCodeAt(0) % colors.length;
+    const backgroundColor = colors[colorIndex];
+
+    // Draw background
+    context.fillStyle = backgroundColor;
+    context.fillRect(0, 0, size, size);
+
+    // Draw letter
+    context.fillStyle = '#FFFFFF';
+    context.font = `bold ${size * 0.4}px Inter, Arial, sans-serif`;
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.fillText(firstLetter, size / 2, size / 2);
+
+    // Convert to data URL and set as image source
+    element.src = canvas.toDataURL();
+    element.alt = name;
+}
+
+// Function to update all user avatars
+function updateUserAvatar() {
+    try {
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        const userName = userData ? (userData.name || userData.username || userData.email || 'User') : 'User';
+        
+        // Update all avatar elements
+        const avatarElements = document.querySelectorAll('.user-avatar, .user-avatar-large');
+        
+        avatarElements.forEach(avatar => {
+            if (avatar.tagName === 'IMG') {
+                createLetterAvatar(userName, avatar);
+            }
+        });
+
+        console.log('Avatar updated for user:', userName);
+    } catch (error) {
+        console.error('Error updating avatar:', error);
+        // Fallback to default image
+        const avatarElements = document.querySelectorAll('.user-avatar, .user-avatar-large');
+        avatarElements.forEach(avatar => {
+            if (avatar.tagName === 'IMG') {
+                avatar.src = '/Logo.png';
+            }
+        });
+    }
+}
+
+// Function to get display name
+function getDisplayName() {
+    try {
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        return userData ? (userData.name || userData.username || userData.email || 'User') : 'User';
+    } catch (error) {
+        console.error('Error getting display name:', error);
+        return 'User';
+    }
 }
 
 function setupEventListeners() {
@@ -379,21 +469,65 @@ function setupEventListeners() {
         }
     });
 }
+async function fetchAndStoreUserData() {
+    try {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            console.log('No auth token found');
+            return;
+        }
+
+        const response = await fetch(`${API_BASE_URL}/auth/me`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            const userData = await response.json();
+            localStorage.setItem('userData', JSON.stringify(userData));
+            console.log('User data stored:', userData);
+            
+            // Update the UI immediately
+            displayUserName();
+            updateUserAvatar(); // This will now create letter avatars
+        } else {
+            console.error('Failed to fetch user data:', response.status);
+        }
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+    }
+}
 
 function displayUserName() {
     try {
         const userData = JSON.parse(localStorage.getItem('userData'));
-        const userNameElement = document.querySelector('.user-name');
+        const userNameElement = document.getElementById('userDisplayName');
         
-        if (userData && userData.name) {
-            userNameElement.textContent = userData.name;
-        } else {
-            const displayName = userData?.username || userData?.email || 'User';
+        if (userData) {
+            // Priority: name -> username -> email -> 'User'
+            const displayName = userData.name || userData.username || userData.email || 'User';
             userNameElement.textContent = displayName;
+            
+            // Update avatar with letter
+            updateUserAvatar();
+            
+            console.log('User data loaded and avatar updated:', {
+                name: userData.name,
+                username: userData.username,
+                email: userData.email
+            });
+        } else {
+            console.warn('No user data found in localStorage');
+            userNameElement.textContent = 'User';
+            updateUserAvatar(); // Update with default
         }
     } catch (error) {
         console.error('Error displaying user name:', error);
-        document.querySelector('.user-name').textContent = 'User';
+        document.getElementById('userDisplayName').textContent = 'User';
+        updateUserAvatar(); // Update with default
     }
 }
 
@@ -1662,8 +1796,10 @@ function loadUserProfile() {
         const userData = JSON.parse(localStorage.getItem('userData'));
         
         if (userData) {
+            const displayName = userData.name || userData.username || userData.email || 'User';
+            
             // Update profile view mode
-            document.getElementById('profileName').textContent = userData.name || 'User';
+            document.getElementById('profileName').textContent = displayName;
             document.getElementById('profileUsername').textContent = userData.username || '-';
             document.getElementById('profileEmail').textContent = userData.email || '-';
             document.getElementById('profileUserId').textContent = userData.id || userData._id || '-';
@@ -1672,6 +1808,12 @@ function loadUserProfile() {
             document.getElementById('editName').value = userData.name || '';
             document.getElementById('editUsername').value = userData.username || '';
             document.getElementById('editEmail').value = userData.email || '';
+            
+            // Update avatar in profile modal
+            const profileAvatar = document.querySelector('.user-avatar-large');
+            if (profileAvatar) {
+                createLetterAvatar(displayName, profileAvatar);
+            }
             
             // Set member since date
             const memberSince = userData.createdAt ? new Date(userData.createdAt).getFullYear() : new Date().getFullYear();
@@ -1682,7 +1824,7 @@ function loadUserProfile() {
             document.getElementById('profileLastLogin').textContent = lastLogin;
             
             // Update user display name in sidebar
-            document.getElementById('userDisplayName').textContent = userData.name || userData.username || 'User';
+            document.getElementById('userDisplayName').textContent = displayName;
         }
     } catch (error) {
         console.error('Error loading user profile:', error);
@@ -1788,11 +1930,11 @@ function handleAvatarUpload(files) {
             if (profileAvatar) profileAvatar.src = e.target.result;
             
             showNotification('Profile picture updated!', 'success');
+            
+            // Here you would typically upload to server and update user data
+            // For now, we'll keep using letter avatars for consistency
         };
         reader.readAsDataURL(file);
-        
-        // Here you would typically upload to server
-        // uploadAvatarToServer(file);
     }
 }
 function previewImage(input) {
