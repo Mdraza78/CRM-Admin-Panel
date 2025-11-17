@@ -1011,17 +1011,11 @@ function renderDealsTable() {
             </td>
             <td><span class="priority-badge ${deal.priority.toLowerCase()}">${deal.priority}</span></td>
             <td>${deal.assignedOwner || '-'}</td>
-<td class="actions-cell">
-    <button class="action-btn" title="View" onclick="viewDeal(deal.id)">
-        <i class="fas fa-eye"></i>
-    </button>
-    <button class="action-btn" title="Edit" onclick="editDeal(deal.id)">
-        <i class="fas fa-edit"></i>
-    </button>
-    <button class="action-btn" title="Delete" onclick="deleteDeal(deal.id)">
-        <i class="fas fa-trash"></i>
-    </button>
-</td>
+    <td class="actions-cell">
+        <button class="action-btn" title="View" onclick="event.stopPropagation(); viewDeal('${deal.id}')"><i class="fas fa-eye"></i></button>
+        <button class="action-btn" title="Edit" onclick="event.stopPropagation(); editDeal('${deal.id}')"><i class="fas fa-edit"></i></button>
+        <button class="action-btn" title="Delete" onclick="event.stopPropagation(); deleteDeal('${deal.id}')"><i class="fas fa-trash"></i></button>
+    </td>
 
 
         `;
