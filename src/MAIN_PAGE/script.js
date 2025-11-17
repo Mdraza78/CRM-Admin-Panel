@@ -190,29 +190,27 @@ function displayUserName() {
         const userData = JSON.parse(localStorage.getItem('userData'));
         const userNameElement = document.getElementById('userDisplayName');
         
-        let displayName = 'User';
+        console.log('displayUserName called - User data:', userData);
         
         if (userData) {
             // Priority: name -> username -> email -> 'User'
-            displayName = userData.name || userData.username || userData.email || 'User';
-            console.log('User data found:', { 
-                name: userData.name, 
-                username: userData.username, 
-                email: userData.email,
-                displayName: displayName
-            });
+            const displayName = userData.name || userData.username || userData.email || 'User';
+            console.log('Setting display name to:', displayName);
+            
+            if (userNameElement) {
+                userNameElement.textContent = displayName;
+            }
+            
+            // Update avatar with letter
+            updateUserAvatar();
+            
         } else {
             console.warn('No user data found in localStorage');
+            if (userNameElement) {
+                userNameElement.textContent = 'User';
+            }
+            updateUserAvatar();
         }
-        
-        // Always update the display name
-        if (userNameElement) {
-            userNameElement.textContent = displayName;
-        }
-        
-        // Update avatar with letter
-        updateUserAvatar();
-        
     } catch (error) {
         console.error('Error displaying user name:', error);
         const userNameElement = document.getElementById('userDisplayName');
@@ -222,6 +220,25 @@ function displayUserName() {
         updateUserAvatar();
     }
 }
+
+// Debug function to check DOM elements
+function debugDOMElements() {
+    console.log('=== DOM ELEMENTS DEBUG ===');
+    const userNameElement = document.getElementById('userDisplayName');
+    const userAvatarElement = document.getElementById('userAvatar');
+    
+    console.log('userNameElement exists:', !!userNameElement);
+    console.log('userAvatarElement exists:', !!userAvatarElement);
+    
+    if (userNameElement) {
+        console.log('userNameElement current text:', userNameElement.textContent);
+    }
+    
+    console.log('=======================');
+}
+
+// Call this in DOMContentLoaded after a short delay to ensure DOM is ready
+setTimeout(debugDOMElements, 1000);
 
 // Debug function to check user data
 function debugUserData() {
@@ -243,18 +260,15 @@ function debugUserData() {
     console.log('=======================');
 }
 
-// Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Dashboard - DOM Content Loaded');
     
     // Check for authentication
     const token = localStorage.getItem('authToken');
-    const userData = localStorage.getItem('userData');
     
     console.log('Auth check:', { 
-        hasToken: !!token, 
-        hasUserData: !!userData,
-        userData: userData ? JSON.parse(userData) : null
+        hasToken: !!token,
+        token: token ? 'Exists' : 'Missing'
     });
     
     if (!token) {
@@ -263,19 +277,26 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
     
-    // Debug user data
-    debugUserData();
+    // STEP 1: Try to load user data immediately from localStorage
+    const hasUserData = loadUserDataImmediately();
     
+    // STEP 2: Initialize the app
     initializeApp();
     setupEventListeners();
     
-    // Display user data immediately from localStorage
-    displayUserName();
+    // STEP 3: If we don't have user data, fetch it from API
+    if (!hasUserData) {
+        console.log('Fetching fresh user data from API...');
+        fetchAndStoreUserData();
+    } else {
+        console.log('Using existing user data from localStorage');
+    }
     
-    // Then try to fetch fresh user data
-    fetchAndStoreUserData();
-    
+    // STEP 4: Load deals data
     loadDeals();
+    
+    // STEP 5: Debug info
+    debugUserData();
 });
 
 function initializeApp() {
@@ -300,6 +321,8 @@ async function fetchAndStoreUserData() {
             return;
         }
 
+        console.log('Fetching user data from API...');
+        
         const response = await fetch(`${API_BASE_URL}/auth/me`, {
             method: 'GET',
             headers: {
@@ -310,14 +333,19 @@ async function fetchAndStoreUserData() {
 
         if (response.ok) {
             const userData = await response.json();
+            console.log('API user data response:', userData);
+            
+            // Store user data
             localStorage.setItem('userData', JSON.stringify(userData));
-            console.log('User data stored:', userData);
+            console.log('User data stored in localStorage');
             
             // Update the UI immediately
             displayUserName();
-            updateUserAvatar();
+            console.log('UI updated with new user data');
         } else {
-            console.error('Failed to fetch user data:', response.status);
+            console.error('Failed to fetch user data. Status:', response.status);
+            const errorText = await response.text();
+            console.error('Error response:', errorText);
         }
     } catch (error) {
         console.error('Error fetching user data:', error);
@@ -1599,6 +1627,33 @@ function toggleNotifications() {
 function viewProfile() {
     closeAllDropdowns();
     openProfileModal();
+}
+function loadUserDataImmediately() {
+    console.log('=== LOADING USER DATA IMMEDIATELY ===');
+    
+    // Check if we have user data in localStorage
+    const userData = localStorage.getItem('userData');
+    const authToken = localStorage.getItem('authToken');
+    
+    console.log('Auth token exists:', !!authToken);
+    console.log('User data in localStorage:', userData);
+    
+    if (userData) {
+        try {
+            const parsedData = JSON.parse(userData);
+            console.log('Parsed user data:', parsedData);
+            
+            // Immediately update the UI
+            displayUserName();
+            return true;
+        } catch (error) {
+            console.error('Error parsing user data from localStorage:', error);
+        }
+    } else {
+        console.log('No user data found in localStorage, will fetch from API');
+    }
+    
+    return false;
 }
 
 function openProfileModal() {
