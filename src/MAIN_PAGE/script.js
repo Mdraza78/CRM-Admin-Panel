@@ -78,18 +78,8 @@ function setupNavigationEventListeners() {
     });
 }
 
-// Function to generate consistent color based on name
-function getAvatarColor(name) {
-    const colors = [
-        '#00BCD4', '#1E88E5', '#2D5BFF', '#667eea', '#764ba2',
-        '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899',
-        '#00BCD4', '#1E88E5', '#2D5BFF', '#667eea', '#764ba2'
-    ];
-    if (!name || name === 'User' || name === 'Loading...') {
-        return '#00BCD4'; // Default color
-    }
-    const colorIndex = name.charCodeAt(0) % colors.length;
-    return colors[colorIndex];
+function getAvatarColor() {
+    return 'linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%)';
 }
 
 // Function to create letter avatar
@@ -100,7 +90,7 @@ function createLetterAvatar(name, element) {
 
     // Get first letter of the name
     const firstLetter = name.charAt(0).toUpperCase();
-    const backgroundColor = getAvatarColor(name);
+    const backgroundColor = getAvatarColor();
 
     if (element.tagName === 'IMG') {
         // For image elements, create canvas avatar
@@ -110,8 +100,13 @@ function createLetterAvatar(name, element) {
         canvas.height = size;
         const context = canvas.getContext('2d');
 
-        // Draw background
-        context.fillStyle = backgroundColor;
+        // Create gradient for canvas
+        const gradient = context.createLinearGradient(0, 0, size, size);
+        gradient.addColorStop(0, '#00BCD4');
+        gradient.addColorStop(1, '#1E88E5');
+
+        // Draw background with gradient
+        context.fillStyle = gradient;
         context.fillRect(0, 0, size, size);
 
         // Draw letter
@@ -124,7 +119,7 @@ function createLetterAvatar(name, element) {
         element.src = canvas.toDataURL();
         element.alt = name;
     } else {
-        // For div elements (like in sidebar), update directly
+        // For div elements (like in sidebar), use CSS gradient directly
         element.style.background = backgroundColor;
         const letterSpan = element.querySelector('.avatar-letter');
         if (letterSpan) {
@@ -140,6 +135,7 @@ function createLetterAvatar(name, element) {
     }
 }
 
+// Function to update all user avatars
 // Function to update all user avatars
 function updateUserAvatar() {
     try {
@@ -162,10 +158,10 @@ function updateUserAvatar() {
 
     } catch (error) {
         console.error('Error updating avatar:', error);
-        // Fallback
+        // Fallback with gradient color
         const sidebarAvatar = document.getElementById('userAvatar');
         if (sidebarAvatar) {
-            sidebarAvatar.style.background = '#00BCD4';
+            sidebarAvatar.style.background = 'linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%)';
             const letterSpan = sidebarAvatar.querySelector('.avatar-letter');
             if (letterSpan) {
                 letterSpan.textContent = 'U';
