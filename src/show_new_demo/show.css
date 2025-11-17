@@ -1000,11 +1000,7 @@ body {
     display: block !important;
 }
 .show-leads-table-view {
-    display: none;
-    width: 100%;
-    background: white;
-    border-radius: 0;  /* Remove rounded corners when active in section */
-    padding: 0;  /* No padding, let wrapper handle it */
+    display: none;  /* Hide by default */
 }
 
 .show-leads-cards-view.active{
@@ -1031,6 +1027,7 @@ body {
     margin-bottom: 30px;
     width: 100%;
 }
+
 
 .show-lead-card {
     background: white;
@@ -2060,9 +2057,8 @@ body {
     }
 }
 .show-leads-table-view.active {
-    display: block !important;  /* Show ONLY when active */
+    display: block !important;  /* Show only when active */
 }
-
 
 @media (max-width: 480px) {
     .show-leads-table-view {
