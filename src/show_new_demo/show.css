@@ -974,11 +974,27 @@ body {
     scrollbar-width: thin;
     scrollbar-color: #cbd5e1 #f1f5f9;
 }
-.show-leads-cards-view,
-.show-leads-table-view {
-    display: none;
+
+.show-lead-card-header {
+    padding: 20px;
+    border-bottom: 2px solid #f8f9fa;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
 }
 
+
+
+.show-leads-cards-view {
+    display: block !important;  /* Show cards by default */
+}
+
+.show-leads-table-view {
+    display: none !important;  /* Hide table by default */
+}
+.show-leads-table-view.active {
+    display: block !important;  /* Show only when active */
+}
 .show-leads-table-view {
     width: 100%;
     background: white;
@@ -986,8 +1002,11 @@ body {
     padding: 0;  /* No padding, let wrapper handle it */
 }
 
-show-leads-cards-view.active,
-.show-leads-table-view.active {
+.show-leads-cards-view.active{
+    display: block;
+}
+
+.show-leads-cards-view.active {
     display: block;
 }
 
@@ -1005,6 +1024,7 @@ show-leads-cards-view.active,
     grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
     gap: 25px;
     margin-bottom: 30px;
+    width: 100%;
 }
 
 .show-lead-card {
@@ -1012,7 +1032,7 @@ show-leads-cards-view.active,
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     overflow: hidden;
-    transition: all 0.3s ease;
+    transition: none;  /* No hover effects */
     cursor: pointer;
     border: 1px solid #e9ecef;
 }
@@ -1022,13 +1042,7 @@ show-leads-cards-view.active,
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
 
-.show-lead-card-header {
-    padding: 20px;
-    border-bottom: 2px solid #f8f9fa;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-}
+
 
 .lead-info h3 {
     font-size: 18px;
@@ -1047,6 +1061,7 @@ show-leads-cards-view.active,
     color: #667eea;
     font-weight: 600;
 }
+
 
 .lead-source-badge {
     padding: 6px 12px;
@@ -1070,6 +1085,7 @@ show-leads-cards-view.active,
 .show-lead-card-body {
     padding: 20px;
 }
+
 
 .lead-details {
     display: flex;
@@ -1121,7 +1137,6 @@ show-leads-cards-view.active,
 .show-info h4 i {
     color: #667eea;
 }
-
 .show-date {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
@@ -1139,6 +1154,7 @@ show-leads-cards-view.active,
     align-items: center;
 }
 
+
 .card-actions-left {
     display: flex;
     gap: 10px;
@@ -1151,7 +1167,7 @@ show-leads-cards-view.active,
     padding: 8px 12px;
     border-radius: 6px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: none;  /* No hover effects */
     font-size: 12px;
     display: flex;
     align-items: center;
