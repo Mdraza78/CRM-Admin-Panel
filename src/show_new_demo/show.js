@@ -1084,22 +1084,31 @@ function switchView(view) {
     });
     document.querySelector(`[data-view="${view}"]`).classList.add('active');
     
-    // Update view containers
-    document.querySelectorAll('.show-leads-cards-view, .show-leads-table-view').forEach(container => {
-        container.classList.remove('active');
-    });
+    // Get the containers
+    const cardsView = document.getElementById('cardsView');
+    const tableView = document.getElementById('tableView');
     
+    // IMPORTANT: Hide both first
+    cardsView.style.display = 'none';
+    tableView.style.display = 'none';
+    
+    // Then show only the selected one
     if (view === 'cards') {
-        document.getElementById('cardsView').classList.add('active');
-        itemsPerPage = 4; // Ensure this is set for cards view
-    } else {
-        document.getElementById('tableView').classList.add('active');
-        itemsPerPage = 15; // Keep 15 for table view
+        cardsView.style.display = 'block';
+        cardsView.classList.add('active');
+        tableView.classList.remove('active');
+        itemsPerPage = 4;
+    } else if (view === 'table') {
+        tableView.style.display = 'block';
+        tableView.classList.add('active');
+        cardsView.classList.remove('active');
+        itemsPerPage = 15;
     }
     
     currentPage = 1;
     loadShowLeads();
 }
+
 
 // Filtering and Sorting
 function filterShowLeads() {

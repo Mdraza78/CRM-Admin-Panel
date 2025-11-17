@@ -990,11 +990,12 @@ body {
 
 
 .show-leads-cards-view {
-    display: block;  /* Show cards by default */
+    display: block !important;
 }
 
+
 .show-leads-table-view {
-    display: none !important;  /* Hide table by default */
+    display: none !important;
 }
 .show-leads-cards-view.active {
     display: block !important;
@@ -2057,8 +2058,9 @@ body {
     }
 }
 .show-leads-table-view.active {
-    display: block !important;  /* Show only when active */
+    display: block !important;
 }
+
 
 @media (max-width: 480px) {
     .show-leads-table-view {
