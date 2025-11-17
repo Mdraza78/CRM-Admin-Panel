@@ -1102,12 +1102,14 @@ function switchView(view) {
     // CRITICAL: Reset itemsPerPage based on view
     if (view === 'cards') {
         itemsPerPage = 4;
+        // Show cards, hide table
         cardsView.style.display = 'block';
         cardsView.classList.add('active');
         tableView.style.display = 'none';
         tableView.classList.remove('active');
     } else if (view === 'table') {
         itemsPerPage = 15;
+        // Show table, hide cards
         tableView.style.display = 'block';
         tableView.classList.add('active');
         cardsView.style.display = 'none';

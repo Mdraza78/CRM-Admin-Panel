@@ -961,7 +961,9 @@ body {
 .show-leads-container {
     margin-bottom: 30px;
     width: 100%;
+    position: relative;
 }
+
 
 .show-leads-container .show-leads-cards-view.active ~ .show-leads-table-view {
     display: none !important;
@@ -990,15 +992,16 @@ body {
 
 
 .show-leads-cards-view {
-    display: block !important;
+    display: none;
+    width: 100%;
 }
-
 
 .show-leads-table-view {
-    display: none !important;
+    display: none;
+    width: 100%;
 }
-.show-leads-cards-view.active {
-    display: block !important;
+.show-leads-table-view.active {
+    display: block;
 }
 .show-leads-table-view {
     display: none;  /* Hide by default */
@@ -1006,6 +1009,47 @@ body {
 
 .show-leads-cards-view.active{
     display: block;
+}
+
+.show-leads-cards-view:not(.active),
+.show-leads-table-view:not(.active) {
+    display: none !important;
+}
+
+/* Table View Styling */
+.show-leads-table-view.active .table-container {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e9ecef;
+}
+
+.show-leads-table-view.active .data-table {
+    width: 100%;
+    min-width: 100%;
+    border-collapse: collapse;
+}
+
+.show-leads-table-view.active .data-table th,
+.show-leads-table-view.active .data-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.show-leads-table-view.active .data-table thead {
+    background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important;
+}
+
+.show-leads-table-view.active .data-table th {
+    color: white;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
 }
 
 .show-leads-cards-view.active {
