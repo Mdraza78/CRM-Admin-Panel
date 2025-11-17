@@ -713,19 +713,15 @@ body {
 
 
 .action-btn {
-    background: none;
-    border: none;
-    width: 28px;
-    height: 28px;
-    font-size: 16px;
-    cursor: pointer;
+    width: 18px;     /* Smaller width */
+    height: 18px;    /* Smaller height */
+    font-size: 10px; /* Smaller font for icons */
+    border-radius: 3px;
     padding: 0;
-    border-radius: 6px;
-    color: #64748b;
-    transition: color 0.2s, background 0.3s, transform 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+}
+
+.action-btn i {
+    font-size: 12px; /* Small icon size */
 }
 
 
