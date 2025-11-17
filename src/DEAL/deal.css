@@ -713,8 +713,8 @@ body {
 
 
 .action-btn {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     border-radius: 6px;
     background: #f8fafc;
     display: flex;
@@ -728,7 +728,7 @@ body {
 }
 
 .action-btn i {
-    font-size: 15px;    /* Keep icon crisp but not too large */
+    font-size: 12px;    /* Keep icon crisp but not too large */
     color: inherit;
 }
 
