@@ -783,7 +783,7 @@ nav-link.active:hover i,
 }
 
 .kpi-value {
-    font-size: 32px; /* Reduced from 42px */
+    font-size: 32px;
     font-weight: 800;
     color: #2c3e50;
     margin-bottom: 4px;
