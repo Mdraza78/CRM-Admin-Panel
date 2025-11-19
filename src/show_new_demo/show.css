@@ -1061,6 +1061,146 @@ body {
     text-overflow: ellipsis;
 }
 
+/* New Layout Structure */
+.content-container {
+    display: flex;
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.filters-sidebar {
+    width: 300px;
+    flex-shrink: 0;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 25px;
+    height: fit-content;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+}
+
+.main-content-area {
+    flex: 1;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 30px;
+    overflow: hidden;
+}
+
+.sidebar-section h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f8f9fa;
+}
+
+.sidebar-section h3 i {
+    color: #00BCD4;
+}
+
+.filter-group {
+    margin-bottom: 20px;
+}
+
+.filter-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.full-width {
+    width: 100%;
+}
+
+/* Content Header */
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f8f9fa;
+}
+
+.content-title h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.records-count {
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.content-actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.records-per-page {
+    min-width: 180px;
+}
+
+/* Leads Display Section */
+.leads-display-section {
+    margin-bottom: 30px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1200px) {
+    .content-container {
+        flex-direction: column;
+    }
+    
+    .filters-sidebar {
+        width: 100%;
+        max-height: none;
+    }
+    
+    .content-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .content-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+@media (max-width: 768px) {
+    .content-actions {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+    
+    .view-toggle,
+    .sort-controls,
+    .records-per-page {
+        width: 100%;
+    }
+    
+    .view-toggle {
+        justify-content: center;
+    }
+}
+
 
 .show-leads-cards-view {
     display: none;
