@@ -42,6 +42,8 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ Show Leads System initialized successfully');
 });
 
+
+
 function checkAuthentication() {
     console.log('🔐 Checking authentication...');
     
