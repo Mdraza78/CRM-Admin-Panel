@@ -1,20 +1,19 @@
-// show.js - Updated with Backend Integration and Navigation
+// show.js - Updated with new layout structure
 
 // Global variables
 let showLeads = [];
 let filteredShowLeads = [];
 let currentEditingShowLead = null;
 let currentDeleteShowLead = null;
-let currentView = 'cards';
+let currentView = 'table'; // Force table view only
 let currentPage = 1;
-let itemsPerPage = 4;
+let itemsPerPage = 15; // Increased for table view
 let uploadedFiles = [];
 let totalLeadsCount = 0;
 
 // API Base URL
 const API_BASE_URL = 'https://crm-admin-panel-production.up.railway.app/api';
 
-// Initialize the application
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🎪 Show Leads System initializing...');
@@ -29,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     initializeShowLeads();
     setupEventListeners();
-    displayUserName(); // This will now also update the avatar
+    displayUserName();
     initializePagination();
     loadShowLeads();
     
@@ -41,8 +40,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log('✅ Show Leads System initialized successfully');
 });
-
-
 
 function checkAuthentication() {
     console.log('🔐 Checking authentication...');
@@ -102,6 +99,8 @@ function getUserData() {
 
 function initializeShowLeads() {
     console.log('🎪 Show Leads System initialized with backend integration');
+    // Force table view
+    switchView('table');
 }
 
 function setupEventListeners() {
@@ -226,6 +225,7 @@ class ActiveMenuManager {
         return titles[page] || page.replace('-', ' ');
     }
 }
+
 function getAvatarColor() {
     return 'linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%)';
 }
@@ -309,10 +309,7 @@ function updateUserAvatar() {
     }
 }
 
-
-
 // Navigation function
-// Update the handleNavigation function in script.js
 function handleNavigation(page) {
     console.log(`Navigation requested to: ${page}`);
     
@@ -396,9 +393,6 @@ function displayUserName() {
 function getToken() {
     return localStorage.getItem('authToken') || '';
 }
-
-// Rest of the existing show.js functions remain the same...
-// [Previous API Functions, Show Lead Management, Rendering, Filtering, etc.]
 
 // API Functions
 async function loadShowLeads() {
@@ -495,6 +489,9 @@ async function loadShowLeads() {
 
             filteredShowLeads = [...showLeads];
             totalLeadsCount = result.pagination.totalLeads;
+            
+            // Update total records display
+            document.getElementById('totalRecords').textContent = totalLeadsCount;
             
             updateStats(result.stats);
             populateShowFilter();
@@ -968,105 +965,8 @@ function renderShowLeadDetails(lead) {
 function renderShowLeads() {
     console.log('Rendering show leads. Current view:', currentView);
     
-    if (currentView === 'cards') {
-        console.log('Rendering cards view');
-        renderShowLeadsCards();
-    } else if (currentView === 'table') {
-        console.log('Rendering table view');
-        renderShowLeadsTable();
-    }
-}
-
-
-function renderShowLeadsCards() {
-    const grid = document.getElementById('showLeadsGrid');
-    
-    if (showLeads.length === 0) {
-        grid.innerHTML = `
-            <div class="no-leads-message">
-                <i class="fas fa-calendar-alt"></i>
-                <h3>No Show Leads Found</h3>
-                <p>Get started by adding your first show lead</p>
-                <button class="btn-primary" onclick="addNewShowLead()">
-                    <i class="fas fa-plus"></i> Add New Show Lead
-                </button>
-            </div>
-        `;
-        return;
-    }
-    
-    grid.innerHTML = '';
-    
-    showLeads.forEach(lead => {
-        const card = document.createElement('div');
-        card.className = 'show-lead-card';
-        card.onclick = () => viewShowLeadDetails(lead.id);
-        
-        card.innerHTML = `
-            <div class="show-lead-card-header">
-                <div class="lead-info">
-                    <h3>${lead.contactName}</h3>
-                    <p>${lead.jobTitle || 'No title specified'}</p>
-                    <p class="company-name">${lead.companyName}</p>
-                </div>
-                <span class="lead-source-badge ${lead.leadSource}">${lead.leadSource}</span>
-            </div>
-            <div class="show-lead-card-body">
-                <div class="show-info">
-                    <h4><i class="fas fa-calendar-alt"></i> ${lead.showName}</h4>
-                    <div class="detail-item">
-                        <i class="fas fa-calendar"></i>
-                        <span class="label">Date:</span>
-                        <span class="show-date">${formatDate(lead.showDate)}</span>
-                    </div>
-                    ${lead.attendeeCount ? `
-                        <div class="detail-item">
-                            <i class="fas fa-users"></i>
-                            <span class="label">Attendees:</span>
-                            <span class="value">${lead.attendeeCount.toLocaleString()}</span>
-                        </div>
-                    ` : ''}
-                </div>
-                <div class="lead-details">
-                    <div class="detail-item">
-                        <i class="fas fa-envelope"></i>
-                        <span class="label">Email:</span>
-                        <span class="value">${lead.clientEmail}</span>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-phone"></i>
-                        <span class="label">Phone:</span>
-                        <span class="value">${lead.clientPhone || 'N/A'}</span>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-globe"></i>
-                        <span class="label">Country:</span>
-                        <span class="value">${lead.companyCountry}</span>
-                    </div>
-                    ${lead.followUpDate ? `
-                        <div class="detail-item">
-                            <i class="fas fa-clock"></i>
-                            <span class="label">Follow-up:</span>
-                            <span class="value">${formatDate(lead.followUpDate)}</span>
-                        </div>
-                    ` : ''}
-                </div>
-            </div>
-            <div class="show-lead-card-actions">
-                <div class="card-actions-left">
-                    <button class="action-btn edit" onclick="event.stopPropagation(); editShowLead('${lead.id}')">
-                        <i class="fas fa-edit"></i> Edit
-                    </button>
-                    <button class="action-btn delete" onclick="event.stopPropagation(); deleteShowLead('${lead.id}')">
-                        <i class="fas fa-trash"></i> Delete
-                    </button>
-                </div>
-                <span class="priority-badge ${lead.leadPriority}">${lead.leadPriority}</span>
-            </div>
-        `;
-        
-        grid.appendChild(card);
-    });
+    // Only render table view
+    renderShowLeadsTable();
 }
 
 function renderShowLeadsTable() {
@@ -1173,49 +1073,15 @@ function initializePagination() {
     }
 }
 
-// View Management
-
+// View Management - Force table view only
 function switchView(view) {
-    console.log('Switching view to:', view);
-    currentView = view;
-    
-    // Update view buttons
-    document.querySelectorAll('.view-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    document.querySelector(`[data-view="${view}"]`).classList.add('active');
-    
-    // Get the containers
-    const cardsView = document.getElementById('cardsView');
-    const tableView = document.getElementById('tableView');
-    
-    if (!cardsView || !tableView) {
-        console.error('View containers not found!');
-        return;
-    }
-    
-    // CRITICAL: Reset itemsPerPage based on view
-    if (view === 'cards') {
-        itemsPerPage = 4;
-        // Show cards, hide table
-        cardsView.style.display = 'block';
-        cardsView.classList.add('active');
-        tableView.style.display = 'none';
-        tableView.classList.remove('active');
-    } else if (view === 'table') {
-        itemsPerPage = 15;
-        // Show table, hide cards
-        tableView.style.display = 'block';
-        tableView.classList.add('active');
-        cardsView.style.display = 'none';
-        cardsView.classList.remove('active');
-    }
-    
+    // Only allow table view
+    currentView = 'table';
+    itemsPerPage = 15;
     currentPage = 1;
-    console.log('View switched. CurrentView:', currentView, 'ItemsPerPage:', itemsPerPage);
+    console.log('Forced table view. ItemsPerPage:', itemsPerPage);
     renderShowLeads();
 }
-
 
 // Filtering and Sorting
 function filterShowLeads() {
@@ -1648,8 +1514,6 @@ function downloadCSV(content, filename) {
 function toggleSidebar() {
     document.querySelector('.app-container').classList.toggle('sidebar-collapsed');
 }
-
-
 
 function toggleUserMenu() {
     const dropdown = document.getElementById('userDropdown');

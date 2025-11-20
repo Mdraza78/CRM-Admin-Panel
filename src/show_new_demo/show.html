@@ -59,16 +59,17 @@
                     </nav>
                 </div>
                 
-<div class="header-right">
-    <div class="user-profile" onclick="toggleUserMenu()">
-        <!-- Letter Avatar will be inserted here by JavaScript -->
-        <div class="user-avatar" id="userAvatar">
-            <span class="avatar-letter" id="avatarLetter">U</span>
-        </div>
-        <span class="user-name" id="userDisplayName">Loading...</span>
-        <i class="fas fa-chevron-down"></i>
-    </div>
-</div>
+                <div class="header-right">
+                   
+                    
+                     <div class="user-profile" onclick="toggleUserMenu()">
+                        <div class="user-avatar" id="userAvatar">
+                            <span class="avatar-letter" id="avatarLetter">U</span>
+                        </div>
+                        <span class="user-name" id="userDisplayName">Loading...</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
             </div>
             
             <!-- User Dropdown Menu -->
@@ -125,12 +126,18 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Menu Toggle Button -->
-                <div class="dashboard-header">
-                    <button class="menu-toggle" onclick="toggleSidebar()">
-                        <i class="fas fa-bars"></i>
+            <!-- Dashboard Header with Add New Lead Button -->
+            <div class="dashboard-header">
+                <button class="menu-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="dashboard-header-actions">
+                    <button class="btn-primary" onclick="addNewShowLead()">
+                        <i class="fas fa-plus"></i> Add New Lead
                     </button>
-    </div>
+                </div>
+            </div>
+
             <!-- Page Header -->
             <div class="page-header">
                 <div class="header-left">
@@ -138,10 +145,10 @@
                     <p>Manage leads from trade shows, exhibitions, and events</p>
                 </div>
                 <div class="header-actions">
-                  
-                    <button class="btn-primary" onclick="addNewShowLead()">
-                        <i class="fas fa-plus"></i> Add Show Lead
-                    </button>
+                    <div class="search-container">
+                        <i class="fas fa-search"></i>
+                        <input type="search" class="search-input" placeholder="Search show leads..." onkeyup="performSearch(this.value)">
+                    </div>
                 </div>
             </div>
 
@@ -200,160 +207,143 @@
                 </div>
             </section>
 
-            <!-- Filters and Controls -->
-            <section class="controls-section">
-                <div class="section-header">
-                    <h3><i class="fas fa-filter"></i> Filters & Controls</h3>
-                </div>
-                
-                <div class="filters-bar">
-                    <div class="filter-group">
-                        <label for="sourceFilter">Lead Source:</label>
-                        <select id="sourceFilter" class="form-select" onchange="filterShowLeads()">
-                            <option value="">All Sources</option>
-                            <option value="email">Email</option>
-                            <option value="linkedin">LinkedIn</option>
-                        </select>
+            <!-- Main Content Area - Side by Side Layout -->
+            <div class="main-content-area">
+                <!-- Controls Section on Left -->
+                <section class="controls-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-filter"></i> Filters & Controls</h3>
                     </div>
-                    <div class="filter-group">
-                        <label for="showFilter">Show:</label>
-                        <select id="showFilter" class="form-select" onchange="filterShowLeads()">
-                            <option value="">All Shows</option>
-                        </select>
+                    
+                    <div class="filters-bar">
+                        <div class="filter-group">
+                            <label for="sourceFilter">Lead Source:</label>
+                            <select id="sourceFilter" class="form-select" onchange="filterShowLeads()">
+                                <option value="">All Sources</option>
+                                <option value="email">Email</option>
+                                <option value="linkedin">LinkedIn</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="showFilter">Show:</label>
+                            <select id="showFilter" class="form-select" onchange="filterShowLeads()">
+                                <option value="">All Shows</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="countryFilter">Country:</label>
+                            <select id="countryFilter" class="form-select" onchange="filterShowLeads()">
+                                <option value="">All Countries</option>
+                                <option value="USA">United States</option>
+                                <option value="CAN">Canada</option>
+                                <option value="GBR">United Kingdom</option>
+                                <option value="DEU">Germany</option>
+                                <option value="FRA">France</option>
+                                <option value="AUS">Australia</option>
+                                <option value="JPN">Japan</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="dateFilter">Date Range:</label>
+                            <select id="dateFilter" class="form-select" onchange="filterShowLeads()">
+                                <option value="">All Dates</option>
+                                <option value="upcoming">Upcoming Shows</option>
+                                <option value="past">Past Shows</option>
+                                <option value="this_month">This Month</option>
+                                <option value="this_year">This Year</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <button class="btn-secondary" onclick="resetFilters()">
+                                <i class="fas fa-undo"></i> Reset
+                            </button>
+                        </div>
                     </div>
-                    <div class="filter-group">
-                        <label for="countryFilter">Country:</label>
-                        <select id="countryFilter" class="form-select" onchange="filterShowLeads()">
-                            <option value="">All Countries</option>
-                            <option value="USA">United States</option>
-                            <option value="CAN">Canada</option>
-                            <option value="GBR">United Kingdom</option>
-                            <option value="DEU">Germany</option>
-                            <option value="FRA">France</option>
-                            <option value="AUS">Australia</option>
-                            <option value="JPN">Japan</option>
-                        </select>
+
+                    <div class="view-controls">
+                        <div class="sort-controls">
+                            <label for="sortBy">Sort By:</label>
+                            <select id="sortBy" class="form-select" onchange="sortShowLeads()">
+                                <option value="created_desc">Newest First</option>
+                                <option value="created_asc">Oldest First</option>
+                                <option value="show_date_desc">Show Date (Latest)</option>
+                                <option value="show_date_asc">Show Date (Earliest)</option>
+                                <option value="name_asc">Contact A-Z</option>
+                                <option value="name_desc">Contact Z-A</option>
+                                <option value="company_asc">Company A-Z</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="filter-group">
-                        <label for="dateFilter">Date Range:</label>
-                        <select id="dateFilter" class="form-select" onchange="filterShowLeads()">
-                            <option value="">All Dates</option>
-                            <option value="upcoming">Upcoming Shows</option>
-                            <option value="past">Past Shows</option>
-                            <option value="this_month">This Month</option>
-                            <option value="this_year">This Year</option>
-                        </select>
+                </section>
+
+                <!-- Show Leads Section on Right -->
+                <section class="show-leads-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-calendar-check"></i> All Leads</h3>
+                        <div class="section-actions">
+                            <span class="total-records">Total Records: <span id="totalRecords">0</span></span>
+                        </div>
                     </div>
-                    <div class="filter-group">
-                        <button class="btn-secondary" onclick="resetFilters()">
-                            <i class="fas fa-undo"></i> Reset
+                    
+                    <div class="show-leads-container">
+                        <!-- Table View Only (Cards view removed) -->
+                        <div class="show-leads-table-view active" id="tableView">
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th><input type="checkbox" onchange="selectAllShowLeads(this)"></th>
+                                            <th onclick="sortTable('contactName')">Contact Name <i class="fas fa-sort"></i></th>
+                                            <th onclick="sortTable('clientEmail')">Email <i class="fas fa-sort"></i></th>
+                                            <th onclick="sortTable('jobTitle')">Job Title <i class="fas fa-sort"></i></th>
+                                            <th onclick="sortTable('companyName')">Company <i class="fas fa-sort"></i></th>
+                                            <th onclick="sortTable('showName')">Show <i class="fas fa-sort"></i></th>
+                                            <th onclick="sortTable('showDate')">Show Date <i class="fas fa-sort"></i></th>
+                                            <th onclick="sortTable('leadSource')">Source <i class="fas fa-sort"></i></th>
+                                            <th onclick="sortTable('createdDate')">Created <i class="fas fa-sort"></i></th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="showLeadsTableBody">
+                                        <!-- Table rows will be populated by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bulk Actions -->
+                    <div class="bulk-actions" id="bulkActions" style="display: none;">
+                        <span class="selected-count">0 leads selected</span>
+                        <button class="btn-secondary" onclick="bulkEmailSelected()">
+                            <i class="fas fa-envelope"></i> Send Email
+                        </button>
+                        <button class="btn-secondary" onclick="bulkExportSelected()">
+                            <i class="fas fa-download"></i> Export Selected
+                        </button>
+                        <button class="btn-danger" onclick="bulkDeleteShowLeads()">
+                            <i class="fas fa-trash"></i> Delete Selected
                         </button>
                     </div>
-                </div>
 
-                <div class="view-controls">
-                    <div class="view-toggle">
-                        <button class="view-btn active" onclick="switchView('cards')" data-view="cards">
-                            <i class="fas fa-th"></i> Cards
-                        </button>
-                        <button class="view-btn" onclick="switchView('table')" data-view="table">
-                            <i class="fas fa-list"></i> Table
-                        </button>
+                    <!-- Pagination -->
+                    <div class="pagination-container">
+                        <div class="pagination-info">
+                            Showing <span id="paginationStart">1</span> to <span id="paginationEnd">10</span> of <span id="paginationTotal">0</span> show leads
+                        </div>
+                        <div class="pagination-controls">
+                            <button class="pagination-btn" onclick="changePage(-1)" id="prevBtn">
+                                <i class="fas fa-chevron-left"></i> Previous
+                            </button>
+                            <div class="pagination-numbers" id="paginationNumbers">
+                                <!-- Page numbers will be populated by JavaScript -->
+                            </div>
+                            <button class="pagination-btn" onclick="changePage(1)" id="nextBtn">
+                                Next <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div class="sort-controls">
-                        <select id="sortBy" class="form-select" onchange="sortShowLeads()">
-                            <option value="created_desc">Newest First</option>
-                            <option value="created_asc">Oldest First</option>
-                            <option value="show_date_desc">Show Date (Latest)</option>
-                            <option value="show_date_asc">Show Date (Earliest)</option>
-                            <option value="name_asc">Contact A-Z</option>
-                            <option value="name_desc">Contact Z-A</option>
-                            <option value="company_asc">Company A-Z</option>
-                        </select>
-                    </div>
-                </div>
-            </section>
-
-
-
-            <!-- Show Leads Display Area -->
-        <!-- In your show.html, ensure the empty state has proper structure -->
-<section class="show-leads-section">
-    <div class="section-header">
-        <h3><i class="fas fa-calendar-check"></i> Show Leads</h3>
-        <div class="section-actions">
-            <div class="search-container">
-                <i class="fas fa-search"></i>
-                <input type="search" class="search-input" placeholder="Search show leads..." onkeyup="performSearch(this.value)">
-            </div>
-        </div>
-    </div>
-    
-    <div class="show-leads-container">
-        <!-- Cards View -->
-        <div class="show-leads-cards-view active" id="cardsView">
-            <div class="show-leads-grid" id="showLeadsGrid">
-                <!-- Show lead cards will be populated by JavaScript -->
-                <!-- When empty, this will show the no-leads message -->
-            </div>
-        </div>
-
-        <!-- Table View -->
- <!-- Table View -->
-<div class="show-leads-table-view" id="tableView">
-    <div class="table-container">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th><input type="checkbox" onchange="selectAllShowLeads(this)"></th>
-                    <th onclick="sortTable('contactName')">Contact Name <i class="fas fa-sort"></i></th>
-                    <th onclick="sortTable('clientEmail')">Email <i class="fas fa-sort"></i></th>
-                    <th onclick="sortTable('jobTitle')">Job Title <i class="fas fa-sort"></i></th>
-                    <th onclick="sortTable('companyName')">Company <i class="fas fa-sort"></i></th>
-                    <th onclick="sortTable('showName')">Show <i class="fas fa-sort"></i></th>
-                    <th onclick="sortTable('showDate')">Show Date <i class="fas fa-sort"></i></th>
-                    <th onclick="sortTable('leadSource')">Source <i class="fas fa-sort"></i></th>
-                    <th onclick="sortTable('createdDate')">Created <i class="fas fa-sort"></i></th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="showLeadsTableBody">
-                <!-- Table rows will be populated by JavaScript -->
-            </tbody>
-        </table>
-    </div>
-</div>
-    </div>
-</section>
-<div class="bulk-actions" id="bulkActions" style="display: none;">
-                <span class="selected-count">0 leads selected</span>
-                <button class="btn-secondary" onclick="bulkEmailSelected()">
-                    <i class="fas fa-envelope"></i> Send Email
-                </button>
-                <button class="btn-secondary" onclick="bulkExportSelected()">
-                    <i class="fas fa-download"></i> Export Selected
-                </button>
-                <button class="btn-danger" onclick="bulkDeleteShowLeads()">
-                    <i class="fas fa-trash"></i> Delete Selected
-                </button>
-            </div>
-
-            <!-- Pagination -->
-            <div class="pagination-container">
-                <div class="pagination-info">
-                    Showing <span id="paginationStart">1</span> to <span id="paginationEnd">10</span> of <span id="paginationTotal">0</span> show leads
-                </div>
-                <div class="pagination-controls">
-                    <button class="pagination-btn" onclick="changePage(-1)" id="prevBtn">
-                        <i class="fas fa-chevron-left"></i> Previous
-                    </button>
-                    <div class="pagination-numbers" id="paginationNumbers">
-                        <!-- Page numbers will be populated by JavaScript -->
-                    </div>
-                    <button class="pagination-btn" onclick="changePage(1)" id="nextBtn">
-                        Next <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
+                </section>
             </div>
 
         </main>
