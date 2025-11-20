@@ -210,75 +210,71 @@
             <!-- Main Content Area - Side by Side Layout -->
             <div class="main-content-area">
                 <!-- Controls Section on Left -->
-<section class="controls-section">
-    <div class="section-header">
-        <h3><i class="fas fa-filter"></i> Filters & Controls</h3>
-    </div>
-    
-    <div class="filters-bar">
-        <div class="filter-group">
-            <label>LEAD SOURCE:</label>
-            <select id="sourceFilter" class="form-select" onchange="filterShowLeads()">
-                <option value="">All Sources</option>
-                <option value="email">Email</option>
-                <option value="linkedin">LinkedIn</option>
-            </select>
-        </div>
-        
-        <div class="filter-group">
-            <label>SHOW:</label>
-            <select id="showFilter" class="form-select" onchange="filterShowLeads()">
-                <option value="">All Shows</option>
-            </select>
-        </div>
-        
-        <div class="filter-group">
-            <label>COUNTRY:</label>
-            <select id="countryFilter" class="form-select" onchange="filterShowLeads()">
-                <option value="">All Countries</option>
-                <option value="USA">United States</option>
-                <option value="CAN">Canada</option>
-                <option value="GBR">United Kingdom</option>
-                <option value="DEU">Germany</option>
-                <option value="FRA">France</option>
-                <option value="AUS">Australia</option>
-                <option value="JPN">Japan</option>
-            </select>
-        </div>
-        
-        <div class="filter-group">
-            <label>DATE RANGE:</label>
-            <select id="dateFilter" class="form-select" onchange="filterShowLeads()">
-                <option value="">All Dates</option>
-                <option value="upcoming">Upcoming Shows</option>
-                <option value="past">Past Shows</option>
-                <option value="this_month">This Month</option>
-                <option value="this_year">This Year</option>
-            </select>
-        </div>
-        
-        <div class="filter-group">
-            <button class="btn-secondary" onclick="resetFilters()">
-                <i class="fas fa-undo"></i> Reset
-            </button>
-        </div>
-    </div>
+                <section class="controls-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-filter"></i> Filters & Controls</h3>
+                    </div>
+                    
+                    <div class="filters-bar">
+                        <div class="filter-group">
+                            <label for="sourceFilter">Lead Source:</label>
+                            <select id="sourceFilter" class="form-select" onchange="filterShowLeads()">
+                                <option value="">All Sources</option>
+                                <option value="email">Email</option>
+                                <option value="linkedin">LinkedIn</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="showFilter">Show:</label>
+                            <select id="showFilter" class="form-select" onchange="filterShowLeads()">
+                                <option value="">All Shows</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="countryFilter">Country:</label>
+                            <select id="countryFilter" class="form-select" onchange="filterShowLeads()">
+                                <option value="">All Countries</option>
+                                <option value="USA">United States</option>
+                                <option value="CAN">Canada</option>
+                                <option value="GBR">United Kingdom</option>
+                                <option value="DEU">Germany</option>
+                                <option value="FRA">France</option>
+                                <option value="AUS">Australia</option>
+                                <option value="JPN">Japan</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="dateFilter">Date Range:</label>
+                            <select id="dateFilter" class="form-select" onchange="filterShowLeads()">
+                                <option value="">All Dates</option>
+                                <option value="upcoming">Upcoming Shows</option>
+                                <option value="past">Past Shows</option>
+                                <option value="this_month">This Month</option>
+                                <option value="this_year">This Year</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <button class="btn-secondary" onclick="resetFilters()">
+                                <i class="fas fa-undo"></i> Reset
+                            </button>
+                        </div>
+                    </div>
 
-    <div class="view-controls">
-        <div class="sort-controls">
-            <label>SORT BY:</label>
-            <select id="sortBy" class="form-select" onchange="sortShowLeads()">
-                <option value="created_desc">Newest First</option>
-                <option value="created_asc">Oldest First</option>
-                <option value="show_date_desc">Show Date (Latest)</option>
-                <option value="show_date_asc">Show Date (Earliest)</option>
-                <option value="name_asc">Contact A-Z</option>
-                <option value="name_desc">Contact Z-A</option>
-                <option value="company_asc">Company A-Z</option>
-            </select>
-        </div>
-    </div>
-</section>
+                    <div class="view-controls">
+                        <div class="sort-controls">
+                            <label for="sortBy">Sort By:</label>
+                            <select id="sortBy" class="form-select" onchange="sortShowLeads()">
+                                <option value="created_desc">Newest First</option>
+                                <option value="created_asc">Oldest First</option>
+                                <option value="show_date_desc">Show Date (Latest)</option>
+                                <option value="show_date_asc">Show Date (Earliest)</option>
+                                <option value="name_asc">Contact A-Z</option>
+                                <option value="name_desc">Contact Z-A</option>
+                                <option value="company_asc">Company A-Z</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
 
                 <!-- Show Leads Section on Right -->
                 <section class="show-leads-section">
