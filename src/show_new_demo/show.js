@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ Show Leads System initialized successfully');
 });
 
+
 function checkAuthentication() {
     console.log('🔐 Checking authentication...');
     
@@ -493,7 +494,10 @@ async function loadShowLeads() {
             // Update total records display
             document.getElementById('totalRecords').textContent = totalLeadsCount;
             
-            updateStats(result.stats);
+            // Update stats - but don't try to update KPI elements that don't exist
+            // The stats data is still received from backend but we don't display it
+            console.log('Stats received from backend:', result.stats);
+            
             populateShowFilter();
             renderShowLeads();
             
@@ -1256,13 +1260,8 @@ function goToPage(page) {
 
 // Stats Update
 function updateStats(stats) {
-    console.log('Updating stats with backend data:', stats);
-    
-    // Animate the values with smooth counting from backend stats
-    animateCounter('totalShowLeads', stats.totalShowLeads || 0);
-    animateCounter('activeShows', stats.activeShows || 0);
-    animateCounter('emailLeads', stats.emailLeads || 0);
-    animateCounter('linkedinLeads', stats.linkedinLeads || 0);
+    // This function is called but does nothing since KPI section is removed
+    console.log('Stats data received (not displayed):', stats);
 }
 
 function animateCounter(elementId, endValue) {
