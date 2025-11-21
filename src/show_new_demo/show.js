@@ -5,11 +5,12 @@ let showLeads = [];
 let filteredShowLeads = [];
 let currentEditingShowLead = null;
 let currentDeleteShowLead = null;
-let currentView = 'table'; // Force table view only
 let currentPage = 1;
 let itemsPerPage = 15; // Increased for table view
 let uploadedFiles = [];
 let totalLeadsCount = 0;
+let leads = []; // Your full list of leads, populated elsewhere
+const rowsPerPage = 5;
 
 // API Base URL
 const API_BASE_URL = 'https://crm-admin-panel-production.up.railway.app/api';
@@ -974,58 +975,36 @@ function renderShowLeads() {
 }
 
 function renderShowLeadsTable() {
+    const startIdx = (currentPage - 1) * rowsPerPage;
+    const endIdx = startIdx + rowsPerPage;
+    const paginatedLeads = leads.slice(startIdx, endIdx);
+
     const tbody = document.getElementById('showLeadsTableBody');
-    
-    if (showLeads.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="10" class="no-data">
-                    <div class="no-leads-message">
-                        <i class="fas fa-calendar-alt"></i>
-                        <h3>No Show Leads Found</h3>
-                        <p>Get started by adding your first show lead</p>
-                        <button class="btn-primary" onclick="addNewShowLead()">
-                            <i class="fas fa-plus"></i> Add New Show Lead
-                        </button>
-                    </div>
-                </td>
-            </tr>
-        `;
-        return;
-    }
-    
-    tbody.innerHTML = '';
-    
-  showLeads.forEach(lead => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td><input type="checkbox" value="${lead.id}" onchange="toggleShowLeadSelection()"></td>
+    tbody.innerHTML = "";
+
+    paginatedLeads.forEach(lead => {
+        // Create your row HTML based on lead fields
+        let rowHTML = `<tr>
+            <td><input type="checkbox"></td>
             <td>${lead.contactName}</td>
             <td>${lead.clientEmail}</td>
-            <td>${lead.jobTitle || 'N/A'}</td>
+            <td>${lead.jobTitle}</td>
             <td>${lead.companyName}</td>
             <td>${lead.showName}</td>
-            <td>${formatDate(lead.showDate)}</td>
-            <td><span class="lead-source-badge ${lead.leadSource}">${lead.leadSource}</span></td>
-            <td>${formatDate(lead.createdDate)}</td>
-            <td>
-                <div class="table-actions">
-                    <button class="table-action-btn view" onclick="viewShowLeadDetails('${lead.id}')" title="View">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="table-action-btn edit" onclick="editShowLead('${lead.id}')" title="Edit">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="table-action-btn delete" onclick="deleteShowLead('${lead.id}')" title="Delete">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            </td>
-        `;
-        
-        tbody.appendChild(row);
+            <td>${lead.showDate}</td>
+            <td>${lead.leadSource}</td>
+            <td>${lead.createdDate}</td>
+            <td><!-- action buttons --></td>
+        </tr>`;
+        tbody.innerHTML += rowHTML;
     });
+
+    // Update pagination display (e.g., 6–10 of 23, etc.)
+    document.getElementById('paginationStart').textContent = (startIdx + 1);
+    document.getElementById('paginationEnd').textContent = Math.min(endIdx, leads.length);
+    document.getElementById('paginationTotal').textContent = leads.length;
 }
+
 
 function populateShowFilter() {
     const showFilter = document.getElementById('showFilter');
@@ -1248,10 +1227,21 @@ function renderPaginationNumbers(totalPages) {
     }
 }
 
-function changePage(direction) {
-    const newPage = currentPage + direction;
-    goToPage(newPage);
+function changePage(increment) {
+    currentPage += increment;
+    const totalPages = Math.ceil(leads.length / rowsPerPage);
+    if (currentPage < 1) currentPage = 1;
+    if (currentPage > totalPages) currentPage = totalPages;
+    renderShowLeadsTable();
+    updatePaginationButtons();
 }
+
+function updatePaginationButtons() {
+    const totalPages = Math.ceil(leads.length / rowsPerPage);
+    document.getElementById('prevBtn').disabled = (currentPage === 1);
+    document.getElementById('nextBtn').disabled = (currentPage === totalPages);
+}
+
 
 function goToPage(page) {
     currentPage = page;
