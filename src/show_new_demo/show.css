@@ -96,26 +96,9 @@
     position: relative;
 }
 
-.dashboard-header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 30px;
-}
-
 .dashboard-header-actions {
     display: flex;
     gap: 15px;
-}
-
-.dashboard-header-left h1 {
-    font-size: 28px;
-    font-weight: 700;
-    color: #2c3e50;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
 }
 
 
