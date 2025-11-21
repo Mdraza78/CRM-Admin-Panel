@@ -16,8 +16,23 @@
 /* View icon (blue) on hover inside section header */
 .section-header .table-action-btn.view:hover i,
 .section-header .table-action-btn.view:focus i {
-    color: #017aff !important;
+    color: #3b82f6;
+    border-color: #3b82f6;
+    background: #eff6ff;
+
 }
+
+.table-action-btn.view:hover i {
+    color: #3b82f6;
+}
+.table-action-btn.edit:hover i {
+    color: #f59e0b;
+}
+
+.table-action-btn.delete:hover i {
+    color: #ef4444;
+}
+
 
 /* Delete icon (red) on hover inside section header */
 .section-header .table-action-btn.delete:hover i,
@@ -1137,16 +1152,18 @@ body {
     transform: translateY(-1px);
 }
 
+
 .table-action-btn.edit:hover {
     color: #f59e0b;
     border-color: #f59e0b;
+    background: #fffbeb;
 }
 
 .table-action-btn.delete:hover {
     color: #ef4444;
     border-color: #ef4444;
+    background: #fef2f2;
 }
-
 
 
 .table-container::-webkit-scrollbar {

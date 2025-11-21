@@ -996,7 +996,7 @@ function renderShowLeadsTable() {
     
     tbody.innerHTML = '';
     
-    showLeads.forEach(lead => {
+  showLeads.forEach(lead => {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td><input type="checkbox" value="${lead.id}" onchange="toggleShowLeadSelection()"></td>
@@ -1010,13 +1010,13 @@ function renderShowLeadsTable() {
             <td>${formatDate(lead.createdDate)}</td>
             <td>
                 <div class="table-actions">
-                    <button class="table-action-btn" onclick="viewShowLeadDetails('${lead.id}')" title="View">
+                    <button class="table-action-btn view" onclick="viewShowLeadDetails('${lead.id}')" title="View">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button class="table-action-btn" onclick="editShowLead('${lead.id}')" title="Edit">
+                    <button class="table-action-btn edit" onclick="editShowLead('${lead.id}')" title="Edit">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="table-action-btn" onclick="deleteShowLead('${lead.id}')" title="Delete">
+                    <button class="table-action-btn delete" onclick="deleteShowLead('${lead.id}')" title="Delete">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
