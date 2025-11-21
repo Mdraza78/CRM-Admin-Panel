@@ -127,16 +127,22 @@
         <!-- Main Content -->
         <main class="main-content">
             <!-- Dashboard Header with Add New Lead Button -->
-            <div class="dashboard-header">
-                <button class="menu-toggle" onclick="toggleSidebar()">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <div class="dashboard-header-actions">
-                    <button class="btn-primary" onclick="addNewShowLead()">
-                        <i class="fas fa-plus"></i> Add New Lead
-                    </button>
-                </div>
-            </div>
+<div class="dashboard-header">
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="dashboard-header-actions">
+        <button class="btn-primary" onclick="addNewShowLead()">
+            <i class="fas fa-plus"></i> Add New Lead
+        </button>
+        <!-- Move your search-container here -->
+        <div class="search-container">
+            <i class="fas fa-search"></i>
+            <input type="search" class="search-input" placeholder="Search show leads..." onkeyup="performSearch(this.value)">
+        </div>
+    </div>
+</div>
+
 
             <!-- Page Header -->
             <div class="page-header">

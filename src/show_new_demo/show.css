@@ -95,9 +95,9 @@
 
 .dashboard-header-actions {
     display: flex;
-    gap: 15px;
+    gap: 20px;
+    align-items: center;
 }
-
 
 
 .show-leads-table-view.active {
@@ -1381,6 +1381,7 @@ body {
     position: relative;
     display: flex;
     align-items: center;
+    width: 270px; /* Adjust as desired */
 }
 
 .search-container i {
@@ -1395,19 +1396,17 @@ body {
     padding: 12px 15px 12px 40px;
     border: none;
     border-radius: 25px;
-    width: 250px;
+    width: 100%;
     font-size: 14px;
-    background-color: rgba(255, 255, 255, 0.9);
-    transition: all 0.3s ease;
+    background-color: rgba(255,255,255,0.95);
     border: 2px solid #e9ecef;
+    transition: all 0.3s;
 }
-
 .search-input:focus {
     outline: none;
     background-color: white;
-    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-    border-color: #667eea;
-    width: 300px;
+    border-color: #00BCD4;
+    width: 100%;
 }
 
 /* Modal Styles */
@@ -1836,7 +1835,15 @@ body {
         border-left: none;
         border-right: none;
     }
-    
+    .dashboard-header-actions {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+    }
+    .search-container {
+        width: 100%;
+    }
+
     .data-table {
         min-width: 1000px;
     }
