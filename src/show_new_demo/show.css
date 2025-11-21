@@ -88,10 +88,7 @@
 .dashboard-header {
     /* background: white; */  /* Remove or comment out this line */
     padding: 25px 30px;
-    border-radius: 16px;
-    
-    margin-bottom: 25px;
-    
+    margin-bottom: 35px;
     position: relative;
 }
 
