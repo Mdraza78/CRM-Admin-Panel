@@ -159,7 +159,54 @@
     margin-bottom: 4px;
 }
 
+/* Enhanced Visual Hierarchy */
+.filter-group {
+    position: relative;
+}
 
+.filter-group::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #e9ecef, transparent);
+}
+
+.filter-group:last-child::after {
+    display: none;
+}
+
+/* Optional: Add icons to filter labels */
+.filter-group label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.filter-group label::before {
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 11px;
+    color: #00BCD4;
+}
+
+.filter-group:nth-child(1) label::before {
+    content: '\f0c0'; /* users */
+}
+
+.filter-group:nth-child(2) label::before {
+    content: '\f133'; /* calendar */
+}
+
+.filter-group:nth-child(3) label::before {
+    content: '\f57d'; /* globe */
+}
+
+.filter-group:nth-child(4) label::before {
+    content: '\f073'; /* calendar-alt */
+}
 
 /* Total records display */
 .total-records {
