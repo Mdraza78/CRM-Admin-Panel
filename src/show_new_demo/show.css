@@ -46,9 +46,14 @@
 
 
 
-/* Ensure table view is always active */
 .show-leads-table-view.active {
-    display: block !important;
+    display: block;
+    width: 100%;
+    overflow-x: auto;       /* Add this if not present */
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e9ecef;
 }
 
 
@@ -968,17 +973,6 @@ body {
     gap: 15px;
 }
 
-/* Table View Styling */
-.show-leads-table-view.active {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border: 1px solid #e9ecef;
-}
-
 .table-container::-webkit-scrollbar {
     height: 12px;
 }
@@ -1001,14 +995,22 @@ body {
 
 .table-container {
     width: 100%;
-    overflow-x: auto;
+    overflow-x: auto;      /* Ensures horizontal scroll at all times */
     border-radius: 12px;
     border: 1px solid #e9ecef;
     background: white;
     margin-bottom: 20px;
     max-height: 70vh;
+    -webkit-overflow-scrolling: touch; /* smooth on mobile */
+}
+.show-leads-table-view.active::-webkit-scrollbar {
+    height: 10px;
 }
 
+.show-leads-table-view.active::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 5px;
+}
 .show-leads-table-view.active .data-table {
    width: 100%;
     min-width: 1200px; /* Minimum width to accommodate all columns */
