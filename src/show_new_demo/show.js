@@ -146,20 +146,7 @@ function setupEventListeners() {
     
     console.log('✅ Event listeners setup complete');
 }
-function handleCountryFilter(checkbox) {
-    if (checkbox.id === 'countryAll' && checkbox.checked) {
-        // Uncheck all other country checkboxes
-        document.querySelectorAll('.filter-group:nth-child(2) input[type="checkbox"]:not(#countryAll)').forEach(cb => {
-            cb.checked = false;
-        });
-    } else if (checkbox.id !== 'countryAll' && checkbox.checked) {
-        // Uncheck "All Countries" when specific country is selected
-        document.getElementById('countryAll').checked = false;
-    }
-    
-    // Apply filters using existing function
-    filterShowLeads();
-}
+
 // Active Menu Manager
 class ActiveMenuManager {
     constructor() {
@@ -186,8 +173,6 @@ class ActiveMenuManager {
         // Load saved active menu from session storage
         this.loadSavedActiveMenu();
     }
-
-
 
     setActiveMenu(page) {
         // Remove active class from all nav links
@@ -245,47 +230,6 @@ class ActiveMenuManager {
 function getAvatarColor() {
     return 'linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%)';
 }
-
-function resetFilters() {
-    // Reset all checkboxes to default state
-    document.getElementById('sourceAll').checked = true;
-    document.querySelectorAll('.filter-group:nth-child(1) input[type="checkbox"]:not(#sourceAll)').forEach(cb => {
-        cb.checked = false;
-    });
-    
-    document.getElementById('countryAll').checked = true;
-    document.querySelectorAll('.filter-group:nth-child(2) input[type="checkbox"]:not(#countryAll)').forEach(cb => {
-        cb.checked = false;
-    });
-    
-    document.getElementById('dateAll').checked = true;
-    document.querySelectorAll('.filter-group:nth-child(3) input[type="checkbox"]:not(#dateAll)').forEach(cb => {
-        cb.checked = false;
-    });
-    
-    document.querySelector('.search-input').value = '';
-    
-    currentPage = 1;
-    loadShowLeads();
-    
-    showNotification('Filters reset', 'info');
-}
-
-function handleDateFilter(checkbox) {
-    if (checkbox.id === 'dateAll' && checkbox.checked) {
-        // Uncheck all other date checkboxes
-        document.querySelectorAll('.filter-group:nth-child(3) input[type="checkbox"]:not(#dateAll)').forEach(cb => {
-            cb.checked = false;
-        });
-    } else if (checkbox.id !== 'dateAll' && checkbox.checked) {
-        // Uncheck "All Dates" when specific date is selected
-        document.getElementById('dateAll').checked = false;
-    }
-    
-    // Apply filters using existing function
-    filterShowLeads();
-}
-
 
 function createLetterAvatar(name, element) {
     if (!name || name === 'User' || name === 'Loading...') {
@@ -1701,21 +1645,5 @@ function getNotificationIcon(type) {
     };
     return icons[type] || icons.info;
 }
-
-function handleSourceFilter(checkbox) {
-    if (checkbox.id === 'sourceAll' && checkbox.checked) {
-        // Uncheck all other source checkboxes
-        document.querySelectorAll('.filter-group:nth-child(1) input[type="checkbox"]:not(#sourceAll)').forEach(cb => {
-            cb.checked = false;
-        });
-    } else if (checkbox.id !== 'sourceAll' && checkbox.checked) {
-        // Uncheck "All Sources" when specific source is selected
-        document.getElementById('sourceAll').checked = false;
-    }
-    
-    // Apply filters using existing function
-    filterShowLeads();
-}
-
 
 console.log('✅ Show Leads Management System fully initialized');
