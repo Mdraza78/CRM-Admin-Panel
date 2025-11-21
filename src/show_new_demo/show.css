@@ -13,6 +13,11 @@
     color: #f6c812 !important;
 }
 
+.section-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
 
 .section-header {
     margin-bottom: 25px;
@@ -83,16 +88,65 @@
     min-width: 0;
     box-sizing: border-box;
 }
+.dashboard-header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-shrink: 0;
+}
 
+.dashboard-header .search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.dashboard-header .search-container i {
+    position: absolute;
+    left: 15px;
+    color: #6c757d;
+    font-size: 14px;
+    z-index: 1;
+}
+
+.dashboard-header .search-input {
+    padding: 12px 15px 12px 40px;
+    border: 2px solid #e9ecef;
+    border-radius: 25px;
+    width: 280px;
+    font-size: 14px;
+    background-color: white;
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+}
+
+.dashboard-header .search-input:focus {
+    outline: none;
+    border-color: #00BCD4;
+    box-shadow: 0 0 0 4px rgba(0, 188, 212, 0.1);
+    width: 320px;
+}
+
+.dashboard-header .search-input::placeholder {
+    color: #9ca3af;
+}
 
 /* Updated dashboard header */
 .dashboard-header {
+    background: white;
+    padding: 25px 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 25px;
+    border: 1px solid #e9ecef;
+    position: relative;
+}
+
+.dashboard-header-content {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 0 0 20px 0;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #e9ecef;
+    align-items: flex-start;
+    gap: 30px;
 }
 
 .dashboard-header-actions {
@@ -100,7 +154,27 @@
     gap: 15px;
 }
 
+.dashboard-header-left h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
 
+.dashboard-header-left h1 i {
+    color: #00BCD4;
+    font-size: 24px;
+}
+
+.dashboard-header-left p {
+    color: #6c757d;
+    font-size: 15px;
+    margin: 0;
+    font-weight: 400;
+}
 
 .show-leads-table-view.active {
     display: block;
@@ -170,6 +244,7 @@
     padding: 8px 16px;
     border-radius: 8px;
     border: 1px solid #e9ecef;
+    white-space: nowrap;
 }
 
 /* Responsive design for the new layout */
@@ -809,27 +884,30 @@ body {
 }
 
 .menu-toggle {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
     background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
     border: none;
     color: white;
-    width: 45px;
-    height: 45px;
+    width: 40px;
+    height: 40px;
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-size: 18px;
+    font-size: 16px;
     box-shadow: 0 2px 8px rgba(0, 188, 212, 0.3);
 }
 
 .menu-toggle:hover {
     background: linear-gradient(135deg, #00a8c0 0%, #1976d2 100%);
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4);
+    transform: translateY(-50%) scale(1.05);
 }
+
 
 .menu-toggle:active {
     transform: translateY(0);
@@ -999,14 +1077,9 @@ body {
 
 /* Page Header */
 .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 30px;
-    padding-bottom: 20px;
-    margin-top: 35px;
-    border-bottom: none;
+    display: none;
 }
+
 
 .page-header .header-left h1 {
     font-size: 32px;
@@ -1378,6 +1451,7 @@ body {
     flex-shrink: 0;
 }
 
+
 /* Search Container */
 .search-container {
     position: relative;
@@ -1402,6 +1476,25 @@ body {
     background-color: rgba(255, 255, 255, 0.9);
     transition: all 0.3s ease;
     border: 2px solid #e9ecef;
+}
+@media (max-width: 1024px) {
+    .dashboard-header-content {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .dashboard-header-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .dashboard-header .search-input {
+        width: 250px;
+    }
+    
+    .dashboard-header .search-input:focus {
+        width: 280px;
+    }
 }
 
 .search-input:focus {
@@ -1831,53 +1924,73 @@ body {
     min-width: 150px;
 }
 @media (max-width: 768px) {
-    .table-container {
-        margin: 0 -15px;
-        width: calc(100% + 30px);
-        border-radius: 0;
-        border-left: none;
-        border-right: none;
+    .dashboard-header {
+        padding: 20px;
     }
     
-    .data-table {
-        min-width: 1000px;
+    .dashboard-header-left h1 {
+        font-size: 24px;
+        margin-bottom: 6px;
     }
     
-    .data-table th,
-    .data-table td {
-        padding: 10px 12px;
-        font-size: 13px;
+    .dashboard-header-left p {
+        font-size: 14px;
+    }
+    
+    .dashboard-header-right {
+        flex-direction: column;
+        gap: 15px;
+        width: 100%;
+    }
+    
+    .dashboard-header .search-container {
+        width: 100%;
+    }
+    
+    .dashboard-header .search-input {
+        width: 100%;
+    }
+    
+    .dashboard-header .search-input:focus {
+        width: 100%;
+    }
+    
+    .btn-primary {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .menu-toggle {
+        position: relative;
+        left: 0;
+        top: 0;
+        transform: none;
+        margin-bottom: 15px;
     }
 }
 
 @media (max-width: 480px) {
-    .show-leads-table-view {
-        overflow-x: auto;
+    .dashboard-header {
+        padding: 15px;
     }
     
-    .data-table {
-        min-width: 800px;
+    .dashboard-header-left h1 {
+        font-size: 20px;
     }
     
-    .table-actions {
-        flex-direction: column;
-        gap: 5px;
+    .dashboard-header-left h1 i {
+        font-size: 18px;
     }
     
-    .bulk-actions {
+    .section-actions {
         flex-direction: column;
         gap: 10px;
-        align-items: stretch;
+        align-items: flex-start;
     }
     
-    .kpi-section {
-        grid-template-columns: 1fr;
-    }
-    
-    .kpi-card {
-        flex-direction: column;
-        text-align: center;
-        padding: 25px;
+    .total-records {
+        font-size: 13px;
+        padding: 6px 12px;
     }
 }
 
