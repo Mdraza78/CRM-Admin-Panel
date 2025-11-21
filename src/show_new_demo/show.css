@@ -969,7 +969,7 @@ body {
 }
 
 /* Table View Styling */
-.show-leads-table-view.active .table-container {
+.show-leads-table-view.active {
     display: block;
     width: 100%;
     overflow-x: auto;
@@ -979,9 +979,39 @@ body {
     border: 1px solid #e9ecef;
 }
 
+.table-container::-webkit-scrollbar {
+    height: 12px;
+}
+
+.table-container::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 6px;
+    margin: 0 5px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 6px;
+    border: 2px solid #f1f5f9;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e9ecef;
+     scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
 .show-leads-table-view.active .data-table {
     width: 100%;
-    min-width: 100%;
+    min-width: 1000px; /* Ensure table doesn't shrink below this width */
     border-collapse: collapse;
 }
 
@@ -990,6 +1020,7 @@ body {
     padding: 12px 15px;
     text-align: left;
     border-bottom: 1px solid #f1f5f9;
+    white-space: nowrap; /* Prevent text wrapping */
 }
 
 .show-leads-table-view.active .data-table thead {
@@ -1106,6 +1137,10 @@ body {
     background: #94a3b8;
 }
 
+.table-wrapper {
+    min-width: 1000px; /* Ensure table has enough width */
+    width: 100%;
+}
 /* Bulk Actions */
 .bulk-actions {
     display: flex;
