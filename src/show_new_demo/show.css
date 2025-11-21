@@ -89,9 +89,9 @@
     /* background: white; */  /* Remove or comment out this line */
     padding: 25px 30px;
     border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    
     margin-bottom: 25px;
-    border: 1px solid #e9ecef;
+    
     position: relative;
 }
 
