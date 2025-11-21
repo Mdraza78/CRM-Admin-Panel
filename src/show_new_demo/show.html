@@ -144,116 +144,117 @@
             <!-- Main Content Area - Side by Side Layout -->
             <div class="main-content-area">
                 <!-- Controls Section on Left -->
-                <section class="controls-section">
-                    <div class="section-header">
-                        <h3><i class="fas fa-filter"></i> Filters & Controls</h3>
-                    </div>
-                    
-                    <div class="filters-bar">
-                        <div class="filter-group">
-                            <label class="filter-label">Lead Source:</label>
-                            <div class="checkbox-group">
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="sourceAll" value="" checked onchange="handleSourceFilter(this)">
-                                    <label for="sourceAll">All Sources</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="sourceEmail" value="email" onchange="handleSourceFilter(this)">
-                                    <label for="sourceEmail">Email</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="sourceLinkedin" value="linkedin" onchange="handleSourceFilter(this)">
-                                    <label for="sourceLinkedin">LinkedIn</label>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="filter-group">
-                            <label class="filter-label">Country:</label>
-                            <div class="checkbox-group">
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="countryAll" value="" checked onchange="handleCountryFilter(this)">
-                                    <label for="countryAll">All Countries</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="countryUSA" value="USA" onchange="handleCountryFilter(this)">
-                                    <label for="countryUSA">United States</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="countryCAN" value="CAN" onchange="handleCountryFilter(this)">
-                                    <label for="countryCAN">Canada</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="countryGBR" value="GBR" onchange="handleCountryFilter(this)">
-                                    <label for="countryGBR">United Kingdom</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="countryDEU" value="DEU" onchange="handleCountryFilter(this)">
-                                    <label for="countryDEU">Germany</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="countryFRA" value="FRA" onchange="handleCountryFilter(this)">
-                                    <label for="countryFRA">France</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="countryAUS" value="AUS" onchange="handleCountryFilter(this)">
-                                    <label for="countryAUS">Australia</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="countryJPN" value="JPN" onchange="handleCountryFilter(this)">
-                                    <label for="countryJPN">Japan</label>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="filter-group">
-                            <label class="filter-label">Date Range:</label>
-                            <div class="checkbox-group">
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="dateAll" value="" checked onchange="handleDateFilter(this)">
-                                    <label for="dateAll">All Dates</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="dateUpcoming" value="upcoming" onchange="handleDateFilter(this)">
-                                    <label for="dateUpcoming">Upcoming Shows</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="datePast" value="past" onchange="handleDateFilter(this)">
-                                    <label for="datePast">Past Shows</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="dateThisMonth" value="this_month" onchange="handleDateFilter(this)">
-                                    <label for="dateThisMonth">This Month</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="dateThisYear" value="this_year" onchange="handleDateFilter(this)">
-                                    <label for="dateThisYear">This Year</label>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="filter-group">
-                            <button class="btn-secondary" onclick="resetFilters()">
-                                <i class="fas fa-undo"></i> Reset Filters
-                            </button>
-                        </div>
-                    </div>
+<!-- Controls Section on Left -->
+<section class="controls-section">
+    <div class="section-header">
+        <h3><i class="fas fa-filter"></i> Filters & Controls</h3>
+    </div>
+    
+    <div class="filters-bar">
+        <div class="filter-group">
+            <label class="filter-label">Lead Source:</label>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="sourceAll" value="" checked onchange="handleSourceFilter(this)">
+                    <label for="sourceAll">All Sources</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="sourceEmail" value="email" onchange="handleSourceFilter(this)">
+                    <label for="sourceEmail">Email</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="sourceLinkedin" value="linkedin" onchange="handleSourceFilter(this)">
+                    <label for="sourceLinkedin">LinkedIn</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="filter-group">
+            <label class="filter-label">Country:</label>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="countryAll" value="" checked onchange="handleCountryFilter(this)">
+                    <label for="countryAll">All Countries</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="countryUSA" value="USA" onchange="handleCountryFilter(this)">
+                    <label for="countryUSA">United States</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="countryCAN" value="CAN" onchange="handleCountryFilter(this)">
+                    <label for="countryCAN">Canada</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="countryGBR" value="GBR" onchange="handleCountryFilter(this)">
+                    <label for="countryGBR">United Kingdom</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="countryDEU" value="DEU" onchange="handleCountryFilter(this)">
+                    <label for="countryDEU">Germany</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="countryFRA" value="FRA" onchange="handleCountryFilter(this)">
+                    <label for="countryFRA">France</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="countryAUS" value="AUS" onchange="handleCountryFilter(this)">
+                    <label for="countryAUS">Australia</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="countryJPN" value="JPN" onchange="handleCountryFilter(this)">
+                    <label for="countryJPN">Japan</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="filter-group">
+            <label class="filter-label">Date Range:</label>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="dateAll" value="" checked onchange="handleDateFilter(this)">
+                    <label for="dateAll">All Dates</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="dateUpcoming" value="upcoming" onchange="handleDateFilter(this)">
+                    <label for="dateUpcoming">Upcoming Shows</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="datePast" value="past" onchange="handleDateFilter(this)">
+                    <label for="datePast">Past Shows</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="dateThisMonth" value="this_month" onchange="handleDateFilter(this)">
+                    <label for="dateThisMonth">This Month</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="dateThisYear" value="this_year" onchange="handleDateFilter(this)">
+                    <label for="dateThisYear">This Year</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="filter-group">
+            <button class="btn-secondary" onclick="resetFilters()">
+                <i class="fas fa-undo"></i> Reset Filters
+            </button>
+        </div>
+    </div>
 
-                    <div class="view-controls">
-                        <div class="sort-controls">
-                            <label for="sortBy">Sort By:</label>
-                            <select id="sortBy" class="form-select" onchange="sortShowLeads()">
-                                <option value="created_desc">Newest First</option>
-                                <option value="created_asc">Oldest First</option>
-                                <option value="show_date_desc">Show Date (Latest)</option>
-                                <option value="show_date_asc">Show Date (Earliest)</option>
-                                <option value="name_asc">Contact A-Z</option>
-                                <option value="name_desc">Contact Z-A</option>
-                                <option value="company_asc">Company A-Z</option>
-                            </select>
-                        </div>
-                    </div>
-                </section>
+    <div class="view-controls">
+        <div class="sort-controls">
+            <label for="sortBy">Sort By:</label>
+            <select id="sortBy" class="form-select" onchange="sortShowLeads()">
+                <option value="created_desc">Newest First</option>
+                <option value="created_asc">Oldest First</option>
+                <option value="show_date_desc">Show Date (Latest)</option>
+                <option value="show_date_asc">Show Date (Earliest)</option>
+                <option value="name_asc">Contact A-Z</option>
+                <option value="name_desc">Contact Z-A</option>
+                <option value="company_asc">Company A-Z</option>
+            </select>
+        </div>
+    </div>
+</section>
 
                 <!-- Show Leads Section on Right -->
                 <section class="show-leads-section">
@@ -264,26 +265,26 @@
                         </div>
                     </div>
                     
-                    <div class="show-leads-container">
-                        <!-- Table View Only -->
-                        <div class="show-leads-table-view active" id="tableView">
-                            <div class="table-container">
-                                <div class="table-wrapper">
-                                    <table class="data-table">
-                                        <thead>
-                                            <tr>
-                                                <th><input type="checkbox" onchange="selectAllShowLeads(this)"></th>
-                                                <th onclick="sortTable('contactName')">Contact Name <i class="fas fa-sort"></i></th>
-                                                <th onclick="sortTable('clientEmail')">Email <i class="fas fa-sort"></i></th>
-                                                <th onclick="sortTable('jobTitle')">Job Title <i class="fas fa-sort"></i></th>
-                                                <th onclick="sortTable('companyName')">Company <i class="fas fa-sort"></i></th>
-                                                <th onclick="sortTable('showName')">Show <i class="fas fa-sort"></i></th>
-                                                <th onclick="sortTable('showDate')">Show Date <i class="fas fa-sort"></i></th>
-                                                <th onclick="sortTable('leadSource')">Source <i class="fas fa-sort"></i></th>
-                                                <th onclick="sortTable('createdDate')">Created <i class="fas fa-sort"></i></th>
-                                                <th>Actions</th>
-                                            </tr>
-                                        </thead>
+              <div class="show-leads-container">
+    <!-- Table View Only -->
+    <div class="show-leads-table-view active" id="tableView">
+        <div class="table-container">
+            <div class="table-wrapper">
+                <table class="data-table">
+                                  <thead>
+                        <tr>
+                            <th><input type="checkbox" onchange="selectAllShowLeads(this)"></th>
+                            <th onclick="sortTable('contactName')">Contact Name <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable('clientEmail')">Email <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable('jobTitle')">Job Title <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable('companyName')">Company <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable('showName')">Show <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable('showDate')">Show Date <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable('leadSource')">Source <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable('createdDate')">Created <i class="fas fa-sort"></i></th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
                                         <tbody id="showLeadsTableBody">
                                             <!-- Table rows will be populated by JavaScript -->
                                         </tbody>
