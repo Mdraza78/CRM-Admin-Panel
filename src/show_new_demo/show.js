@@ -1646,4 +1646,229 @@ function getNotificationIcon(type) {
     return icons[type] || icons.info;
 }
 
+// Filter handling functions for checkbox filters
+function handleSourceFilter(checkbox) {
+    if (checkbox.id === 'sourceAll' && checkbox.checked) {
+        // Uncheck all other source checkboxes
+        document.querySelectorAll('.filter-group:nth-child(1) input[type="checkbox"]:not(#sourceAll)').forEach(cb => {
+            cb.checked = false;
+        });
+    } else if (checkbox.id !== 'sourceAll' && checkbox.checked) {
+        // Uncheck "All Sources" when specific source is selected
+        document.getElementById('sourceAll').checked = false;
+    }
+    
+    // Apply filters
+    filterShowLeads();
+}
+
+function handleCountryFilter(checkbox) {
+    if (checkbox.id === 'countryAll' && checkbox.checked) {
+        // Uncheck all other country checkboxes
+        document.querySelectorAll('.filter-group:nth-child(2) input[type="checkbox"]:not(#countryAll)').forEach(cb => {
+            cb.checked = false;
+        });
+    } else if (checkbox.id !== 'countryAll' && checkbox.checked) {
+        // Uncheck "All Countries" when specific country is selected
+        document.getElementById('countryAll').checked = false;
+    }
+    
+    // Apply filters
+    filterShowLeads();
+}
+
+function handleDateFilter(checkbox) {
+    if (checkbox.id === 'dateAll' && checkbox.checked) {
+        // Uncheck all other date checkboxes
+        document.querySelectorAll('.filter-group:nth-child(3) input[type="checkbox"]:not(#dateAll)').forEach(cb => {
+            cb.checked = false;
+        });
+    } else if (checkbox.id !== 'dateAll' && checkbox.checked) {
+        // Uncheck "All Dates" when specific date is selected
+        document.getElementById('dateAll').checked = false;
+    }
+    
+    // Apply filters
+    filterShowLeads();
+}
+
+// Update the filterShowLeads function to work with checkboxes
+function filterShowLeads() {
+    currentPage = 1;
+    loadShowLeads();
+}
+
+// Update the resetFilters function to reset checkboxes
+function resetFilters() {
+    // Reset all checkboxes to default state
+    document.getElementById('sourceAll').checked = true;
+    document.querySelectorAll('.filter-group:nth-child(1) input[type="checkbox"]:not(#sourceAll)').forEach(cb => {
+        cb.checked = false;
+    });
+    
+    document.getElementById('countryAll').checked = true;
+    document.querySelectorAll('.filter-group:nth-child(2) input[type="checkbox"]:not(#countryAll)').forEach(cb => {
+        cb.checked = false;
+    });
+    
+    document.getElementById('dateAll').checked = true;
+    document.querySelectorAll('.filter-group:nth-child(3) input[type="checkbox"]:not(#dateAll)').forEach(cb => {
+        cb.checked = false;
+    });
+    
+    document.querySelector('.search-input').value = '';
+    
+    currentPage = 1;
+    loadShowLeads();
+    
+    showNotification('Filters reset', 'info');
+}
+
+// Update the loadShowLeads function to handle checkbox filters
+async function loadShowLeads() {
+    try {
+        showLoading(true);
+        
+        const token = getToken();
+        if (!token) {
+            showNotification('Please login to access show leads', 'error');
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 2000);
+            return;
+        }
+
+        const search = document.querySelector('.search-input')?.value || '';
+        const sortBy = document.getElementById('sortBy')?.value || 'created_desc';
+
+        // Get selected sources from checkboxes
+        const sourceFilters = [];
+        if (!document.getElementById('sourceAll').checked) {
+            document.querySelectorAll('.filter-group:nth-child(1) input[type="checkbox"]:checked:not(#sourceAll)').forEach(cb => {
+                sourceFilters.push(cb.value);
+            });
+        }
+
+        // Get selected countries from checkboxes
+        const countryFilters = [];
+        if (!document.getElementById('countryAll').checked) {
+            document.querySelectorAll('.filter-group:nth-child(2) input[type="checkbox"]:checked:not(#countryAll)').forEach(cb => {
+                countryFilters.push(cb.value);
+            });
+        }
+
+        // Get selected date ranges from checkboxes
+        const dateFilters = [];
+        if (!document.getElementById('dateAll').checked) {
+            document.querySelectorAll('.filter-group:nth-child(3) input[type="checkbox"]:checked:not(#dateAll)').forEach(cb => {
+                dateFilters.push(cb.value);
+            });
+        }
+
+        // Parse sort parameters
+        let sortField = 'createdDate';
+        let sortOrder = 'desc';
+        
+        if (sortBy === 'name_asc') {
+            sortField = 'contactName';
+            sortOrder = 'asc';
+        } else if (sortBy === 'name_desc') {
+            sortField = 'contactName';
+            sortOrder = 'desc';
+        } else if (sortBy === 'company_asc') {
+            sortField = 'companyName';
+            sortOrder = 'asc';
+        } else if (sortBy === 'show_date_desc') {
+            sortField = 'showDate';
+            sortOrder = 'desc';
+        } else if (sortBy === 'show_date_asc') {
+            sortField = 'showDate';
+            sortOrder = 'asc';
+        }
+
+        const params = new URLSearchParams({
+            page: currentPage,
+            limit: itemsPerPage,
+            ...(search && { search }),
+            ...(sourceFilters.length > 0 && { sources: sourceFilters.join(',') }),
+            ...(countryFilters.length > 0 && { countries: countryFilters.join(',') }),
+            ...(dateFilters.length > 0 && { dateRanges: dateFilters.join(',') }),
+            sortBy: sortField,
+            sortOrder: sortOrder
+        });
+
+        const response = await fetch(`${API_BASE_URL}/show-leads?${params}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (result.success) {
+            showLeads = result.data.map(lead => ({
+                id: lead._id,
+                contactName: lead.contactName,
+                clientEmail: lead.clientEmail,
+                jobTitle: lead.jobTitle,
+                clientPhone: lead.clientPhone,
+                showName: lead.showName,
+                showWebsite: lead.showWebsite,
+                showDate: lead.showDate,
+                attendeeCount: lead.attendeeCount,
+                companyName: lead.companyName,
+                companyWebsite: lead.companyWebsite,
+                companyCountry: lead.companyCountry,
+                companyPhone: lead.companyPhone,
+                leadSource: lead.leadSource,
+                leadPriority: lead.leadPriority,
+                emailMessage: lead.emailMessage,
+                keyPoints: lead.keyPoints,
+                followUpDate: lead.followUpDate,
+                tags: lead.tags ? lead.tags.join(', ') : '',
+                createdDate: lead.createdDate,
+                emailAttachments: lead.emailAttachments || []
+            }));
+
+            filteredShowLeads = [...showLeads];
+            totalLeadsCount = result.pagination.totalLeads;
+            
+            // Update total records display
+            document.getElementById('totalRecords').textContent = totalLeadsCount;
+            
+            // Update stats - but don't try to update KPI elements that don't exist
+            // The stats data is still received from backend but we don't display it
+            console.log('Stats received from backend:', result.stats);
+            
+            populateShowFilter();
+            renderShowLeads();
+            
+            // Only update pagination if we have pagination data
+            if (result.pagination) {
+                updatePagination(result.pagination);
+            } else {
+                console.warn('No pagination data received from backend');
+            }
+        } else {
+            throw new Error(result.message || 'Failed to load show leads');
+        }
+    } catch (error) {
+        console.error('Error loading show leads:', error);
+        showNotification('Failed to load show leads: ' + error.message, 'error');
+        
+        // Fallback: Try to render with empty data
+        showLeads = [];
+        filteredShowLeads = [];
+        renderShowLeads();
+    } finally {
+        showLoading(false);
+    }
+}
+
 console.log('✅ Show Leads Management System fully initialized');

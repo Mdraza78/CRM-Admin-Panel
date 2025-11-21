@@ -1,10 +1,10 @@
-/* show.css - Updated with side-by-side layout */
+/* show.css - Updated with checkbox filters and horizontal table scroll */
 
 /* Add these new styles for the layout */
 
 .main-content-area {
     display: grid;
-    grid-template-columns: 300px 1fr;
+    grid-template-columns: 280px 1fr;
     gap: 30px;
     margin-top: 20px;
 }
@@ -17,6 +17,7 @@
     height: fit-content;
     position: sticky;
     top: 20px;
+    width: 100%;
 }
 
 .show-leads-section {
@@ -44,35 +45,101 @@
     gap: 15px;
 }
 
-
-
 /* Ensure table view is always active */
 .show-leads-table-view.active {
     display: block !important;
 }
 
-
-/* Update filters layout */
+/* Updated filters layout */
 .filters-bar {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 25px;
     margin-bottom: 20px;
 }
 
 .filter-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
     width: 100%;
 }
 
-.filter-group label {
-    font-size: 12px;
-    font-weight: 600;
+.filter-label {
+    font-size: 13px;
+    font-weight: 700;
     color: #2c3e50;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.checkbox-group::-webkit-scrollbar {
+    width: 6px;
+}
+
+.checkbox-group::-webkit-scrollbar-track {
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.checkbox-group::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}
+
+.checkbox-group::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    transition: all 0.2s ease;
+    border-radius: 6px;
+    padding-left: 5px;
+}
+
+.checkbox-item:hover {
+    background-color: #f8f9fa;
+}
+
+.checkbox-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: #1E88E5;
+    flex-shrink: 0;
+}
+
+.checkbox-item label {
+    font-size: 14px;
+    color: #495057;
+    cursor: pointer;
+    font-weight: 500;
+    transition: color 0.2s ease;
+    flex: 1;
+}
+
+.checkbox-item:hover label {
+    color: #2c3e50;
+}
+
+.checkbox-item input[type="checkbox"]:checked + label {
+    color: #1E88E5;
+    font-weight: 600;
 }
 
 .view-controls {
@@ -108,6 +175,26 @@
     border: 1px solid #e9ecef;
 }
 
+/* Horizontal scroll for table */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e9ecef;
+}
+
+.table-wrapper {
+    min-width: 1000px; /* Ensure table has enough width */
+    width: 100%;
+}
+
+.show-leads-table-view.active .data-table {
+    width: 100%;
+    min-width: 1000px; /* Ensure table doesn't shrink below this width */
+    border-collapse: collapse;
+}
+
 /* Responsive design for the new layout */
 @media (max-width: 1200px) {
     .main-content-area {
@@ -124,7 +211,6 @@
         order: 1;
     }
 }
-
 
 @media (max-width: 768px) {
     .dashboard-header {
@@ -156,6 +242,14 @@
     
     .search-input:focus {
         width: 100%;
+    }
+    
+    .controls-section {
+        padding: 20px;
+    }
+    
+    .filters-bar {
+        gap: 20px;
     }
 }
 
@@ -1821,46 +1915,4 @@ body {
         text-align: center;
         padding: 25px;
     }
-}
-
-.main-content-area {
-    display: grid;
-    grid-template-columns: 300px 1fr;
-    gap: 30px;
-    margin-top: 20px;
-}
-
-.controls-section {
-    background: white;
-    padding: 25px;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    height: fit-content;
-    position: sticky;
-    top: 20px;
-}
-
-.show-leads-section {
-    background: white;
-    padding: 25px;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border: 1px solid #e9ecef;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-/* Updated dashboard header */
-.dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 0 20px 0;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #e9ecef;
-}
-
-.dashboard-header-actions {
-    display: flex;
-    gap: 15px;
 }
