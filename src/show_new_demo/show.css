@@ -8,7 +8,22 @@
     gap: 20px;
     margin-top: 20px;
 }
+.section-header .table-action-btn.edit:hover i,
+.section-header .table-action-btn.edit:focus i {
+    color: #f6c812 !important;
+}
 
+/* View icon (blue) on hover inside section header */
+.section-header .table-action-btn.view:hover i,
+.section-header .table-action-btn.view:focus i {
+    color: #017aff !important;
+}
+
+/* Delete icon (red) on hover inside section header */
+.section-header .table-action-btn.delete:hover i,
+.section-header .table-action-btn.delete:focus i {
+    color: #ef4444 !important;
+}
 .controls-section {
     background: white;
     padding: 25px;
