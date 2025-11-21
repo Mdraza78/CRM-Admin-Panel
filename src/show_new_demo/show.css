@@ -85,9 +85,8 @@
 }
 
 
-/* Updated dashboard header */
 .dashboard-header {
-    background: white;
+    /* background: white; */  /* Remove or comment out this line */
     padding: 25px 30px;
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
@@ -95,6 +94,7 @@
     border: 1px solid #e9ecef;
     position: relative;
 }
+
 
 .dashboard-header-actions {
     display: flex;
@@ -1911,15 +1911,7 @@ body {
     box-sizing: border-box;
 }
 
-/* Updated dashboard header */
-.dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 0 20px 0;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #e9ecef;
-}
+
 
 .dashboard-header-actions {
     display: flex;
