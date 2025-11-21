@@ -15,10 +15,14 @@
 
 
 .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 25px;
     padding-bottom: 15px;
     border-bottom: 2px solid #f8f9fa;
 }
+
 
 .section-header h3 {
     font-size: 18px;
@@ -83,6 +87,18 @@
     min-width: 0;
     box-sizing: border-box;
 }
+
+@media (max-width: 600px) {
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .total-records {
+        align-self: flex-end;
+    }
+}
+
 
 
 .dashboard-header {
