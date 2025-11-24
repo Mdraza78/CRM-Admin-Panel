@@ -1145,7 +1145,7 @@ function initializePagination() {
 function switchView(view) {
     // Only allow table view
     currentView = 'table';
-    itemsPerPage = 5; // Ensure this is set to 5
+    itemsPerPage = 6; // Ensure this is set to 6
     currentPage = 1;
     console.log('Forced table view. ItemsPerPage:', itemsPerPage);
     renderShowLeads();

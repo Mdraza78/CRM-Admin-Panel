@@ -1072,6 +1072,7 @@ body {
     max-height: none !important;
     overflow-y: visible !important;
     padding-bottom: 8px;
+    min-height: 400px; /* Add minimum height to accommodate 6 rows comfortably */
 }
 .show-leads-table-view.active::-webkit-scrollbar {
     height: 10px;
@@ -1087,6 +1088,7 @@ body {
     max-height: none !important;
     overflow-y: visible !important;
 }
+
 
 .show-leads-table-view.active .data-table {
    width: 100%;
@@ -1736,8 +1738,7 @@ body {
 }
 
 .data-table tbody tr {
-    height: auto !important;
-    max-height: none !important;
+    height: 60px; /* Consistent row height */
 }
 .data-table tbody tr:hover {
     background-color: #f8fafc;
