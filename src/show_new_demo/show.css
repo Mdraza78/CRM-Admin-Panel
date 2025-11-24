@@ -347,8 +347,11 @@ body {
     box-shadow: none !important;
 }
 .app-container.sidebar-collapsed .main-content {
-    margin-left: 60px !important;
+    margin-left: 0 !important;
+    width: 100% !important;
+    padding: 40px !important;
 }
+
 
 /* Hide sidebar content when collapsed */
 .app-container.sidebar-collapsed .header-left,
@@ -363,7 +366,7 @@ body {
     position: fixed;
     left: 20px;
     top: 20px;
-    z-index: 1001;
+    z-index: 9999;
     display: flex !important;
     visibility: visible !important;
     opacity: 1 !important;
@@ -2005,7 +2008,7 @@ body {
     position: absolute;
     top: 20px;
     right: -15px;
-    z-index: 1001;
+    z-index: 9999!important;
     display: flex;
     align-items: center;
     justify-content: center;
