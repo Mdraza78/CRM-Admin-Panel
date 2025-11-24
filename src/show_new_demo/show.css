@@ -122,10 +122,9 @@
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     border: 1px solid #e9ecef;
-    max-height: none !important; /* Remove max-height */
-    overflow-y: visible !important; /* Remove vertical scroll */
+    max-height: none !important;
+    overflow-y: visible !important;
 }
-
 
 /* Update filters layout */
 .filters-bar {
@@ -1070,10 +1069,9 @@ body {
     border: 1px solid #e9ecef;
     background: white;
     margin-bottom: 20px;
-    max-height: none !important; /* Remove any max-height restrictions */
-    overflow-y: visible !important; /* Ensure no vertical scroll */
+    max-height: none !important;
+    overflow-y: visible !important;
     padding-bottom: 8px;
-    -webkit-overflow-scrolling: touch;
 }
 .show-leads-table-view.active::-webkit-scrollbar {
     height: 10px;
@@ -1086,8 +1084,8 @@ body {
 
 .data-table {
     min-width: 900px;
-    max-height: none !important; /* Remove max-height */
-    overflow-y: visible !important; /* Remove vertical scroll */
+    max-height: none !important;
+    overflow-y: visible !important;
 }
 
 .show-leads-table-view.active .data-table {
@@ -1738,7 +1736,8 @@ body {
 }
 
 .data-table tbody tr {
-    transition: background-color 0.2s ease;
+    height: auto !important;
+    max-height: none !important;
 }
 .data-table tbody tr:hover {
     background-color: #f8fafc;

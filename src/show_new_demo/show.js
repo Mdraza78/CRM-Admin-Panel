@@ -479,6 +479,7 @@ async function loadShowLeads() {
         });
 
         if (result.success) {
+            // Store ALL leads from server
             showLeads = result.data.map(lead => ({
                 id: lead._id,
                 contactName: lead.contactName,
@@ -523,8 +524,8 @@ async function loadShowLeads() {
             if (result.pagination) {
                 updatePagination(result.pagination);
             } else {
-                console.warn('No pagination data received from backend');
-                // Fallback pagination
+                console.warn('No pagination data received from backend, using client-side pagination');
+                // Fallback pagination based on client-side data
                 updatePagination({
                     currentPage: currentPage,
                     totalPages: Math.ceil(totalLeadsCount / itemsPerPage),
@@ -1011,25 +1012,15 @@ function renderShowLeadsTable() {
     const tbody = document.getElementById('showLeadsTableBody');
     tbody.innerHTML = '';
 
-    console.log('🎯 Rendering table with:', {
+    console.log('🎯 Rendering table with client-side pagination:', {
+        totalLeadsCount: totalLeadsCount,
         showLeadsLength: showLeads.length,
         currentPage: currentPage,
         itemsPerPage: itemsPerPage
     });
 
-    // Use the leads that came from server
-    let leadsToRender = showLeads;
-
-    // If server returned more records than itemsPerPage, limit them client-side
-    if (showLeads.length > itemsPerPage) {
-        console.warn(`⚠️ Server returned ${showLeads.length} records, but expected ${itemsPerPage}. Limiting client-side.`);
-        const startIndex = 0; // Always start from 0 since server should handle pagination
-        const endIndex = Math.min(itemsPerPage, showLeads.length);
-        leadsToRender = showLeads.slice(startIndex, endIndex);
-        console.log(`🔧 Limited to ${leadsToRender.length} records for display`);
-    }
-
-    if (leadsToRender.length === 0) {
+    // If no leads, show empty state
+    if (showLeads.length === 0) {
         tbody.innerHTML = `
             <tr>
                 <td colspan="10" class="no-data">
@@ -1047,8 +1038,23 @@ function renderShowLeadsTable() {
         return;
     }
 
-    // Render the limited number of leads
-    leadsToRender.forEach(lead => {
+    // Calculate pagination indices for client-side pagination
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, showLeads.length);
+    
+    console.log('📄 Pagination indices:', {
+        startIndex: startIndex,
+        endIndex: endIndex,
+        recordsToShow: endIndex - startIndex
+    });
+
+    // Get only the leads for the current page
+    const leadsToRender = showLeads.slice(startIndex, endIndex);
+
+    console.log('🔄 Rendering leads:', leadsToRender.length);
+
+    // Render the paginated leads
+    leadsToRender.forEach((lead, index) => {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td><input type="checkbox" value="${lead.id}" onchange="toggleShowLeadSelection(this)"></td>
@@ -1077,7 +1083,7 @@ function renderShowLeadsTable() {
         tbody.appendChild(row);
     });
 
-    console.log('✅ Rendered', leadsToRender.length, 'leads in table');
+    console.log('✅ Successfully rendered', leadsToRender.length, 'leads for page', currentPage);
 }
 
 function escapeHtml(unsafe) {
@@ -1263,7 +1269,8 @@ function bulkExportSelected() {
 
 // Pagination
 function updatePagination(paginationData) {
-    // Check if pagination elements exist before updating
+    console.log('📄 Updating pagination with:', paginationData);
+    
     const startElement = document.getElementById('paginationStart');
     const endElement = document.getElementById('paginationEnd');
     const totalElement = document.getElementById('paginationTotal');
@@ -1275,18 +1282,70 @@ function updatePagination(paginationData) {
         return;
     }
     
+    // Always calculate based on client-side data to ensure consistency
+    const totalPages = Math.ceil(totalLeadsCount / itemsPerPage);
     const startIndex = ((currentPage - 1) * itemsPerPage) + 1;
-    const endIndex = Math.min(currentPage * itemsPerPage, paginationData.totalLeads);
+    const endIndex = Math.min(currentPage * itemsPerPage, totalLeadsCount);
+    
+    console.log('📊 Pagination calculations:', {
+        totalLeadsCount: totalLeadsCount,
+        itemsPerPage: itemsPerPage,
+        totalPages: totalPages,
+        currentPage: currentPage,
+        startIndex: startIndex,
+        endIndex: endIndex
+    });
     
     startElement.textContent = startIndex;
     endElement.textContent = endIndex;
-    totalElement.textContent = paginationData.totalLeads;
+    totalElement.textContent = totalLeadsCount;
     
-    prevBtn.disabled = !paginationData.hasPrev;
-    nextBtn.disabled = !paginationData.hasNext;
+    prevBtn.disabled = currentPage <= 1;
+    nextBtn.disabled = currentPage >= totalPages;
     
-    renderPaginationNumbers(paginationData.totalPages);
+    renderPaginationNumbers(totalPages);
 }
+
+function renderPaginationNumbers(totalPages) {
+    const container = document.getElementById('paginationNumbers');
+    if (!container) {
+        console.warn('Pagination numbers container not found');
+        return;
+    }
+    
+    container.innerHTML = '';
+    
+    const maxVisible = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+    
+    if (endPage - startPage + 1 < maxVisible) {
+        startPage = Math.max(1, endPage - maxVisible + 1);
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+        const pageBtn = document.createElement('button');
+        pageBtn.className = `page-number ${i === currentPage ? 'active' : ''}`;
+        pageBtn.textContent = i;
+        pageBtn.onclick = () => goToPage(i);
+        container.appendChild(pageBtn);
+    }
+    
+    console.log('🔢 Pagination numbers rendered:', { currentPage, totalPages });
+}
+
+// Add this function to test pagination
+function testPagination() {
+    console.log('🧪 Testing pagination...');
+    console.log('Total leads:', totalLeadsCount);
+    console.log('Items per page:', itemsPerPage);
+    console.log('Current page:', currentPage);
+    console.log('Total pages:', Math.ceil(totalLeadsCount / itemsPerPage));
+    console.log('Showing records:', ((currentPage - 1) * itemsPerPage) + 1, 'to', Math.min(currentPage * itemsPerPage, totalLeadsCount));
+}
+
+// Call this in your loadShowLeads function after renderShowLeads();
+// testPagination();
 
 function renderPaginationNumbers(totalPages) {
     const container = document.getElementById('paginationNumbers');
