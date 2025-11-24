@@ -888,6 +888,7 @@ body {
 }
 
 .menu-toggle {
+   /* Your existing styles */
     background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
     border: none;
     color: white;
@@ -2017,7 +2018,6 @@ body {
     font-size: 14px;
     box-shadow: 0 2px 8px rgba(0, 188, 212, 0.3);
 }
-
 .sidebar-toggle-btn:hover {
     background: linear-gradient(135deg, #00a8c0 0%, #1976d2 100%);
     transform: scale(1.1);
