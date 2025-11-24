@@ -1706,7 +1706,7 @@ function toggleSidebar() {
     // Save sidebar state
     localStorage.setItem('sidebarCollapsed', isCollapsed);
     
-    // Update the toggle icon with better visibility
+    // Update the toggle icon
     if (toggleIcon) {
         if (isCollapsed) {
             toggleIcon.classList.remove('fa-angle-left');
@@ -1717,24 +1717,61 @@ function toggleSidebar() {
             toggleIcon.classList.add('fa-angle-left');
             console.log('🔧 Sidebar expanded - showing left arrow');
         }
-        
-        // Force visibility
-        toggleIcon.style.display = 'flex';
-        toggleIcon.style.visibility = 'visible';
-        toggleIcon.style.opacity = '1';
-    }
-    
-    // Force the toggle button to be visible
-    const toggleBtn = document.querySelector('.sidebar-toggle-btn');
-    if (toggleBtn) {
-        toggleBtn.style.display = 'flex';
-        toggleBtn.style.visibility = 'visible';
-        toggleBtn.style.opacity = '1';
-        toggleBtn.style.zIndex = '1002';
     }
     
     console.log('🔧 Sidebar toggled:', isCollapsed ? 'collapsed' : 'expanded');
 }
+
+// Update initialization to handle sidebar state correctly
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🎪 Show Leads System initializing...');
+    
+    // Check authentication first
+    if (!checkAuthentication()) {
+        console.log('Authentication failed, redirecting to login');
+        return;
+    }
+    
+    console.log('Authentication successful, initializing show leads');
+    
+    // Load sidebar state and set correct icon
+    const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+    const appContainer = document.querySelector('.app-container');
+    const toggleIcon = document.getElementById('sidebarToggleIcon');
+    
+    if (sidebarCollapsed) {
+        appContainer.classList.add('sidebar-collapsed');
+        if (toggleIcon) {
+            toggleIcon.classList.remove('fa-angle-left');
+            toggleIcon.classList.add('fa-angle-right');
+            console.log('🔄 Initial state: Sidebar collapsed');
+        }
+    } else {
+        if (toggleIcon) {
+            toggleIcon.classList.remove('fa-angle-right');
+            toggleIcon.classList.add('fa-angle-left');
+            console.log('🔄 Initial state: Sidebar expanded');
+        }
+    }
+    
+    // Ensure toggle button is visible
+    setTimeout(() => {
+        const toggleBtn = document.querySelector('.sidebar-toggle-btn');
+        if (toggleBtn) {
+            toggleBtn.style.display = 'flex';
+            toggleBtn.style.visibility = 'visible';
+            toggleBtn.style.opacity = '1';
+        }
+    }, 100);
+    
+    initializeShowLeads();
+    setupEventListeners();
+    displayUserName();
+    initializePagination();
+    loadShowLeads();
+    
+    console.log('✅ Show Leads System initialized successfully');
+});
 
 // Update initialization to ensure icon is correct
 document.addEventListener('DOMContentLoaded', function() {
