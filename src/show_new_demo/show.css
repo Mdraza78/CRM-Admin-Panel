@@ -296,7 +296,6 @@ body {
     flex-direction: row;
 }
 
-/* Sidebar Toggle Bottom Styles */
 .sidebar-toggle-bottom {
     position: absolute;
     bottom: 20px;
@@ -307,6 +306,7 @@ body {
     align-items: center;
     justify-content: center;
     width: 100%;
+    padding: 0 15px;
 }
 
 .sidebar-toggle-btn {
@@ -329,41 +329,6 @@ body {
     background: linear-gradient(135deg, #00a8c0 0%, #1976d2 100%);
     transform: scale(1.1);
     box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4);
-}
-
-/* Rotate icon when sidebar is collapsed */
-.app-container.sidebar-collapsed .sidebar-toggle-btn {
-    transform: rotate(180deg);
-}
-
-.app-container.sidebar-collapsed .sidebar-toggle-btn:hover {
-    transform: rotate(180deg) scale(1.1);
-}
-
-/* Ensure sidebar toggle is visible when sidebar is collapsed */
-.app-container.sidebar-collapsed .sidebar-toggle-bottom {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    transform: none;
-    width: auto;
-}
-
-/* Adjust header-right to accommodate the toggle button */
-.header-right {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    margin-top: auto;
-    padding: 20px 8px 60px 8px; /* Increased bottom padding for toggle button */
-    width: 100%;
-    flex-shrink: 0;
-    background: white;
-    border-top: 1px solid #f0f0f0;
-    position: relative;
-    z-index: 10;
-    box-sizing: border-box;
 }
 
 .app-container.sidebar-collapsed .header {
@@ -422,15 +387,7 @@ body {
     display: none !important;
 }
 
-.header-content {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    padding: 0 15px;
-    height: 100%;
-    margin: 0 auto;
-    overflow: hidden;
-}
+
 
 .header-left {
     display: flex;
@@ -697,7 +654,7 @@ body {
     align-items: center;
     gap: 15px;
     margin-top: auto;
-    padding: 20px 8px;
+    padding: 20px 8px; /* Remove bottom padding since we added it to header-content */
     width: 100%;
     flex-shrink: 0;
     background: white;
@@ -2077,6 +2034,15 @@ body {
 .app-container.sidebar-collapsed .sidebar-toggle-btn:hover {
     transform: rotate(180deg) scale(1.1);
 }
+
+.app-container.sidebar-collapsed .sidebar-toggle-bottom {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    transform: none;
+    width: auto;
+}
+
 
 .dashboard-header-actions {
     display: flex;
