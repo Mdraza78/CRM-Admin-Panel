@@ -974,8 +974,11 @@ function renderShowLeads() {
 
 function renderShowLeadsTable() {
     const tbody = document.getElementById('showLeadsTableBody');
-    
-    if (showLeads.length === 0) {
+    tbody.innerHTML = '';
+
+    // Use filtered leads if applicable, otherwise showLeads
+    const leads = filteredShowLeads && filteredShowLeads.length ? filteredShowLeads : showLeads;
+    if (leads.length === 0) {
         tbody.innerHTML = `
             <tr>
                 <td colspan="10" class="no-data">
@@ -992,16 +995,19 @@ function renderShowLeadsTable() {
         `;
         return;
     }
-    
-    tbody.innerHTML = '';
-    
-    showLeads.forEach(lead => {
+
+    // Pagination slice: show only current page records
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, leads.length);
+
+    for (let i = startIndex; i < endIndex; i++) {
+        const lead = leads[i];
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td><input type="checkbox" value="${lead.id}" onchange="toggleShowLeadSelection()"></td>
+            <td><input type="checkbox" value="${lead.id}" onchange="toggleShowLeadSelection(this)"></td>
             <td>${lead.contactName}</td>
             <td>${lead.clientEmail}</td>
-            <td>${lead.jobTitle || 'N/A'}</td>
+            <td>${lead.jobTitle || 'NA'}</td>
             <td>${lead.companyName}</td>
             <td>${lead.showName}</td>
             <td>${formatDate(lead.showDate)}</td>
@@ -1009,22 +1015,16 @@ function renderShowLeadsTable() {
             <td>${formatDate(lead.createdDate)}</td>
             <td>
                 <div class="table-actions">
-                    <button class="table-action-btn" onclick="viewShowLeadDetails('${lead.id}')" title="View">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="table-action-btn" onclick="editShowLead('${lead.id}')" title="Edit">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="table-action-btn" onclick="deleteShowLead('${lead.id}')" title="Delete">
-                        <i class="fas fa-trash"></i>
-                    </button>
+                    <button class="table-action-btn" onclick="viewShowLeadDetails('${lead.id}')" title="View"><i class="fas fa-eye"></i></button>
+                    <button class="table-action-btn" onclick="editShowLead('${lead.id}')" title="Edit"><i class="fas fa-edit"></i></button>
+                    <button class="table-action-btn" onclick="deleteShowLead('${lead.id}')" title="Delete"><i class="fas fa-trash"></i></button>
                 </div>
             </td>
         `;
-        
         tbody.appendChild(row);
-    });
+    }
 }
+
 
 function populateShowFilter() {
     const showFilter = document.getElementById('showFilter');
