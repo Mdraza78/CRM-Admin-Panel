@@ -11,72 +11,62 @@
 <body>
     <div class="app-container">
         <!-- Header / Navigation -->
-        <header class="header">
-            <div class="header-content">
-               
-                <div class="header-left">
-                    <div class="logo">
-                        <img src="../Asset/Globentix_logo.png" alt="Globentix Logo">
-                    </div>
-                    
-                  <nav class="main-nav">
-    <a href="/MAIN_PAGE/index.html" class="nav-link" data-page="dashboard">
-        <i class="fas fa-tachometer-alt"></i> 
-        <span>Dashboard</span>
-    </a>
-    <a href="/show_new_demo/show.html" class="nav-link" data-page="leads">
-        <i class="fas fa-user-plus"></i> 
-        <span>Show Leads</span>
-    </a>
-<!-- In show_new_demo/show.html - Update the Industry Leads link -->
-<a href="/industry-leads" class="nav-link" data-page="industry-leads">
-    <i class="fas fa-headset"></i> 
-    <span>Industry Leads</span>
-</a>
-                        <a href="/main/DEAL/deal.html" class="nav-link" data-page="deals">
-                            <i class="fas fa-handshake"></i> 
-                            <span>Deals</span>
-                        </a>
-                        <a href="/main/CONTACT/contact.html" class="nav-link" data-page="contacts">
-                            <i class="fas fa-address-book"></i> 
-                            <span>Contacts</span>
-                        </a>
-                        <a href="/main/INVOICE/invoice.html" class="nav-link" data-page="invoice">
-                            <i class="fas fa-file-invoice"></i> 
-                            <span>Invoice</span>
-                        </a>
-                        <!-- <a href="/main/REPORTS/reports.html" class="nav-link" data-page="reports">
-                            <i class="fas fa-chart-bar"></i> 
-                            <span>Reports</span>
-                        </a> -->
-                        <!-- <a href="/main/SETTINGSS/setting.html" class="nav-link" data-page="settings">
-                            <i class="fas fa-cog"></i> 
-                            <span>Settings</span>
-                        </a> -->
-                        <a href="/main/SALARY/Salary.html" class="nav-link" data-page="salary">
-                            <i class="fas fa-money-bill"></i> 
-                            <span>Salary</span>
-                        </a>
-                    </nav>
-                </div>
-                
-                <div class="header-right">
-                   
-                    
-                     <div class="user-profile" onclick="toggleUserMenu()">
-                        <div class="user-avatar" id="userAvatar">
-                            <span class="avatar-letter" id="avatarLetter">U</span>
-                        </div>
-                        <span class="user-name" id="userDisplayName">Loading...</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="sidebar-toggle-bottom">
-        <button class="sidebar-toggle-btn" onclick="toggleSidebar()">
-            <i class="fa-solid fa-angle-left" id="sidebarToggleIcon"></i>
-        </button>
-    </div>
-                </div>
+    <header class="header">
+    <div class="header-content">
+        <div class="header-left">
+            <div class="logo">
+                <img src="../Asset/Globentix_logo.png" alt="Globentix Logo">
             </div>
+            
+            <nav class="main-nav">
+                <a href="/MAIN_PAGE/index.html" class="nav-link" data-page="dashboard">
+                    <i class="fas fa-tachometer-alt"></i> 
+                    <span>Dashboard</span>
+                </a>
+                <a href="/show_new_demo/show.html" class="nav-link" data-page="leads">
+                    <i class="fas fa-user-plus"></i> 
+                    <span>Show Leads</span>
+                </a>
+                <a href="/industry-leads" class="nav-link" data-page="industry-leads">
+                    <i class="fas fa-headset"></i> 
+                    <span>Industry Leads</span>
+                </a>
+                <a href="/main/DEAL/deal.html" class="nav-link" data-page="deals">
+                    <i class="fas fa-handshake"></i> 
+                    <span>Deals</span>
+                </a>
+                <a href="/main/CONTACT/contact.html" class="nav-link" data-page="contacts">
+                    <i class="fas fa-address-book"></i> 
+                    <span>Contacts</span>
+                </a>
+                <a href="/main/INVOICE/invoice.html" class="nav-link" data-page="invoice">
+                    <i class="fas fa-file-invoice"></i> 
+                    <span>Invoice</span>
+                </a>
+                <a href="/main/SALARY/Salary.html" class="nav-link" data-page="salary">
+                    <i class="fas fa-money-bill"></i> 
+                    <span>Salary</span>
+                </a>
+            </nav>
+        </div>
+        
+        <div class="header-right">
+            <div class="user-profile" onclick="toggleUserMenu()">
+                <div class="user-avatar" id="userAvatar">
+                    <span class="avatar-letter" id="avatarLetter">U</span>
+                </div>
+                <span class="user-name" id="userDisplayName">Loading...</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </div>
+        
+        <!-- Move sidebar toggle to the bottom of the header -->
+        <div class="sidebar-toggle-bottom">
+            <button class="sidebar-toggle-btn" onclick="toggleSidebar()">
+                <i class="fa-solid fa-angle-left" id="sidebarToggleIcon"></i>
+            </button>
+        </div>
+    </div>
             
             <!-- User Dropdown Menu -->
             <div class="user-dropdown" id="userDropdown">
