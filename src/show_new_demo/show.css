@@ -341,10 +341,10 @@ body {
     padding: 0 !important;
     border: none !important;
     box-shadow: none !important;
+    transition: all 0.3s ease;
 }
 .app-container.sidebar-collapsed .main-content {
-    margin-left: 80px !important;
-    width: calc(100% - 80px);
+    margin-left: 60px !important;
 }
 
 /* Hide sidebar content when collapsed */
@@ -954,7 +954,13 @@ body {
     padding: 0 8px;
 }
 
-
+.app-container.sidebar-collapsed .main-content {
+    position: absolute;
+    left: 25px;
+    top: 25px;
+    margin-left: 0;
+    width: 100%;
+}
 
 .app-container.sidebar-collapsed .header-left {
     align-items: center;
