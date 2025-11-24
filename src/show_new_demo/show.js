@@ -6,7 +6,7 @@ let currentEditingShowLead = null;
 let currentDeleteShowLead = null;
 let currentView = 'table'; // Force table view only
 let currentPage = 1;
-let itemsPerPage = 5; // Change from 15 to 5
+let itemsPerPage = 6; // Change from 15 to 5
 let uploadedFiles = [];
 let totalLeadsCount = 0;
 
@@ -100,7 +100,7 @@ function getUserData() {
 function initializeShowLeads() {
     console.log('🎪 Show Leads System initialized with backend integration');
     // Force table view
-    itemsPerPage = 5; // Ensure this is set to 5
+    itemsPerPage = 6; // Ensure this is set to 5
     switchView('table');
 }
 
