@@ -109,6 +109,11 @@
     align-items: center;
 }
 
+.show-leads-table-view{
+     max-height: unset !important;
+    overflow-y: visible !important;
+}
+
 .show-leads-table-view.active {
     display: block;
     width: 100%;
@@ -1062,7 +1067,8 @@ body {
     border: 1px solid #e9ecef;
     background: white;
     margin-bottom: 20px;
-    max-height: 70vh;
+    max-height: unset!important;
+    overflow-y: visible !important;
     padding-bottom: 8px;
     -webkit-overflow-scrolling: touch; /* smooth on mobile */
 }
@@ -1076,6 +1082,8 @@ body {
 }
 
 .data-table {
+    max-height: unset !important;
+    overflow-y: visible !important;
     min-width: 900px;    /* Adjust as needed for your column count */
 }
 
