@@ -298,7 +298,7 @@ body {
 
 .sidebar-toggle-bottom {
     position: absolute;
-    bottom: 25px;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 1001;
@@ -313,19 +313,20 @@ body {
     background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
     border: none;
     color: white;
-    width: 45px;
-    height: 45px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-size: 18px;
+    font-size: 16px;
     box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4);
     position: relative;
     z-index: 1002;
 }
+
 
 .sidebar-toggle-btn:hover {
     background: linear-gradient(135deg, #00a8c0 0%, #1976d2 100%);
@@ -337,7 +338,7 @@ body {
     width: 0 !important;
     min-width: 0 !important;
     max-width: 0 !important;
-    overflow: visible !important;
+    overflow: hidden !important;
     padding: 0 !important;
     border: none !important;
     box-shadow: none !important;
@@ -2052,10 +2053,10 @@ body {
 .app-container.sidebar-collapsed .sidebar-toggle-bottom {
     position: fixed;
     bottom: 25px;
-    left: 25px;
+    left: 25px; /* Position from left when collapsed */
     transform: none;
     width: auto;
-    z-index: 1003;
+    z-index: 1001;
 }
 
 
