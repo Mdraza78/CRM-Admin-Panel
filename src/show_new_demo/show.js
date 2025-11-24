@@ -493,14 +493,12 @@ async function loadShowLeads() {
             // Update total records display
             document.getElementById('totalRecords').textContent = totalLeadsCount;
             
-            // Update stats - but don't try to update KPI elements that don't exist
-            // The stats data is still received from backend but we don't display it
             console.log('Stats received from backend:', result.stats);
             
             populateShowFilter();
             renderShowLeads();
             
-            // Only update pagination if we have pagination data
+            // Update pagination with server data
             if (result.pagination) {
                 updatePagination(result.pagination);
             } else {
@@ -977,6 +975,7 @@ function renderShowLeadsTable() {
     tbody.innerHTML = '';
 
     // Use filtered leads if available, else all leads
+    // But DON'T apply client-side pagination since server already did it
     const leads = filteredShowLeads && filteredShowLeads.length ? filteredShowLeads : showLeads;
 
     if (leads.length === 0) {
@@ -997,13 +996,13 @@ function renderShowLeadsTable() {
         return;
     }
 
-    // Pagination logic: only show records for that page
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = Math.min(startIndex + itemsPerPage, leads.length);
+    // REMOVE CLIENT-SIDE PAGINATION LOGIC - Server already handles this
+    // const startIndex = (currentPage - 1) * itemsPerPage;
+    // const endIndex = Math.min(startIndex + itemsPerPage, leads.length);
+    // const leadsToShow = leads.slice(startIndex, endIndex);
 
-    const leadsToShow = leads.slice(startIndex, endIndex);
-
-    leadsToShow.forEach(lead => {
+    // Use ALL leads returned from server (which are already paginated)
+    leads.forEach(lead => {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td><input type="checkbox" value="${lead.id}" onchange="toggleShowLeadSelection(this)"></td>
