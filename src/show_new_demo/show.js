@@ -1700,27 +1700,62 @@ function downloadCSV(content, filename) {
 // Dashboard Functions
 function toggleSidebar() {
     const appContainer = document.querySelector('.app-container');
-    const isCollapsed = appContainer.classList.toggle('sidebar-collapsed');
     const toggleIcon = document.getElementById('sidebarToggleIcon');
     
-    // Save sidebar state
-    localStorage.setItem('sidebarCollapsed', isCollapsed);
+    const isCollapsed = appContainer.classList.toggle('sidebar-collapsed');
     
-    // Update the toggle icon
+    // Update the icon based on sidebar state
     if (toggleIcon) {
         if (isCollapsed) {
+            // Sidebar is collapsed - show right arrow
             toggleIcon.classList.remove('fa-angle-left');
             toggleIcon.classList.add('fa-angle-right');
-            console.log('🔧 Sidebar collapsed - showing right arrow');
         } else {
+            // Sidebar is expanded - show left arrow
             toggleIcon.classList.remove('fa-angle-right');
             toggleIcon.classList.add('fa-angle-left');
-            console.log('🔧 Sidebar expanded - showing left arrow');
         }
     }
     
+    // Save sidebar state to localStorage
+    localStorage.setItem('sidebarCollapsed', isCollapsed);
+    
     console.log('🔧 Sidebar toggled:', isCollapsed ? 'collapsed' : 'expanded');
 }
+
+// Update the initialization to handle the saved state
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🎪 Show Leads System initializing...');
+    
+    // Check authentication first
+    if (!checkAuthentication()) {
+        console.log('Authentication failed, redirecting to login');
+        return;
+    }
+    
+    console.log('Authentication successful, initializing show leads');
+    
+    // Load sidebar state and set correct icon
+    const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+    const appContainer = document.querySelector('.app-container');
+    const toggleIcon = document.getElementById('sidebarToggleIcon');
+    
+    if (sidebarCollapsed) {
+        appContainer.classList.add('sidebar-collapsed');
+        if (toggleIcon) {
+            toggleIcon.classList.remove('fa-angle-left');
+            toggleIcon.classList.add('fa-angle-right');
+        }
+    }
+    
+    initializeShowLeads();
+    setupEventListeners();
+    displayUserName();
+    initializePagination();
+    loadShowLeads();
+    
+    console.log('✅ Show Leads System initialized successfully');
+});
 
 // Update initialization to handle sidebar state correctly
 document.addEventListener('DOMContentLoaded', function() {
