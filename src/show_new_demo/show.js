@@ -448,6 +448,12 @@ async function loadShowLeads() {
             sortOrder: sortOrder
         });
 
+        console.log('🔍 Loading show leads with params:', {
+            page: currentPage,
+            limit: itemsPerPage,
+            params: params.toString()
+        });
+
         const response = await fetch(`${API_BASE_URL}/show-leads?${params}`, {
             method: 'GET',
             headers: {
@@ -461,6 +467,13 @@ async function loadShowLeads() {
         }
 
         const result = await response.json();
+
+        console.log('📊 Server response:', {
+            success: result.success,
+            dataLength: result.data ? result.data.length : 0,
+            pagination: result.pagination,
+            totalLeads: result.pagination ? result.pagination.totalLeads : 0
+        });
 
         if (result.success) {
             showLeads = result.data.map(lead => ({
@@ -488,12 +501,17 @@ async function loadShowLeads() {
             }));
 
             filteredShowLeads = [...showLeads];
-            totalLeadsCount = result.pagination.totalLeads;
+            totalLeadsCount = result.pagination ? result.pagination.totalLeads : result.data.length;
             
             // Update total records display
             document.getElementById('totalRecords').textContent = totalLeadsCount;
             
-            console.log('Stats received from backend:', result.stats);
+            console.log('🔄 Processed show leads:', {
+                totalLeadsCount: totalLeadsCount,
+                showLeadsLength: showLeads.length,
+                currentPage: currentPage,
+                itemsPerPage: itemsPerPage
+            });
             
             populateShowFilter();
             renderShowLeads();
@@ -503,6 +521,14 @@ async function loadShowLeads() {
                 updatePagination(result.pagination);
             } else {
                 console.warn('No pagination data received from backend');
+                // Fallback pagination
+                updatePagination({
+                    currentPage: currentPage,
+                    totalPages: Math.ceil(totalLeadsCount / itemsPerPage),
+                    totalLeads: totalLeadsCount,
+                    hasPrev: currentPage > 1,
+                    hasNext: currentPage < Math.ceil(totalLeadsCount / itemsPerPage)
+                });
             }
         } else {
             throw new Error(result.message || 'Failed to load show leads');
@@ -515,6 +541,15 @@ async function loadShowLeads() {
         showLeads = [];
         filteredShowLeads = [];
         renderShowLeads();
+        
+        // Update pagination for error state
+        updatePagination({
+            currentPage: 1,
+            totalPages: 1,
+            totalLeads: 0,
+            hasPrev: false,
+            hasNext: false
+        });
     } finally {
         showLoading(false);
     }
