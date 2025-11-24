@@ -396,6 +396,7 @@ function getToken() {
 }
 
 // API Functions
+// Update the loadShowLeads function to handle ALL data and paginate client-side
 async function loadShowLeads() {
     try {
         showLoading(true);
@@ -437,9 +438,10 @@ async function loadShowLeads() {
             sortOrder = 'asc';
         }
 
+        // For client-side pagination, we need to get ALL data first
+        // So we don't send page/limit to server, or we send large limit to get all data
         const params = new URLSearchParams({
-            page: currentPage,
-            limit: itemsPerPage,
+            limit: 1000, // Get a large number to ensure we get all records
             ...(search && { search }),
             ...(sourceFilter && { source: sourceFilter }),
             ...(showFilter && { showName: showFilter }),
@@ -449,11 +451,7 @@ async function loadShowLeads() {
             sortOrder: sortOrder
         });
 
-        console.log('🔍 Loading show leads with params:', {
-            page: currentPage,
-            limit: itemsPerPage,
-            params: params.toString()
-        });
+        console.log('🔍 Loading ALL show leads for client-side pagination');
 
         const response = await fetch(`${API_BASE_URL}/show-leads?${params}`, {
             method: 'GET',
@@ -469,15 +467,14 @@ async function loadShowLeads() {
 
         const result = await response.json();
 
-        console.log('📊 Server response:', {
+        console.log('📊 Server response - ALL DATA:', {
             success: result.success,
             dataLength: result.data ? result.data.length : 0,
-            pagination: result.pagination,
-            totalLeads: result.pagination ? result.pagination.totalLeads : 0
+            totalLeads: result.pagination ? result.pagination.totalLeads : result.data.length
         });
 
         if (result.success) {
-            // Store ALL leads from server
+            // Store ALL leads from server for client-side pagination
             showLeads = result.data.map(lead => ({
                 id: lead._id,
                 contactName: lead.contactName,
@@ -508,30 +505,23 @@ async function loadShowLeads() {
             // Update total records display
             document.getElementById('totalRecords').textContent = totalLeadsCount;
             
-            console.log('🔄 Processed show leads:', {
+            console.log('🔄 Stored ALL leads for client-side pagination:', {
                 totalLeadsCount: totalLeadsCount,
-                showLeadsLength: showLeads.length,
-                currentPage: currentPage,
-                itemsPerPage: itemsPerPage
+                showLeadsLength: showLeads.length
             });
             
             populateShowFilter();
             renderShowLeads();
             
-            // Update pagination with server data
-            if (result.pagination) {
-                updatePagination(result.pagination);
-            } else {
-                console.warn('No pagination data received from backend, using client-side pagination');
-                // Fallback pagination based on client-side data
-                updatePagination({
-                    currentPage: currentPage,
-                    totalPages: Math.ceil(totalLeadsCount / itemsPerPage),
-                    totalLeads: totalLeadsCount,
-                    hasPrev: currentPage > 1,
-                    hasNext: currentPage < Math.ceil(totalLeadsCount / itemsPerPage)
-                });
-            }
+            // Use client-side pagination calculations
+            updatePagination({
+                currentPage: currentPage,
+                totalPages: Math.ceil(totalLeadsCount / itemsPerPage),
+                totalLeads: totalLeadsCount,
+                hasPrev: currentPage > 1,
+                hasNext: currentPage < Math.ceil(totalLeadsCount / itemsPerPage)
+            });
+            
         } else {
             throw new Error(result.message || 'Failed to load show leads');
         }
@@ -1010,11 +1000,12 @@ function renderShowLeadsTable() {
     const tbody = document.getElementById('showLeadsTableBody');
     tbody.innerHTML = '';
 
-    console.log('🎯 Rendering table with client-side pagination:', {
+    console.log('🎯 Rendering table - CLIENT-SIDE PAGINATION:', {
         totalLeadsCount: totalLeadsCount,
         showLeadsLength: showLeads.length,
         currentPage: currentPage,
-        itemsPerPage: itemsPerPage
+        itemsPerPage: itemsPerPage,
+        totalPages: Math.ceil(totalLeadsCount / itemsPerPage)
     });
 
     // If no leads, show empty state
@@ -1040,18 +1031,18 @@ function renderShowLeadsTable() {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = Math.min(startIndex + itemsPerPage, showLeads.length);
     
-    console.log('📄 Pagination indices:', {
+    console.log('📄 Pagination slice:', {
         startIndex: startIndex,
         endIndex: endIndex,
-        recordsToShow: endIndex - startIndex,
-        calculation: `(${currentPage} - 1) * ${itemsPerPage} = ${startIndex} to ${startIndex} + ${itemsPerPage} = ${endIndex}`
+        calculation: `(${currentPage} - 1) * ${itemsPerPage} = ${startIndex} to min(${startIndex} + ${itemsPerPage}, ${showLeads.length}) = ${endIndex}`,
+        expectedRecords: endIndex - startIndex
     });
 
     // Get only the leads for the current page
     const leadsToRender = showLeads.slice(startIndex, endIndex);
 
-    console.log('🔄 Leads to render:', leadsToRender);
-    console.log('📊 Should show:', leadsToRender.length, 'out of', showLeads.length, 'total leads');
+    console.log('🔄 Leads to render for page', currentPage, ':', leadsToRender.length, 'records');
+    console.log('📋 Sample of leads:', leadsToRender.slice(0, 2)); // Show first 2 for verification
 
     // Render the paginated leads
     leadsToRender.forEach((lead, index) => {
@@ -1085,7 +1076,7 @@ function renderShowLeadsTable() {
     });
 
     console.log('✅ Successfully rendered', leadsToRender.length, 'leads for page', currentPage);
-    console.log('📋 Table body now has', tbody.children.length, 'rows');
+    console.log('--- PAGE', currentPage, 'COMPLETE ---');
 }
 
 function escapeHtml(unsafe) {
@@ -1371,6 +1362,25 @@ function testPagination() {
 // Call this in your loadShowLeads function after renderShowLeads();
 // testPagination();
 
+// Add this function to test pagination manually
+function testPaginationManually() {
+    console.log('🧪 MANUAL PAGINATION TEST');
+    console.log('Total records:', totalLeadsCount);
+    console.log('Items per page:', itemsPerPage);
+    console.log('Total pages:', Math.ceil(totalLeadsCount / itemsPerPage));
+    
+    // Test going through all pages
+    const totalPages = Math.ceil(totalLeadsCount / itemsPerPage);
+    for (let page = 1; page <= totalPages; page++) {
+        const start = (page - 1) * itemsPerPage;
+        const end = Math.min(start + itemsPerPage, totalLeadsCount);
+        console.log(`Page ${page}: records ${start + 1} to ${end} (${end - start} records)`);
+    }
+}
+
+// Call this after loadShowLeads to verify
+// testPaginationManually();
+
 function renderPaginationNumbers(totalPages) {
     const container = document.getElementById('paginationNumbers');
     if (!container) {
@@ -1399,13 +1409,42 @@ function renderPaginationNumbers(totalPages) {
 
 function changePage(direction) {
     const newPage = currentPage + direction;
+    console.log('🔄 Changing page:', {
+        from: currentPage,
+        to: newPage,
+        direction: direction,
+        totalPages: Math.ceil(totalLeadsCount / itemsPerPage)
+    });
+    
+    if (newPage < 1 || newPage > Math.ceil(totalLeadsCount / itemsPerPage)) {
+        console.warn('Cannot navigate to page:', newPage);
+        return;
+    }
+    
     goToPage(newPage);
 }
 
 function goToPage(page) {
+    if (page < 1 || page > Math.ceil(totalLeadsCount / itemsPerPage)) {
+        console.warn('Invalid page number:', page);
+        return;
+    }
+    
+    console.log('🔄 Navigating to page:', page, 'from current page:', currentPage);
     currentPage = page;
-    loadShowLeads();
+    renderShowLeads(); // Re-render with the new page
+    
+    // Update pagination UI
+    updatePagination({
+        currentPage: currentPage,
+        totalPages: Math.ceil(totalLeadsCount / itemsPerPage),
+        totalLeads: totalLeadsCount,
+        hasPrev: currentPage > 1,
+        hasNext: currentPage < Math.ceil(totalLeadsCount / itemsPerPage)
+    });
 }
+
+
 
 // Stats Update
 function updateStats(stats) {
