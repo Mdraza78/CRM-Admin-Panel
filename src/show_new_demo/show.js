@@ -6,7 +6,7 @@ let currentEditingShowLead = null;
 let currentDeleteShowLead = null;
 let currentView = 'table'; // Force table view only
 let currentPage = 1;
-let itemsPerPage = 5; // Changed to 5 rows per page
+let itemsPerPage = 5; // Ensure this is set to 5
 let uploadedFiles = [];
 let totalLeadsCount = 0;
 
@@ -99,9 +99,12 @@ function getUserData() {
 
 function initializeShowLeads() {
     console.log('🎪 Show Leads System initialized with backend integration');
+    itemsPerPage = 5; // Force 5 items per page
+    currentPage = 1;
     // Force table view
     switchView('table');
 }
+
 
 function setupEventListeners() {
     console.log('🔧 Setting up event listeners...');
@@ -1004,16 +1007,29 @@ function renderShowLeads() {
     // Only render table view
     renderShowLeadsTable();
 }
-
 function renderShowLeadsTable() {
     const tbody = document.getElementById('showLeadsTableBody');
     tbody.innerHTML = '';
 
-    // Use filtered leads if available, else all leads
-    // But DON'T apply client-side pagination since server already did it
-    const leads = filteredShowLeads && filteredShowLeads.length ? filteredShowLeads : showLeads;
+    console.log('🎯 Rendering table with:', {
+        showLeadsLength: showLeads.length,
+        currentPage: currentPage,
+        itemsPerPage: itemsPerPage
+    });
 
-    if (leads.length === 0) {
+    // Use the leads that came from server
+    let leadsToRender = showLeads;
+
+    // If server returned more records than itemsPerPage, limit them client-side
+    if (showLeads.length > itemsPerPage) {
+        console.warn(`⚠️ Server returned ${showLeads.length} records, but expected ${itemsPerPage}. Limiting client-side.`);
+        const startIndex = 0; // Always start from 0 since server should handle pagination
+        const endIndex = Math.min(itemsPerPage, showLeads.length);
+        leadsToRender = showLeads.slice(startIndex, endIndex);
+        console.log(`🔧 Limited to ${leadsToRender.length} records for display`);
+    }
+
+    if (leadsToRender.length === 0) {
         tbody.innerHTML = `
             <tr>
                 <td colspan="10" class="no-data">
@@ -1031,34 +1047,48 @@ function renderShowLeadsTable() {
         return;
     }
 
-    // REMOVE CLIENT-SIDE PAGINATION LOGIC - Server already handles this
-    // const startIndex = (currentPage - 1) * itemsPerPage;
-    // const endIndex = Math.min(startIndex + itemsPerPage, leads.length);
-    // const leadsToShow = leads.slice(startIndex, endIndex);
-
-    // Use ALL leads returned from server (which are already paginated)
-    leads.forEach(lead => {
+    // Render the limited number of leads
+    leadsToRender.forEach(lead => {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td><input type="checkbox" value="${lead.id}" onchange="toggleShowLeadSelection(this)"></td>
-            <td>${lead.contactName}</td>
-            <td>${lead.clientEmail}</td>
-            <td>${lead.jobTitle || 'NA'}</td>
-            <td>${lead.companyName}</td>
-            <td>${lead.showName}</td>
+            <td>${escapeHtml(lead.contactName)}</td>
+            <td>${escapeHtml(lead.clientEmail)}</td>
+            <td>${escapeHtml(lead.jobTitle || 'NA')}</td>
+            <td>${escapeHtml(lead.companyName)}</td>
+            <td>${escapeHtml(lead.showName)}</td>
             <td>${formatDate(lead.showDate)}</td>
-            <td><span class="lead-source-badge ${lead.leadSource}">${lead.leadSource}</span></td>
+            <td><span class="lead-source-badge ${lead.leadSource}">${escapeHtml(lead.leadSource)}</span></td>
             <td>${formatDate(lead.createdDate)}</td>
             <td>
                 <div class="table-actions">
-                    <button class="table-action-btn" onclick="viewShowLeadDetails('${lead.id}')" title="View"><i class="fas fa-eye"></i></button>
-                    <button class="table-action-btn" onclick="editShowLead('${lead.id}')" title="Edit"><i class="fas fa-edit"></i></button>
-                    <button class="table-action-btn" onclick="deleteShowLead('${lead.id}')" title="Delete"><i class="fas fa-trash"></i></button>
+                    <button class="table-action-btn view" onclick="viewShowLeadDetails('${lead.id}')" title="View">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="table-action-btn edit" onclick="editShowLead('${lead.id}')" title="Edit">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="table-action-btn delete" onclick="deleteShowLead('${lead.id}')" title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </button>
                 </div>
             </td>
         `;
         tbody.appendChild(row);
     });
+
+    console.log('✅ Rendered', leadsToRender.length, 'leads in table');
+}
+
+function escapeHtml(unsafe) {
+    if (unsafe === null || unsafe === undefined) return '';
+    return unsafe
+        .toString()
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 

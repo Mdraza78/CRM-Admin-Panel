@@ -117,12 +117,15 @@
 .show-leads-table-view.active {
     display: block;
     width: 100%;
-    overflow-x: auto;       /* Add this if not present */
+    overflow-x: auto;
     background: white;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     border: 1px solid #e9ecef;
+    max-height: none !important; /* Remove max-height */
+    overflow-y: visible !important; /* Remove vertical scroll */
 }
+
 
 /* Update filters layout */
 .filters-bar {
@@ -1062,15 +1065,15 @@ body {
 
 .table-container {
     width: 100%;
-    overflow-x: auto;      /* Ensures horizontal scroll at all times */
+    overflow-x: auto;
     border-radius: 12px;
     border: 1px solid #e9ecef;
     background: white;
     margin-bottom: 20px;
-    max-height: unset!important;
-    overflow-y: visible !important;
+    max-height: none !important; /* Remove any max-height restrictions */
+    overflow-y: visible !important; /* Ensure no vertical scroll */
     padding-bottom: 8px;
-    -webkit-overflow-scrolling: touch; /* smooth on mobile */
+    -webkit-overflow-scrolling: touch;
 }
 .show-leads-table-view.active::-webkit-scrollbar {
     height: 10px;
@@ -1082,9 +1085,9 @@ body {
 }
 
 .data-table {
-    max-height: unset !important;
-    overflow-y: visible !important;
-    min-width: 900px;    /* Adjust as needed for your column count */
+    min-width: 900px;
+    max-height: none !important; /* Remove max-height */
+    overflow-y: visible !important; /* Remove vertical scroll */
 }
 
 .show-leads-table-view.active .data-table {
