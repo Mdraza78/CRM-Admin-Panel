@@ -1,13 +1,96 @@
-/* show.css - Updated with 5 rows per page styling */
+/* Updated CSS with fixes for control section width and user avatar */
 
-/* Add these new styles for the layout */
-
+/* Increase control section width */
 .main-content-area {
     display: grid;
-    grid-template-columns: 220px auto;  /* first sidebar, second main card */
+    grid-template-columns: 300px auto;  /* Increased from 220px to 300px */
     gap: 20px;
     margin-top: 20px;
 }
+
+.controls-section {
+    background: white;
+    min-width: 280px;    /* Increased min-width */
+    max-width: 350px;    /* Increased max-width */
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+    border: 1px solid #e9ecef;
+}
+
+/* Fix user avatar styling */
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 16px;
+    color: white;
+    background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
+    box-shadow: 0 2px 8px rgba(0, 188, 212, 0.3);
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.avatar-letter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.user-profile:hover .user-avatar {
+    border-color: #2D5BFF;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4);
+}
+
+/* Responsive adjustments for wider controls */
+@media (max-width: 1200px) {
+    .main-content-area {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .controls-section {
+        position: static;
+        order: 2;
+        min-width: unset;
+        max-width: unset;
+        width: 100%;
+    }
+    
+    .show-leads-section {
+        order: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .controls-section {
+        padding: 20px;
+    }
+    
+    .filters-bar {
+        flex-direction: column;
+    }
+    
+    .filter-group {
+        width: 100%;
+    }
+}
+
+/* Keep all other existing CSS styles */
 .section-header .table-action-btn.edit:hover i,
 .section-header .table-action-btn.edit:focus i {
     color: #f6c812 !important;
@@ -60,53 +143,6 @@
 .section-header .table-action-btn.delete:hover i,
 .section-header .table-action-btn.delete:focus i {
     color: #ef4444 !important;
-}
-
-.controls-section {
-    background: white;
-    padding: 25px;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    height: fit-content;
-    position: sticky;
-    top: 20px;
-    border: 1px solid #e9ecef;
-}
-
-.show-leads-section {
-    background: white;
-    padding: 25px;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border: 1px solid #e9ecef;
-    width: 700px; /* or 60vw or appropriate px value */
-    max-width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
-}
-
-@media (max-width: 600px) {
-    .section-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-    .total-records {
-        align-self: flex-end;
-    }
-}
-
-.dashboard-header {
-    /* background: white; */  /* Remove or comment out this line */
-    padding: 25px 30px;
-    margin-bottom: 35px;
-    position: relative;
-}
-
-.dashboard-header-actions {
-    display: flex;
-    gap: 20px;
-    align-items: center;
 }
 
 .show-leads-table-view{
@@ -627,20 +663,6 @@ body {
 .user-profile:hover {
     color: #2D5BFF;
     transform: translateY(-2px);
-}
-
-.user-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 2px solid #e9ecef;
-    object-fit: cover;
-    transition: all 0.3s ease;
-}
-
-.user-profile:hover .user-avatar {
-    border-color: #2D5BFF;
-    transform: scale(1.05);
 }
 
 .user-name {
@@ -1900,25 +1922,6 @@ body {
         text-align: center;
         padding: 25px;
     }
-}
-
-.main-content-area {
-    display: grid;
-    grid-template-columns: 220px 1fr;   /* Changed from 300px to 220px */
-    gap: 20px;
-    margin-top: 20px;
-}
-
-.controls-section {
-    background: white;
-     min-width: 180px;    /* New: add a min-width, less than grid column */
-    max-width: 250px;  
-    padding: 25px;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    height: fit-content;
-    position: sticky;
-    top: 20px;
 }
 
 .show-leads-section {
