@@ -976,8 +976,9 @@ function renderShowLeadsTable() {
     const tbody = document.getElementById('showLeadsTableBody');
     tbody.innerHTML = '';
 
-    // Use filtered leads if applicable, otherwise showLeads
+    // Use filtered leads if available, else all leads
     const leads = filteredShowLeads && filteredShowLeads.length ? filteredShowLeads : showLeads;
+
     if (leads.length === 0) {
         tbody.innerHTML = `
             <tr>
@@ -996,12 +997,13 @@ function renderShowLeadsTable() {
         return;
     }
 
-    // Pagination slice: show only current page records
+    // Pagination logic: only show records for that page
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = Math.min(startIndex + itemsPerPage, leads.length);
 
-    for (let i = startIndex; i < endIndex; i++) {
-        const lead = leads[i];
+    const leadsToShow = leads.slice(startIndex, endIndex);
+
+    leadsToShow.forEach(lead => {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td><input type="checkbox" value="${lead.id}" onchange="toggleShowLeadSelection(this)"></td>
@@ -1022,8 +1024,9 @@ function renderShowLeadsTable() {
             </td>
         `;
         tbody.appendChild(row);
-    }
+    });
 }
+
 
 
 function populateShowFilter() {
