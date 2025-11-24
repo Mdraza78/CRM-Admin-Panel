@@ -297,9 +297,9 @@ body {
 }
 
 .app-container.sidebar-collapsed .header {
-    width: 60 !important;
-    min-width: 60 !important;
-    max-width: 60 !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
     overflow: hidden !important;
     padding: 0 !important;
     border: none !important;
