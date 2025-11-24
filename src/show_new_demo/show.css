@@ -1,4 +1,4 @@
-/* show.css - Updated with side-by-side layout */
+/* show.css - Updated with 5 rows per page styling */
 
 /* Add these new styles for the layout */
 
@@ -13,7 +13,6 @@
     color: #f6c812 !important;
 }
 
-
 .section-header {
     display: flex;
     justify-content: space-between;
@@ -22,7 +21,6 @@
     padding-bottom: 15px;
     border-bottom: 2px solid #f8f9fa;
 }
-
 
 .section-header h3 {
     font-size: 18px;
@@ -45,7 +43,6 @@
     color: #3b82f6;
     border-color: #3b82f6;
     background: #eff6ff;
-
 }
 
 .table-action-btn.view:hover i {
@@ -59,12 +56,12 @@
     color: #ef4444;
 }
 
-
 /* Delete icon (red) on hover inside section header */
 .section-header .table-action-btn.delete:hover i,
 .section-header .table-action-btn.delete:focus i {
     color: #ef4444 !important;
 }
+
 .controls-section {
     background: white;
     padding: 25px;
@@ -99,8 +96,6 @@
     }
 }
 
-
-
 .dashboard-header {
     /* background: white; */  /* Remove or comment out this line */
     padding: 25px 30px;
@@ -108,13 +103,11 @@
     position: relative;
 }
 
-
 .dashboard-header-actions {
     display: flex;
     gap: 20px;
     align-items: center;
 }
-
 
 .show-leads-table-view.active {
     display: block;
@@ -125,7 +118,6 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     border: 1px solid #e9ecef;
 }
-
 
 /* Update filters layout */
 .filters-bar {
@@ -150,7 +142,6 @@
     margin-bottom: 4px;
 }
 
-
 .view-controls {
     display: flex;
     flex-direction: column;
@@ -158,6 +149,7 @@
     padding-top: 20px;
     border-top: 2px solid #f8f9fa;
 }
+
 .sort-controls {
     display: flex;
     flex-direction: column;
@@ -172,8 +164,6 @@
     letter-spacing: 0.5px;
     margin-bottom: 4px;
 }
-
-
 
 /* Total records display */
 .total-records {
@@ -202,7 +192,6 @@
         order: 1;
     }
 }
-
 
 @media (max-width: 768px) {
     .dashboard-header {

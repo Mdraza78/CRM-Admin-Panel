@@ -1,13 +1,12 @@
 // show.js - Updated with new layout structure
 
-// Global variables
 let showLeads = [];
 let filteredShowLeads = [];
 let currentEditingShowLead = null;
 let currentDeleteShowLead = null;
 let currentView = 'table'; // Force table view only
 let currentPage = 1;
-let itemsPerPage = 15; // Increased for table view
+let itemsPerPage = 5; // Changed to 5 rows per page
 let uploadedFiles = [];
 let totalLeadsCount = 0;
 
