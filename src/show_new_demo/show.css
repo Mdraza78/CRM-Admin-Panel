@@ -21,6 +21,12 @@
     border: 1px solid #e9ecef;
 }
 
+#sidebarToggleIcon {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
 /* Fix user avatar styling */
 .user-avatar {
     width: 40px;
@@ -339,7 +345,6 @@ body {
     padding: 0 !important;
     border: none !important;
     box-shadow: none !important;
-    transition: all 0.3s ease;
 }
 .app-container.sidebar-collapsed .main-content {
     margin-left: 60px !important;
@@ -356,9 +361,12 @@ body {
 /* Show only the toggle button when collapsed */
 .app-container.sidebar-collapsed .sidebar-toggle-sticky {
     position: fixed;
-    left: 45px;
+    left: 20px;
     top: 20px;
-    right: auto;
+    z-index: 1001;
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 .header {
@@ -2002,7 +2010,6 @@ body {
     align-items: center;
     justify-content: center;
 }
-
 .sidebar-toggle-btn {
     background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
     border: none;
@@ -2018,24 +2025,25 @@ body {
     font-size: 14px;
     box-shadow: 0 2px 8px rgba(0, 188, 212, 0.3);
 }
+
 .sidebar-toggle-btn:hover {
     background: linear-gradient(135deg, #00a8c0 0%, #1976d2 100%);
     transform: scale(1.1);
     box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4);
 }
 
-.app-container.sidebar-collapsed .sidebar-toggle-sticky {
-    right: -15px;
-}
+
 
 .app-container.sidebar-collapsed .sidebar-toggle-btn {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
     transform: rotate(180deg);
 }
 
 .app-container.sidebar-collapsed .sidebar-toggle-btn:hover {
     transform: rotate(180deg) scale(1.1);
 }
-
 .app-container.sidebar-collapsed .sidebar-toggle-bottom {
     position: fixed;
     bottom: 20px;
@@ -2049,3 +2057,4 @@ body {
     display: flex;
     gap: 15px;
 }
+

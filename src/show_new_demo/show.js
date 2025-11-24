@@ -1710,11 +1710,21 @@ function toggleSidebar() {
             // Sidebar is collapsed - show right arrow
             toggleIcon.classList.remove('fa-angle-left');
             toggleIcon.classList.add('fa-angle-right');
+            console.log('🔧 Sidebar collapsed - showing right arrow');
         } else {
             // Sidebar is expanded - show left arrow
             toggleIcon.classList.remove('fa-angle-right');
             toggleIcon.classList.add('fa-angle-left');
+            console.log('🔧 Sidebar expanded - showing left arrow');
         }
+    }
+    
+    // Force visibility of toggle button
+    const toggleBtn = document.querySelector('.sidebar-toggle-btn');
+    if (toggleBtn) {
+        toggleBtn.style.display = 'flex';
+        toggleBtn.style.visibility = 'visible';
+        toggleBtn.style.opacity = '1';
     }
     
     // Save sidebar state to localStorage
@@ -1724,6 +1734,7 @@ function toggleSidebar() {
 }
 
 // Update the initialization to handle the saved state
+// Update the initialization to ensure icon is correct
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🎪 Show Leads System initializing...');
     
@@ -1745,8 +1756,33 @@ document.addEventListener('DOMContentLoaded', function() {
         if (toggleIcon) {
             toggleIcon.classList.remove('fa-angle-left');
             toggleIcon.classList.add('fa-angle-right');
+            console.log('🔄 Initial state: Sidebar collapsed');
+        }
+    } else {
+        if (toggleIcon) {
+            toggleIcon.classList.remove('fa-angle-right');
+            toggleIcon.classList.add('fa-angle-left');
+            console.log('🔄 Initial state: Sidebar expanded');
         }
     }
+    
+    // Force visibility of toggle elements
+    setTimeout(() => {
+        const toggleBtn = document.querySelector('.sidebar-toggle-btn');
+        const toggleIcon = document.getElementById('sidebarToggleIcon');
+        
+        if (toggleBtn) {
+            toggleBtn.style.display = 'flex';
+            toggleBtn.style.visibility = 'visible';
+            toggleBtn.style.opacity = '1';
+        }
+        
+        if (toggleIcon) {
+            toggleIcon.style.display = 'flex';
+            toggleIcon.style.visibility = 'visible';
+            toggleIcon.style.opacity = '1';
+        }
+    }, 100);
     
     initializeShowLeads();
     setupEventListeners();
