@@ -313,29 +313,32 @@ body {
     background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
     border: none;
     color: white;
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-size: 14px;
-    box-shadow: 0 2px 8px rgba(0, 188, 212, 0.3);
+    font-size: 16px;
+    box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4);
+    position: relative;
+    z-index: 1002;
 }
+
 
 .sidebar-toggle-btn:hover {
     background: linear-gradient(135deg, #00a8c0 0%, #1976d2 100%);
     transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4);
+    box-shadow: 0 6px 16px rgba(0, 188, 212, 0.6);
 }
 
 .app-container.sidebar-collapsed .header {
     width: 0 !important;
     min-width: 0 !important;
     max-width: 0 !important;
-    overflow: hidden !important;
+    overflow: visible !important;
     padding: 0 !important;
     border: none !important;
     box-shadow: none !important;
@@ -607,12 +610,14 @@ body {
     display: flex;
     flex-direction: column;
     flex: 1;
-    padding: 0 12px;
+    padding: 0 15px;
     height: 100%;
     margin: 0 auto;
     overflow: hidden;
     width: 100%;
     box-sizing: border-box;
+    position: relative;
+    padding-bottom: 80px; /* More space for the toggle button */
 }
 
 .main-nav {
@@ -914,9 +919,9 @@ body {
 }
 
 .app-container.sidebar-collapsed .main-content {
-    margin-left: 64px !important;
+    margin-left: 80px !important; /* Increased to prevent overlap */
     position: static !important;
-    width: 100%;
+    width: calc(100% - 80px);
     left: 0 !important;
     top: 0 !important;
     overflow-x: auto;
@@ -2029,19 +2034,31 @@ body {
 
 .app-container.sidebar-collapsed .sidebar-toggle-btn {
     transform: rotate(180deg);
+    background: linear-gradient(135deg, #1E88E5 0%, #00BCD4 100%);
 }
-
 .app-container.sidebar-collapsed .sidebar-toggle-btn:hover {
     transform: rotate(180deg) scale(1.1);
 }
-
+#sidebarToggleIcon {
+    font-size: 18px;
+    transition: all 0.3s ease;
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+.sidebar-toggle-btn,
+.app-container.sidebar-collapsed .sidebar-toggle-btn {
+    z-index: 1002;
+}
 .app-container.sidebar-collapsed .sidebar-toggle-bottom {
     position: fixed;
-    bottom: 20px;
-    left: 20px;
+    bottom: 25px;
+    left: 25px; /* Position from left when collapsed */
     transform: none;
     width: auto;
+    z-index: 1003;
 }
+
 
 
 .dashboard-header-actions {
