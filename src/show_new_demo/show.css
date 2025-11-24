@@ -306,6 +306,25 @@ body {
     box-shadow: none !important;
     transition: all 0.3s ease;
 }
+.app-container.sidebar-collapsed .main-content {
+    margin-left: 60px !important;
+}
+
+/* Hide sidebar content when collapsed */
+.app-container.sidebar-collapsed .header-left,
+.app-container.sidebar-collapsed .header-right,
+.app-container.sidebar-collapsed .logo,
+.app-container.sidebar-collapsed .main-nav {
+    display: none !important;
+}
+
+/* Show only the toggle button when collapsed */
+.app-container.sidebar-collapsed .sidebar-toggle-sticky {
+    position: fixed;
+    left: 45px;
+    top: 20px;
+    right: auto;
+}
 
 .header {
     position: fixed;
@@ -1930,7 +1949,7 @@ body {
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     border: 1px solid #e9ecef;
-    width: 670px; /* or 60vw or appropriate px value */
+    width: 680px; /* or 60vw or appropriate px value */
     max-width: 100%;
     min-width: 0;
     box-sizing: border-box;
@@ -1944,6 +1963,49 @@ body {
     padding: 0 0 20px 0;
     margin-bottom: 20px;
     border-bottom: 2px solid #e9ecef;
+}
+.sidebar-toggle-sticky {
+    position: absolute;
+    top: 20px;
+    right: -15px;
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar-toggle-btn {
+    background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
+    border: none;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(0, 188, 212, 0.3);
+}
+
+.sidebar-toggle-btn:hover {
+    background: linear-gradient(135deg, #00a8c0 0%, #1976d2 100%);
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4);
+}
+
+.app-container.sidebar-collapsed .sidebar-toggle-sticky {
+    right: -15px;
+}
+
+.app-container.sidebar-collapsed .sidebar-toggle-btn {
+    transform: rotate(180deg);
+}
+
+.app-container.sidebar-collapsed .sidebar-toggle-btn:hover {
+    transform: rotate(180deg) scale(1.1);
 }
 
 .dashboard-header-actions {
