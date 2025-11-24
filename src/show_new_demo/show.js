@@ -1699,8 +1699,60 @@ function downloadCSV(content, filename) {
 
 // Dashboard Functions
 function toggleSidebar() {
-    document.querySelector('.app-container').classList.toggle('sidebar-collapsed');
+    const appContainer = document.querySelector('.app-container');
+    const isCollapsed = appContainer.classList.toggle('sidebar-collapsed');
+    
+    // Save sidebar state
+    localStorage.setItem('sidebarCollapsed', isCollapsed);
+    
+    // Update the toggle icon
+    const toggleIcon = document.getElementById('sidebarToggleIcon');
+    if (toggleIcon) {
+        if (isCollapsed) {
+            toggleIcon.classList.remove('fa-angle-left');
+            toggleIcon.classList.add('fa-angle-right');
+        } else {
+            toggleIcon.classList.remove('fa-angle-right');
+            toggleIcon.classList.add('fa-angle-left');
+        }
+    }
+    
+    console.log('🔧 Sidebar toggled:', isCollapsed ? 'collapsed' : 'expanded');
 }
+
+// Update the initialization to handle the icon correctly
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🎪 Show Leads System initializing...');
+    
+    // Check authentication first
+    if (!checkAuthentication()) {
+        console.log('Authentication failed, redirecting to login');
+        return;
+    }
+    
+    console.log('Authentication successful, initializing show leads');
+    
+    // Load sidebar state and set correct icon
+    const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+    const appContainer = document.querySelector('.app-container');
+    const toggleIcon = document.getElementById('sidebarToggleIcon');
+    
+    if (sidebarCollapsed) {
+        appContainer.classList.add('sidebar-collapsed');
+        if (toggleIcon) {
+            toggleIcon.classList.remove('fa-angle-left');
+            toggleIcon.classList.add('fa-angle-right');
+        }
+    }
+    
+    initializeShowLeads();
+    setupEventListeners();
+    displayUserName();
+    initializePagination();
+    loadShowLeads();
+    
+    console.log('✅ Show Leads System initialized successfully');
+});
 
 function toggleUserMenu() {
     const dropdown = document.getElementById('userDropdown');
