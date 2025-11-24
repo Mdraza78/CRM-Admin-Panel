@@ -6,7 +6,7 @@ let currentEditingShowLead = null;
 let currentDeleteShowLead = null;
 let currentView = 'table'; // Force table view only
 let currentPage = 1;
-let itemsPerPage = 5; // Ensure this is set to 5
+let itemsPerPage = 5; // Change from 15 to 5
 let uploadedFiles = [];
 let totalLeadsCount = 0;
 
@@ -99,12 +99,10 @@ function getUserData() {
 
 function initializeShowLeads() {
     console.log('🎪 Show Leads System initialized with backend integration');
-    itemsPerPage = 5; // Force 5 items per page
-    currentPage = 1;
     // Force table view
+    itemsPerPage = 5; // Ensure this is set to 5
     switchView('table');
 }
-
 
 function setupEventListeners() {
     console.log('🔧 Setting up event listeners...');
@@ -1045,16 +1043,19 @@ function renderShowLeadsTable() {
     console.log('📄 Pagination indices:', {
         startIndex: startIndex,
         endIndex: endIndex,
-        recordsToShow: endIndex - startIndex
+        recordsToShow: endIndex - startIndex,
+        calculation: `(${currentPage} - 1) * ${itemsPerPage} = ${startIndex} to ${startIndex} + ${itemsPerPage} = ${endIndex}`
     });
 
     // Get only the leads for the current page
     const leadsToRender = showLeads.slice(startIndex, endIndex);
 
-    console.log('🔄 Rendering leads:', leadsToRender.length);
+    console.log('🔄 Leads to render:', leadsToRender);
+    console.log('📊 Should show:', leadsToRender.length, 'out of', showLeads.length, 'total leads');
 
     // Render the paginated leads
     leadsToRender.forEach((lead, index) => {
+        const actualIndex = startIndex + index;
         const row = document.createElement('tr');
         row.innerHTML = `
             <td><input type="checkbox" value="${lead.id}" onchange="toggleShowLeadSelection(this)"></td>
@@ -1084,6 +1085,7 @@ function renderShowLeadsTable() {
     });
 
     console.log('✅ Successfully rendered', leadsToRender.length, 'leads for page', currentPage);
+    console.log('📋 Table body now has', tbody.children.length, 'rows');
 }
 
 function escapeHtml(unsafe) {
@@ -1149,11 +1151,10 @@ function initializePagination() {
     }
 }
 
-// View Management - Force table view only
 function switchView(view) {
     // Only allow table view
     currentView = 'table';
-    itemsPerPage = 15;
+    itemsPerPage = 5; // Ensure this is set to 5
     currentPage = 1;
     console.log('Forced table view. ItemsPerPage:', itemsPerPage);
     renderShowLeads();
@@ -1238,6 +1239,29 @@ async function bulkDeleteShowLeads() {
         showLoading(false);
     }
 }
+
+function verifyPagination() {
+    console.log('🔍 VERIFYING PAGINATION:');
+    console.log('Total leads:', totalLeadsCount);
+    console.log('Items per page:', itemsPerPage);
+    console.log('Current page:', currentPage);
+    console.log('Total pages:', Math.ceil(totalLeadsCount / itemsPerPage));
+    
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, totalLeadsCount);
+    console.log('Should show records:', startIndex + 1, 'to', endIndex, 'of', totalLeadsCount);
+    
+    const tbody = document.getElementById('showLeadsTableBody');
+    console.log('Actual rows in table:', tbody.children.length);
+    
+    if (tbody.children.length > itemsPerPage) {
+        console.warn('❌ TOO MANY ROWS: Table has', tbody.children.length, 'rows but should have max', itemsPerPage);
+    } else {
+        console.log('✅ CORRECT: Table has', tbody.children.length, 'rows');
+    }
+}
+
+// Call this after renderShowLeads() in loadShowLeads function
 
 function bulkEmailSelected() {
     const selectedCheckboxes = document.querySelectorAll('#showLeadsTableBody input[type="checkbox"]:checked');
