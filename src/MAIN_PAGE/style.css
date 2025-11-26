@@ -753,9 +753,7 @@ nav-link.active:hover i,
     transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.kpi-card.animate-in .progress-indicator {
-    width: 100%;
-}
+
 
 
 .kpi-value {
