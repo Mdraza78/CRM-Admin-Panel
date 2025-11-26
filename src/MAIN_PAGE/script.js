@@ -18,16 +18,17 @@ const API_BASE_URL = 'https://crm-admin-panel-production.up.railway.app/api';
 function handleNavigation(page) {
     console.log(`Navigation requested to: ${page}`);
     
+    // Updated routes to match your actual file structure
     const routes = {
         'dashboard': '/MAIN_PAGE/index.html',
-        'leads': '/show_new_demo/show.html',
-        'industry-leads': '/INDUSTRY_LEAD_PAGE/demo.html',
-        'deals': '/DEAL/deal.html',
-        'contacts': '/CONTACT/contact.html',
-        'invoice': '/INVOICE/invoice.html',
-        'reports': '/REPORTS/reports.html',
-        'settings': '/SETTINGS/setting.html',
-        'salary': '/SALARY/Salary.html'
+        'leads': '/main/LEAD/lead.html', // Updated path
+        'industry-leads': '/main/INDUSTRY_LEAD_PAGE/demo.html', // Updated path
+        'deals': '/main/DEAL/deal.html',
+        'contacts': '/main/CONTACT/contact.html',
+        'invoice': '/main/INVOICE/invoice.html',
+        'reports': '/main/REPORTS/reports.html',
+        'settings': '/main/SETTINGS/setting.html',
+        'salary': '/main/SALARY/Salary.html'
     };
     
     const route = routes[page];
@@ -60,12 +61,13 @@ function getPageTitle(page) {
     return titles[page] || page.replace('-', ' ');
 }
 
+
 // ✅ ADD: Navigation event listeners setup
 function setupNavigationEventListeners() {
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
-            const page = this.dataset.page;
+            const page = this.getAttribute('data-page');
             console.log(`Nav link clicked: ${page}`);
             
             if (page && page !== 'unknown') {
@@ -131,6 +133,37 @@ function createLetterAvatar(name, element) {
             newLetterSpan.textContent = firstLetter;
             element.innerHTML = '';
             element.appendChild(newLetterSpan);
+        }
+    }
+}
+
+function updateActiveNavLink() {
+    const currentPath = window.location.pathname;
+    console.log('Current path:', currentPath);
+    
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+    });
+    
+    // Map paths to data-page values
+    const pathToPageMap = {
+        '/MAIN_PAGE/index.html': 'dashboard',
+        '/main/LEAD/lead.html': 'leads',
+        '/main/INDUSTRY_LEAD_PAGE/demo.html': 'industry-leads',
+        '/main/DEAL/deal.html': 'deals',
+        '/main/CONTACT/contact.html': 'contacts',
+        '/main/INVOICE/invoice.html': 'invoice',
+        '/main/REPORTS/reports.html': 'reports',
+        '/main/SETTINGS/setting.html': 'settings',
+        '/main/SALARY/Salary.html': 'salary'
+    };
+    
+    const currentPage = pathToPageMap[currentPath];
+    if (currentPage) {
+        const activeLink = document.querySelector(`.nav-link[data-page="${currentPage}"]`);
+        if (activeLink) {
+            activeLink.classList.add('active');
         }
     }
 }
@@ -261,25 +294,40 @@ document.addEventListener('visibilitychange', function() {
     }
 });
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM fully loaded');
+    initializeApp();
+    
+    // Debug info
     setTimeout(() => {
-        initializeKpiAnimations();
-        setupKpiHoverEffects();
+        debugUserData();
+        debugDOMElements();
     }, 500);
 });
 
 
 function initializeApp() {
-    console.log('Deal Management System initialized with backend integration');
+    console.log('CRM Dashboard initialized');
+    
+    // Setup navigation first
     setupNavigationEventListeners();
-    showDealsList();
-    updatePagination();
-    setMinCloseDate();
+    
+    // Update active nav link
+    updateActiveNavLink();
+    
+    // Initialize user data
+    displayUserName();
+    updateUserAvatar();
     
     // Initialize animations
     setTimeout(() => {
         initializeKpiAnimations();
         setupKpiHoverEffects();
     }, 1000);
+    
+    // Load user data if needed
+    if (!loadUserDataImmediately()) {
+        fetchAndStoreUserData();
+    }
 }
 
 
