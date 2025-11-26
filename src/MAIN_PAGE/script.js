@@ -261,13 +261,13 @@ document.addEventListener('visibilitychange', function() {
     }
 });
 
-
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         initializeKpiAnimations();
         setupKpiHoverEffects();
     }, 500);
 });
+
 
 
 function initializeApp() {
@@ -1865,26 +1865,30 @@ function animateKpiValues() {
         void valueElement.offsetWidth;
         
         // Apply counting animation
-        valueElement.style.animation = `numberCount 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards`;
+        valueElement.style.animation = `numberIncrement 1.5s ease-out forwards`;
         valueElement.classList.add('counting');
         
-        // Format the number with commas if it's a large number
+        // Format the number
         let formattedValue;
         if (targetValue.includes(',')) {
-            formattedValue = targetValue; // Already formatted
+            formattedValue = targetValue;
         } else {
             const numericValue = parseInt(targetValue.replace(/,/g, ''));
             formattedValue = numericValue.toLocaleString();
         }
         
-        // Update the value after a short delay
+        // Update the displayed value
         setTimeout(() => {
             valueElement.textContent = formattedValue;
+        }, 800);
+        
+        // Remove counting class after animation completes
+        setTimeout(() => {
             valueElement.classList.remove('counting');
-            valueElement.classList.add('animated');
-        }, 600);
+        }, 1500);
     });
 }
+
 
 
 function setupKpiHoverEffects() {
@@ -1892,12 +1896,12 @@ function setupKpiHoverEffects() {
     
     kpiCards.forEach(card => {
         card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-3px)';
-            this.style.boxShadow = '0 8px 30px rgba(0, 0, 0, 0.12)';
+            this.style.transform = 'translateY(-2px)';
+            this.style.boxShadow = '0 6px 25px rgba(0, 0, 0, 0.12)';
             
             const icon = this.querySelector('.kpi-icon');
             if (icon) {
-                icon.style.transform = 'scale(1.05)';
+                icon.style.transform = 'translateY(-2px)';
             }
         });
         
@@ -1907,7 +1911,7 @@ function setupKpiHoverEffects() {
             
             const icon = this.querySelector('.kpi-icon');
             if (icon) {
-                icon.style.transform = 'scale(1)';
+                icon.style.transform = 'translateY(0)';
             }
         });
     });
@@ -1917,8 +1921,8 @@ function setupKpiHoverEffects() {
 function initializeKpiAnimations() {
     const kpiCards = document.querySelectorAll('.kpi-card[data-animate="true"]');
     
-    // Reset animations for re-triggering
     kpiCards.forEach(card => {
+        // Reset and trigger animations
         card.style.animation = 'none';
         card.querySelector('.kpi-icon').style.animation = 'none';
         card.querySelector('.kpi-content').style.animation = 'none';
@@ -1929,14 +1933,15 @@ function initializeKpiAnimations() {
         void card.offsetWidth;
         
         // Re-apply animations
-        card.style.animation = `kpiCardEntrance 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards`;
-        card.querySelector('.kpi-icon').style.animation = `kpiIconEntrance 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards`;
-        card.querySelector('.kpi-content').style.animation = `kpiContentEntrance 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards`;
-        card.querySelector('.kpi-label').style.animation = `kpiLabelEntrance 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.4s forwards`;
-        card.querySelector('.kpi-change').style.animation = `kpiChangeEntrance 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.5s forwards`;
+        const delay = card.style.animationDelay || '0s';
+        card.style.animation = `cardSlideUp 0.6s ease-out ${delay} forwards`;
+        card.querySelector('.kpi-icon').style.animation = `iconFadeIn 0.5s ease-out ${delay} forwards`;
+        card.querySelector('.kpi-content').style.animation = `contentFadeIn 0.5s ease-out ${delay} forwards`;
+        card.querySelector('.kpi-label').style.animation = `labelFadeIn 0.5s ease-out ${delay} forwards`;
+        card.querySelector('.kpi-change').style.animation = `changeFadeIn 0.5s ease-out ${delay} forwards`;
     });
     
-    // Animate the KPI values with counting effect
+    // Animate numbers after cards appear
     setTimeout(() => {
         animateKpiValues();
     }, 800);
