@@ -269,7 +269,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-
 function initializeApp() {
     console.log('Deal Management System initialized with backend integration');
     setupNavigationEventListeners();
@@ -1896,12 +1895,12 @@ function setupKpiHoverEffects() {
     
     kpiCards.forEach(card => {
         card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-2px)';
-            this.style.boxShadow = '0 6px 25px rgba(0, 0, 0, 0.12)';
+            this.style.transform = 'translateY(-3px)';
+            this.style.boxShadow = '0 8px 30px rgba(0, 0, 0, 0.12)';
             
             const icon = this.querySelector('.kpi-icon');
             if (icon) {
-                icon.style.transform = 'translateY(-2px)';
+                icon.style.transform = 'scale(1.05)';
             }
         });
         
@@ -1911,12 +1910,11 @@ function setupKpiHoverEffects() {
             
             const icon = this.querySelector('.kpi-icon');
             if (icon) {
-                icon.style.transform = 'translateY(0)';
+                icon.style.transform = 'scale(1)';
             }
         });
     });
 }
-
 
 function initializeKpiAnimations() {
     const kpiCards = document.querySelectorAll('.kpi-card[data-animate="true"]');
