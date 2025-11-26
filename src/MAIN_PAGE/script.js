@@ -255,45 +255,20 @@ function debugUserData() {
     }
     console.log('=======================');
 }
+document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+        setTimeout(initializeKpiAnimations, 300);
+    }
+});
+
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Dashboard - DOM Content Loaded');
-    
-    // Check for authentication
-    const token = localStorage.getItem('authToken');
-    
-    console.log('Auth check:', { 
-        hasToken: !!token,
-        token: token ? 'Exists' : 'Missing'
-    });
-    
-    if (!token) {
-        console.log('No auth token, redirecting to login');
-        window.location.href = '/';
-        return;
-    }
-    
-    // STEP 1: Try to load user data immediately from localStorage
-    const hasUserData = loadUserDataImmediately();
-    
-    // STEP 2: Initialize the app
-    initializeApp();
-    setupEventListeners();
-    
-    // STEP 3: If we don't have user data, fetch it from API
-    if (!hasUserData) {
-        console.log('Fetching fresh user data from API...');
-        fetchAndStoreUserData();
-    } else {
-        console.log('Using existing user data from localStorage');
-    }
-    
-    // STEP 4: Load deals data
-    loadDeals();
-    
-    // STEP 5: Debug info
-    debugUserData();
+    setTimeout(() => {
+        initializeKpiAnimations();
+        setupKpiHoverEffects();
+    }, 500);
 });
+
 
 function initializeApp() {
     console.log('Deal Management System initialized with backend integration');
@@ -308,6 +283,8 @@ function initializeApp() {
         setupKpiHoverEffects();
     }, 1000);
 }
+
+
 
 async function fetchAndStoreUserData() {
     try {
@@ -1879,51 +1856,91 @@ function setMinCloseDate() {
 function animateKpiValues() {
     const kpiValues = document.querySelectorAll('.kpi-value');
     
-    kpiValues.forEach((value, index) => {
-        const currentValue = value.textContent;
+    kpiValues.forEach((valueElement, index) => {
+        const targetValue = valueElement.getAttribute('data-target');
+        if (!targetValue) return;
         
-        value.style.animation = 'none';
-        value.offsetHeight; // Trigger reflow
+        // Reset animation
+        valueElement.style.animation = 'none';
+        void valueElement.offsetWidth;
         
+        // Apply counting animation
+        valueElement.style.animation = `numberCount 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards`;
+        valueElement.classList.add('counting');
+        
+        // Format the number with commas if it's a large number
+        let formattedValue;
+        if (targetValue.includes(',')) {
+            formattedValue = targetValue; // Already formatted
+        } else {
+            const numericValue = parseInt(targetValue.replace(/,/g, ''));
+            formattedValue = numericValue.toLocaleString();
+        }
+        
+        // Update the value after a short delay
         setTimeout(() => {
-            value.style.animation = `countUp 0.8s ease-out ${index * 0.1}s both, pulse 1s ease ${index * 0.1 + 0.5}s`;
-            value.classList.add('animated');
-            
-            setTimeout(() => {
-                value.textContent = currentValue;
-            }, 500);
-        }, 100);
+            valueElement.textContent = formattedValue;
+            valueElement.classList.remove('counting');
+            valueElement.classList.add('animated');
+        }, 600);
     });
 }
+
 
 function setupKpiHoverEffects() {
     const kpiCards = document.querySelectorAll('.kpi-card');
     
     kpiCards.forEach(card => {
         card.addEventListener('mouseenter', function() {
-            const value = this.querySelector('.kpi-value');
-            const icon = this.querySelector('.kpi-icon');
+            this.style.transform = 'translateY(-3px)';
+            this.style.boxShadow = '0 8px 30px rgba(0, 0, 0, 0.12)';
             
-            if (value) {
-                value.style.animation = 'pulse 0.5s ease, numberGlow 2s ease-in-out';
-            }
+            const icon = this.querySelector('.kpi-icon');
             if (icon) {
-                icon.style.transform = 'scale(1.1) rotate(5deg)';
+                icon.style.transform = 'scale(1.05)';
             }
         });
         
         card.addEventListener('mouseleave', function() {
-            const icon = this.querySelector('.kpi-icon');
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.08)';
             
+            const icon = this.querySelector('.kpi-icon');
             if (icon) {
-                icon.style.transform = 'scale(1) rotate(0deg)';
+                icon.style.transform = 'scale(1)';
             }
         });
     });
 }
 
+
 function initializeKpiAnimations() {
-    // Initialize any KPI animations if needed
+    const kpiCards = document.querySelectorAll('.kpi-card[data-animate="true"]');
+    
+    // Reset animations for re-triggering
+    kpiCards.forEach(card => {
+        card.style.animation = 'none';
+        card.querySelector('.kpi-icon').style.animation = 'none';
+        card.querySelector('.kpi-content').style.animation = 'none';
+        card.querySelector('.kpi-label').style.animation = 'none';
+        card.querySelector('.kpi-change').style.animation = 'none';
+        
+        // Force reflow
+        void card.offsetWidth;
+        
+        // Re-apply animations
+        card.style.animation = `kpiCardEntrance 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards`;
+        card.querySelector('.kpi-icon').style.animation = `kpiIconEntrance 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards`;
+        card.querySelector('.kpi-content').style.animation = `kpiContentEntrance 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards`;
+        card.querySelector('.kpi-label').style.animation = `kpiLabelEntrance 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.4s forwards`;
+        card.querySelector('.kpi-change').style.animation = `kpiChangeEntrance 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.5s forwards`;
+    });
+    
+    // Animate the KPI values with counting effect
+    setTimeout(() => {
+        animateKpiValues();
+    }, 800);
 }
+
 
 console.log('Deal Management System initialized with enhanced user profile and avatar system');

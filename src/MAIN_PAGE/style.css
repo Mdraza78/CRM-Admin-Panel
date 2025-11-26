@@ -711,12 +711,25 @@ nav-link.active:hover i,
     display: flex;
     align-items: center;
     gap: 20px;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
     border: 1px solid #f0f0f0;
     min-height: 140px;
-    animation: fadeInUp 0.6s ease-out;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: kpiCardEntrance 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes kpiCardEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .kpi-card:hover {
@@ -726,9 +739,24 @@ nav-link.active:hover i,
 }
 
 .kpi-card:hover .kpi-value {
-    animation: pulse 0.5s ease, numberGlow 2s ease-in-out;
     color: #00BCD4;
+    transition: color 0.3s ease;
 }
+
+.progress-indicator {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #00BCD4, #1E88E5);
+    width: 0%;
+    transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.kpi-card.animate-in .progress-indicator {
+    width: 100%;
+}
+
 
 .kpi-value {
     font-size: 32px;
@@ -739,11 +767,13 @@ nav-link.active:hover i,
     line-height: 1;
     letter-spacing: -0.5px;
     transition: all 0.3s ease;
-    animation: countUp 0.8s ease-out;
+    position: relative;
+    display: inline-block;
 }
 
+
 .kpi-value.animated {
-    animation: countUp 0.8s ease-out, pulse 1s ease;
+    animation: smoothCount 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .kpi-icon {
@@ -763,13 +793,25 @@ nav-link.active:hover i,
 }
 
 .kpi-card:hover .kpi-icon {
-    transform: scale(1.1) rotate(5deg);
+    transform: scale(1.05);
     box-shadow: 0 6px 20px rgba(0, 188, 212, 0.4);
 }
 
 .kpi-content {
     flex: 1;
-    animation: fadeInUp 0.6s ease-out 0.1s both;
+    opacity: 0;
+    transform: translateX(-10px);
+    animation: kpiContentEntrance 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
+}
+@keyframes kpiContentEntrance {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 .kpi-label {
@@ -803,7 +845,7 @@ nav-link.active:hover i,
 }
 
 .kpi-card:hover .kpi-change {
-    transform: translateX(5px);
+    transform: translateX(3px);
 }
 
 /* Stagger animations for KPI cards */
@@ -819,28 +861,44 @@ nav-link.active:hover i,
 .kpi-card:nth-child(3) { animation-delay: 0.3s; }
 .kpi-card:nth-child(4) { animation-delay: 0.4s; }
 
-.kpi-card:nth-child(1) .kpi-content { animation-delay: 0.2s; }
-.kpi-card:nth-child(2) .kpi-content { animation-delay: 0.3s; }
-.kpi-card:nth-child(3) .kpi-content { animation-delay: 0.4s; }
-.kpi-card:nth-child(4) .kpi-content { animation-delay: 0.5s; }
+.kpi-card:nth-child(1) .kpi-content { animation-delay: 0.3s; }
+.kpi-card:nth-child(2) .kpi-content { animation-delay: 0.4s; }
+.kpi-card:nth-child(3) .kpi-content { animation-delay: 0.5s; }
+.kpi-card:nth-child(4) .kpi-content { animation-delay: 0.6s; }
 
-.kpi-card:nth-child(1) .kpi-icon { animation-delay: 0.3s; }
-.kpi-card:nth-child(2) .kpi-icon { animation-delay: 0.4s; }
-.kpi-card:nth-child(3) .kpi-icon { animation-delay: 0.5s; }
-.kpi-card:nth-child(4) .kpi-icon { animation-delay: 0.6s; }
+.kpi-card:nth-child(1) .kpi-icon { animation-delay: 0.2s; }
+.kpi-card:nth-child(2) .kpi-icon { animation-delay: 0.3s; }
+.kpi-card:nth-child(3) .kpi-icon { animation-delay: 0.4s; }
+.kpi-card:nth-child(4) .kpi-icon { animation-delay: 0.5s; }
 
-.kpi-card:nth-child(1) .kpi-change { animation-delay: 0.4s; }
-.kpi-card:nth-child(2) .kpi-change { animation-delay: 0.5s; }
-.kpi-card:nth-child(3) .kpi-change { animation-delay: 0.6s; }
-.kpi-card:nth-child(4) .kpi-change { animation-delay: 0.7s; }
+.kpi-card:nth-child(1) .kpi-label { animation-delay: 0.5s; }
+.kpi-card:nth-child(2) .kpi-label { animation-delay: 0.6s; }
+.kpi-card:nth-child(3) .kpi-label { animation-delay: 0.7s; }
+.kpi-card:nth-child(4) .kpi-label { animation-delay: 0.8s; }
+
+.kpi-card:nth-child(1) .kpi-change { animation-delay: 0.6s; }
+.kpi-card:nth-child(2) .kpi-change { animation-delay: 0.7s; }
+.kpi-card:nth-child(3) .kpi-change { animation-delay: 0.8s; }
+.kpi-card:nth-child(4) .kpi-change { animation-delay: 0.9s; }
 
 /* Loading state animation */
 .kpi-value.loading {
-    animation: pulse 1.5s infinite;
-    color: #ccc;
+    animation: subtlePulse 2s ease-in-out infinite;
     background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
     background-size: 200% 100%;
     border-radius: 4px;
+    color: transparent;
+}
+@keyframes subtlePulse {
+    0% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.6;
+    }
 }
 
 /* ===== COUNTING ANIMATIONS FOR KPI CARDS ===== */
@@ -940,7 +998,7 @@ nav-link.active:hover i,
 }
 
 .kpi-value.counting {
-    animation: countUp 1.5s ease-out forwards;
+    animation: numberCount 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .kpi-value.incrementing {
@@ -975,6 +1033,21 @@ nav-link.active:hover i,
     animation: digitFlip 0.6s ease-out;
 }
 
+@keyframes numberCount {
+    0% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.95);
+    }
+    50% {
+        opacity: 0.8;
+        transform: translateY(-2px) scale(1.02);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
 /* Gradient text effect during counting */
 .kpi-value.counting {
     background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 50%, #2c3e50 100%);
@@ -992,11 +1065,6 @@ nav-link.active:hover i,
     text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
 }
 
-/* Hover effects with counting animation */
-.kpi-card:hover .kpi-value {
-    animation: numberIncrement 0.6s ease, pulse 2s ease-in-out infinite;
-    color: #00BCD4;
-}
 
 /* Specific animations for different KPI types */
 .kpi-card.leads .kpi-value.counting {
@@ -1257,7 +1325,16 @@ nav-link.active:hover i,
     left: 0;
     right: 0;
     height: 4px;
-    background: transparent;
+    background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.kpi-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    border-color: #e9ecef;
 }
 
 .kpi-card:hover {
@@ -1269,7 +1346,7 @@ nav-link.active:hover i,
 .kpi-icon {
     width: 63px;
     height: 63px;
-    border-radius: 8px; /* Reduced from 16px */
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1278,6 +1355,21 @@ nav-link.active:hover i,
     flex-shrink: 0;
     background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important;
     box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    transform: scale(0.8);
+    animation: kpiIconEntrance 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards;
+}
+
+@keyframes kpiIconEntrance {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 
@@ -1302,6 +1394,31 @@ nav-link.active:hover i,
     font-weight: 600;
     font-family: 'Inter', sans-serif;
     letter-spacing: -0.2px;
+    transition: all 0.3s ease;
+    opacity: 0;
+    animation: kpiLabelEntrance 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.4s forwards;
+}
+
+@keyframes kpiLabelEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes kpiChangeEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .kpi-change {
@@ -1315,6 +1432,9 @@ nav-link.active:hover i,
     width: fit-content;
     font-family: 'Inter', sans-serif;
     backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    opacity: 0;
+    animation: kpiChangeEntrance 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.5s forwards;
 }
 
 .kpi-change.positive {
@@ -2702,6 +2822,17 @@ nav-link.active:hover i,
     .notifications-dropdown.show {
         left: 10px;
         width: calc(100vw - 20px);
+    }
+}
+
+@keyframes smoothCount {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
