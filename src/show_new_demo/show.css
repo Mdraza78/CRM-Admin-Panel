@@ -369,6 +369,7 @@ body {
 }
 
 /* Show only the toggle button when collapsed */
+/* Show only the toggle button when collapsed */
 .app-container.sidebar-collapsed .sidebar-toggle-sticky {
     position: fixed !important;
     left: 20px !important;
@@ -376,6 +377,7 @@ body {
     right: auto !important;
     z-index: 9999 !important;
 }
+
 .header {
     position: fixed;
     left: 0;
