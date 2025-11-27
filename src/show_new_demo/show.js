@@ -25,17 +25,57 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log('Authentication successful, initializing show leads');
     
+    // Load sidebar state and set correct icon
+    const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+    const appContainer = document.querySelector('.app-container');
+    const toggleIcon = document.getElementById('sidebarToggleIcon');
+    
+    if (sidebarCollapsed) {
+        appContainer.classList.add('sidebar-collapsed');
+        if (toggleIcon) {
+            toggleIcon.classList.remove('fa-arrow-left');
+            toggleIcon.classList.add('fa-arrow-right');
+            console.log('🔄 Initial state: Sidebar collapsed - showing right arrow');
+        }
+    } else {
+        appContainer.classList.remove('sidebar-collapsed');
+        if (toggleIcon) {
+            toggleIcon.classList.remove('fa-arrow-right');
+            toggleIcon.classList.add('fa-arrow-left');
+            console.log('🔄 Initial state: Sidebar expanded - showing left arrow');
+        }
+    }
+    
+    // Force button visibility on load
+    setTimeout(() => {
+        const toggleBtn = document.querySelector('.sidebar-toggle-btn');
+        const toggleSticky = document.querySelector('.sidebar-toggle-sticky');
+        const toggleIcon = document.getElementById('sidebarToggleIcon');
+        
+        if (toggleBtn) {
+            toggleBtn.style.display = 'flex';
+            toggleBtn.style.visibility = 'visible';
+            toggleBtn.style.opacity = '1';
+        }
+        
+        if (toggleSticky) {
+            toggleSticky.style.display = 'flex';
+            toggleSticky.style.visibility = 'visible';
+            toggleSticky.style.opacity = '1';
+        }
+        
+        if (toggleIcon) {
+            toggleIcon.style.display = 'flex';
+            toggleIcon.style.visibility = 'visible';
+            toggleIcon.style.opacity = '1';
+        }
+    }, 100);
+    
     initializeShowLeads();
     setupEventListeners();
     displayUserName();
     initializePagination();
     loadShowLeads();
-    
-    // Load sidebar state
-    const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-    if (sidebarCollapsed) {
-        document.querySelector('.app-container').classList.add('sidebar-collapsed');
-    }
     
     console.log('✅ Show Leads System initialized successfully');
 });
@@ -1720,10 +1760,18 @@ function toggleSidebar() {
     
     // Force button visibility
     const toggleBtn = document.querySelector('.sidebar-toggle-btn');
+    const toggleSticky = document.querySelector('.sidebar-toggle-sticky');
+    
     if (toggleBtn) {
         toggleBtn.style.display = 'flex';
         toggleBtn.style.visibility = 'visible';
         toggleBtn.style.opacity = '1';
+    }
+    
+    if (toggleSticky) {
+        toggleSticky.style.display = 'flex';
+        toggleSticky.style.visibility = 'visible';
+        toggleSticky.style.opacity = '1';
     }
     
     // Save sidebar state to localStorage
