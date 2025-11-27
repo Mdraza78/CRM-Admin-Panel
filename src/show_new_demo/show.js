@@ -25,28 +25,26 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log('Authentication successful, initializing show leads');
     
-    // Load sidebar state and set correct icon
- // Load sidebar state and set correct icon
-const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-const appContainer = document.querySelector('.app-container');
-const toggleIcon = document.getElementById('sidebarToggleIcon');
-
-if (sidebarCollapsed) {
-    appContainer.classList.add('sidebar-collapsed');
-    if (toggleIcon) {
-        toggleIcon.classList.remove('fa-chevron-left');
-        toggleIcon.classList.add('fa-chevron-right');  // Right arrow when collapsed
+    // Load sidebar state and set correct icon - SINGLE INITIALIZATION
+    const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+    const appContainer = document.querySelector('.app-container');
+    const toggleIcon = document.getElementById('sidebarToggleIcon');
+    
+    if (sidebarCollapsed) {
+        appContainer.classList.add('sidebar-collapsed');
+        if (toggleIcon) {
+            toggleIcon.classList.remove('fa-chevron-left');
+            toggleIcon.classList.add('fa-chevron-right');
+            console.log('🔄 Initial state: Sidebar collapsed - showing right chevron');
+        }
+    } else {
+        appContainer.classList.remove('sidebar-collapsed');
+        if (toggleIcon) {
+            toggleIcon.classList.remove('fa-chevron-right');
+            toggleIcon.classList.add('fa-chevron-left');
+            console.log('🔄 Initial state: Sidebar expanded - showing left chevron');
+        }
     }
-    console.log('Initial state: Sidebar collapsed - showing right chevron');
-} else {
-    appContainer.classList.remove('sidebar-collapsed');
-    if (toggleIcon) {
-        toggleIcon.classList.remove('fa-chevron-right');
-        toggleIcon.classList.add('fa-chevron-left');   // Left arrow when expanded
-    }
-    console.log('Initial state: Sidebar expanded - showing left chevron');
-}
-
     
     // Force button visibility on load
     setTimeout(() => {
@@ -1748,26 +1746,28 @@ function toggleSidebar() {
     // Update the icon based on sidebar state
     if (toggleIcon) {
         if (isCollapsed) {
-            // Sidebar is collapsed - show right chevron (fa-chevron-right) to open
+            // Sidebar is collapsed - show right chevron (to open)
             toggleIcon.classList.remove('fa-chevron-left');
             toggleIcon.classList.add('fa-chevron-right');
-            console.log('Sidebar collapsed - showing right chevron');
+            console.log('🔧 Sidebar collapsed - showing right chevron');
         } else {
-            // Sidebar is expanded - show left chevron (fa-chevron-left) to close  
+            // Sidebar is expanded - show left chevron (to close)
             toggleIcon.classList.remove('fa-chevron-right');
             toggleIcon.classList.add('fa-chevron-left');
-            console.log('Sidebar expanded - showing left chevron');
+            console.log('🔧 Sidebar expanded - showing left chevron');
         }
     }
     
     // Force button visibility
     const toggleBtn = document.querySelector('.sidebar-toggle-btn');
     const toggleSticky = document.querySelector('.sidebar-toggle-sticky');
+    
     if (toggleBtn) {
         toggleBtn.style.display = 'flex';
         toggleBtn.style.visibility = 'visible';
         toggleBtn.style.opacity = '1';
     }
+    
     if (toggleSticky) {
         toggleSticky.style.display = 'flex';
         toggleSticky.style.visibility = 'visible';
@@ -1776,7 +1776,8 @@ function toggleSidebar() {
     
     // Save sidebar state to localStorage
     localStorage.setItem('sidebarCollapsed', isCollapsed);
-    console.log('Sidebar toggled:', isCollapsed ? 'collapsed' : 'expanded');
+    
+    console.log('🔧 Sidebar toggled:', isCollapsed ? 'collapsed' : 'expanded');
 }
 
 // Update the initialization to handle the saved state
