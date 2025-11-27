@@ -1746,15 +1746,15 @@ function toggleSidebar() {
     // Update the icon based on sidebar state
     if (toggleIcon) {
         if (isCollapsed) {
-            // Sidebar is collapsed - show right arrow (to open)
-            toggleIcon.classList.remove('fa-arrow-left');
-            toggleIcon.classList.add('fa-arrow-right');
-            console.log('🔧 Sidebar collapsed - showing right arrow');
+            // Sidebar is collapsed - show right chevron (to open)
+            toggleIcon.classList.remove('fa-chevron-left');
+            toggleIcon.classList.add('fa-chevron-right');
+            console.log('🔧 Sidebar collapsed - showing right chevron');
         } else {
-            // Sidebar is expanded - show left arrow (to close)
-            toggleIcon.classList.remove('fa-arrow-right');
-            toggleIcon.classList.add('fa-arrow-left');
-            console.log('🔧 Sidebar expanded - showing left arrow');
+            // Sidebar is expanded - show left chevron (to close)
+            toggleIcon.classList.remove('fa-chevron-right');
+            toggleIcon.classList.add('fa-chevron-left');
+            console.log('🔧 Sidebar expanded - showing left chevron');
         }
     }
     
