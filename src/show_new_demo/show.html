@@ -11,124 +11,84 @@
 <body>
     <div class="app-container">
         <!-- Header / Navigation -->
-        <header class="header">
-            <div class="header-content">
-<!-- Update the sidebar toggle button in the header -->
-<div class="sidebar-toggle-sticky">
-    <button class="sidebar-toggle-btn" onclick="toggleSidebar()">
-        <i class="fas fa-chevron-left" id="sidebarToggleIcon"></i>
-    </button>
-</div>
-                <div class="header-left">
-                    <div class="logo">
-                        <img src="../Asset/Globentix_logo.png" alt="Globentix Logo">
-                    </div>
-                    
-                  <nav class="main-nav">
-    <a href="/MAIN_PAGE/index.html" class="nav-link" data-page="dashboard">
-        <i class="fas fa-tachometer-alt"></i> 
-        <span>Dashboard</span>
-    </a>
-    <a href="/show_new_demo/show.html" class="nav-link" data-page="leads">
-        <i class="fas fa-user-plus"></i> 
-        <span>Show Leads</span>
-    </a>
-<!-- In show_new_demo/show.html - Update the Industry Leads link -->
-<a href="/industry-leads" class="nav-link" data-page="industry-leads">
-    <i class="fas fa-headset"></i> 
-    <span>Industry Leads</span>
-</a>
-                        <a href="/main/DEAL/deal.html" class="nav-link" data-page="deals">
-                            <i class="fas fa-handshake"></i> 
-                            <span>Deals</span>
-                        </a>
-                        <a href="/main/CONTACT/contact.html" class="nav-link" data-page="contacts">
-                            <i class="fas fa-address-book"></i> 
-                            <span>Contacts</span>
-                        </a>
-                        <a href="/main/INVOICE/invoice.html" class="nav-link" data-page="invoice">
-                            <i class="fas fa-file-invoice"></i> 
-                            <span>Invoice</span>
-                        </a>
-                        <!-- <a href="/main/REPORTS/reports.html" class="nav-link" data-page="reports">
-                            <i class="fas fa-chart-bar"></i> 
-                            <span>Reports</span>
-                        </a> -->
-                        <!-- <a href="/main/SETTINGSS/setting.html" class="nav-link" data-page="settings">
-                            <i class="fas fa-cog"></i> 
-                            <span>Settings</span>
-                        </a> -->
-                        <a href="/main/SALARY/Salary.html" class="nav-link" data-page="salary">
-                            <i class="fas fa-money-bill"></i> 
-                            <span>Salary</span>
-                        </a>
-                    </nav>
-                </div>
-                
-                <div class="header-right">
-                   
-                    
-                     <div class="user-profile" onclick="toggleUserMenu()">
-                        <div class="user-avatar" id="userAvatar">
-                            <span class="avatar-letter" id="avatarLetter">U</span>
-                        </div>
-                        <span class="user-name" id="userDisplayName">Loading...</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                </div>
+<!-- Header / Navigation -->
+<header class="header">
+    <div class="header-content">
+        <!-- Sidebar Toggle Button - Positioned properly -->
+        <div class="sidebar-toggle-sticky">
+            <button class="sidebar-toggle-btn" onclick="toggleSidebar()">
+                <i class="fas fa-chevron-left" id="sidebarToggleIcon"></i>
+            </button>
+        </div>
+        
+        <div class="header-left">
+            <div class="logo">
+                <img src="../Asset/Globentix_logo.png" alt="Globentix Logo">
             </div>
             
-            <!-- User Dropdown Menu -->
-            <div class="user-dropdown" id="userDropdown">
-                <div class="dropdown-item" onclick="viewProfile()">
-                    <i class="fas fa-user"></i>
-                    <span>View Profile</span>
+            <nav class="main-nav">
+                <a href="/MAIN_PAGE/index.html" class="nav-link" data-page="dashboard">
+                    <i class="fas fa-tachometer-alt"></i> 
+                    <span>Dashboard</span>
+                </a>
+                <a href="/show_new_demo/show.html" class="nav-link" data-page="leads">
+                    <i class="fas fa-user-plus"></i> 
+                    <span>Show Leads</span>
+                </a>
+                <a href="/industry-leads" class="nav-link" data-page="industry-leads">
+                    <i class="fas fa-headset"></i> 
+                    <span>Industry Leads</span>
+                </a>
+                <a href="/main/DEAL/deal.html" class="nav-link" data-page="deals">
+                    <i class="fas fa-handshake"></i> 
+                    <span>Deals</span>
+                </a>
+                <a href="/main/CONTACT/contact.html" class="nav-link" data-page="contacts">
+                    <i class="fas fa-address-book"></i> 
+                    <span>Contacts</span>
+                </a>
+                <a href="/main/INVOICE/invoice.html" class="nav-link" data-page="invoice">
+                    <i class="fas fa-file-invoice"></i> 
+                    <span>Invoice</span>
+                </a>
+                <a href="/main/SALARY/Salary.html" class="nav-link" data-page="salary">
+                    <i class="fas fa-money-bill"></i> 
+                    <span>Salary</span>
+                </a>
+            </nav>
+        </div>
+        
+        <div class="header-right">
+            <div class="user-profile" onclick="toggleUserMenu()">
+                <div class="user-avatar" id="userAvatar">
+                    <span class="avatar-letter" id="avatarLetter">U</span>
                 </div>
-                <div class="dropdown-item" onclick="openSettings()">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </div>
-                <div class="dropdown-item" onclick="openHelp()">
-                    <i class="fas fa-question-circle"></i>
-                    <span>Help & Support</span>
-                </div>
-                <div class="dropdown-item logout" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
-                </div>
+                <span class="user-name" id="userDisplayName">Loading...</span>
+                <i class="fas fa-chevron-down"></i>
             </div>
-            
-            <!-- Notifications Dropdown Menu -->
-            <div class="notifications-dropdown" id="notificationsDropdown">
-                <div class="notifications-header">
-                    <h4>Notifications</h4>
-                    <button class="mark-all-read" onclick="markAllRead()">Mark all as read</button>
-                </div>
-                <div class="notifications-list">
-                    <div class="notification-item urgent" onclick="viewNotification(1)">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <div class="notification-content">
-                            <p>New high-priority show lead assigned</p>
-                            <span class="notification-time">5 minutes ago</span>
-                        </div>
-                    </div>
-                    <div class="notification-item" onclick="viewNotification(2)">
-                        <i class="fas fa-calendar-check"></i>
-                        <div class="notification-content">
-                            <p>Show lead follow-up reminder</p>
-                            <span class="notification-time">1 hour ago</span>
-                        </div>
-                    </div>
-                    <div class="notification-item" onclick="viewNotification(3)">
-                        <i class="fas fa-user-plus"></i>
-                        <div class="notification-content">
-                            <p>3 new show leads imported</p>
-                            <span class="notification-time">2 hours ago</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
+        </div>
+    </div>
+    
+    <!-- User Dropdown Menu -->
+    <div class="user-dropdown" id="userDropdown">
+        <div class="dropdown-item" onclick="viewProfile()">
+            <i class="fas fa-user"></i>
+            <span>View Profile</span>
+        </div>
+        <div class="dropdown-item" onclick="openSettings()">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </div>
+        <div class="dropdown-item" onclick="openHelp()">
+            <i class="fas fa-question-circle"></i>
+            <span>Help & Support</span>
+        </div>
+        <div class="dropdown-item logout" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </div>
+    </div>
+</header>
 
         <!-- Main Content -->
         <main class="main-content">

@@ -46,30 +46,30 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Force button visibility on load
-    setTimeout(() => {
-        const toggleBtn = document.querySelector('.sidebar-toggle-btn');
-        const toggleSticky = document.querySelector('.sidebar-toggle-sticky');
-        const toggleIcon = document.getElementById('sidebarToggleIcon');
-        
-        if (toggleBtn) {
-            toggleBtn.style.display = 'flex';
-            toggleBtn.style.visibility = 'visible';
-            toggleBtn.style.opacity = '1';
-        }
-        
-        if (toggleSticky) {
-            toggleSticky.style.display = 'flex';
-            toggleSticky.style.visibility = 'visible';
-            toggleSticky.style.opacity = '1';
-        }
-        
-        if (toggleIcon) {
-            toggleIcon.style.display = 'flex';
-            toggleIcon.style.visibility = 'visible';
-            toggleIcon.style.opacity = '1';
-        }
-    }, 100);
+
+setTimeout(() => {
+    const toggleBtn = document.querySelector('.sidebar-toggle-btn');
+    const toggleSticky = document.querySelector('.sidebar-toggle-sticky');
+    const toggleIcon = document.getElementById('sidebarToggleIcon');
+    
+    if (toggleBtn) {
+        toggleBtn.style.display = 'flex';
+        toggleBtn.style.visibility = 'visible';
+        toggleBtn.style.opacity = '1';
+    }
+    
+    if (toggleSticky) {
+        toggleSticky.style.display = 'flex';
+        toggleSticky.style.visibility = 'visible';
+        toggleSticky.style.opacity = '1';
+    }
+    
+    if (toggleIcon) {
+        toggleIcon.style.display = 'inline-block';
+        toggleIcon.style.visibility = 'visible';
+        toggleIcon.style.opacity = '1';
+    }
+}, 100);
     
     initializeShowLeads();
     setupEventListeners();
@@ -1743,18 +1743,16 @@ function toggleSidebar() {
     
     const isCollapsed = appContainer.classList.toggle('sidebar-collapsed');
     
-    // Update the icon based on sidebar state
+    // Update the icon rotation based on sidebar state
     if (toggleIcon) {
         if (isCollapsed) {
-            // Sidebar is collapsed - show right chevron (to open)
-            toggleIcon.classList.remove('fa-chevron-left');
-            toggleIcon.classList.add('fa-chevron-right');
-            console.log('🔧 Sidebar collapsed - showing right chevron');
+            // Sidebar is collapsed - rotate to point right
+            toggleIcon.style.transform = 'rotate(180deg)';
+            console.log('🔧 Sidebar collapsed - icon rotated right');
         } else {
-            // Sidebar is expanded - show left chevron (to close)
-            toggleIcon.classList.remove('fa-chevron-right');
-            toggleIcon.classList.add('fa-chevron-left');
-            console.log('🔧 Sidebar expanded - showing left chevron');
+            // Sidebar is expanded - rotate back to left
+            toggleIcon.style.transform = 'rotate(0deg)';
+            console.log('🔧 Sidebar expanded - icon pointing left');
         }
     }
     
@@ -1779,13 +1777,6 @@ function toggleSidebar() {
     
     console.log('🔧 Sidebar toggled:', isCollapsed ? 'collapsed' : 'expanded');
 }
-
-
-
-
-
-
-
 
 function toggleUserMenu() {
     const dropdown = document.getElementById('userDropdown');
