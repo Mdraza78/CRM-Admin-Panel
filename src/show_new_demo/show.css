@@ -1998,7 +1998,7 @@ body {
 /* Updated dashboard header */
 .dashboard-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end; /* Align items to the right */
     align-items: center;
     padding: 0 0 20px 0;
     margin-bottom: 20px;
@@ -2059,5 +2059,6 @@ body {
 .dashboard-header-actions {
     display: flex;
     gap: 15px;
+    align-items: center;
 }
 

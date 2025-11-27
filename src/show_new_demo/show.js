@@ -1707,24 +1707,16 @@ function toggleSidebar() {
     // Update the icon based on sidebar state
     if (toggleIcon) {
         if (isCollapsed) {
-            // Sidebar is collapsed - show right arrow
+            // Sidebar is collapsed - show right arrow (to open)
             toggleIcon.classList.remove('fa-angle-left');
             toggleIcon.classList.add('fa-angle-right');
             console.log('🔧 Sidebar collapsed - showing right arrow');
         } else {
-            // Sidebar is expanded - show left arrow
+            // Sidebar is expanded - show left arrow (to close)
             toggleIcon.classList.remove('fa-angle-right');
             toggleIcon.classList.add('fa-angle-left');
             console.log('🔧 Sidebar expanded - showing left arrow');
         }
-    }
-    
-    // Force visibility of toggle button
-    const toggleBtn = document.querySelector('.sidebar-toggle-btn');
-    if (toggleBtn) {
-        toggleBtn.style.display = 'flex';
-        toggleBtn.style.visibility = 'visible';
-        toggleBtn.style.opacity = '1';
     }
     
     // Save sidebar state to localStorage
