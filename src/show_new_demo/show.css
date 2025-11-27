@@ -25,6 +25,7 @@
     display: flex !important;
     visibility: visible !important;
     opacity: 1 !important;
+    font-size: 14px;
 }
 
 /* Fix user avatar styling */
@@ -367,9 +368,6 @@ body {
     left: 20px;
     top: 20px;
     z-index: 9999;
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
 }
 
 .header {
@@ -2008,25 +2006,28 @@ body {
     position: absolute;
     top: 20px;
     right: -15px;
-    z-index: 9999!important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    z-index: 9999;
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
+
 .sidebar-toggle-btn {
     background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
     border: none;
     color: white;
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    display: flex;
+    display: flex !important;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
     font-size: 14px;
     box-shadow: 0 2px 8px rgba(0, 188, 212, 0.3);
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 .sidebar-toggle-btn:hover {
@@ -2037,11 +2038,15 @@ body {
 
 
 
+
 .app-container.sidebar-collapsed .sidebar-toggle-btn {
     display: flex !important;
     visibility: visible !important;
     opacity: 1 !important;
-    transform: rotate(180deg);
+    position: fixed;
+    left: 20px;
+    top: 20px;
+    z-index: 9999;
 }
 
 .app-container.sidebar-collapsed .sidebar-toggle-btn:hover {

@@ -1697,7 +1697,6 @@ function downloadCSV(content, filename) {
     document.body.removeChild(link);
 }
 
-// Dashboard Functions
 function toggleSidebar() {
     const appContainer = document.querySelector('.app-container');
     const toggleIcon = document.getElementById('sidebarToggleIcon');
@@ -1708,15 +1707,23 @@ function toggleSidebar() {
     if (toggleIcon) {
         if (isCollapsed) {
             // Sidebar is collapsed - show right arrow (to open)
-            toggleIcon.classList.remove('fa-angle-left');
-            toggleIcon.classList.add('fa-angle-right');
+            toggleIcon.classList.remove('fa-arrow-left');
+            toggleIcon.classList.add('fa-arrow-right');
             console.log('🔧 Sidebar collapsed - showing right arrow');
         } else {
             // Sidebar is expanded - show left arrow (to close)
-            toggleIcon.classList.remove('fa-angle-right');
-            toggleIcon.classList.add('fa-angle-left');
+            toggleIcon.classList.remove('fa-arrow-right');
+            toggleIcon.classList.add('fa-arrow-left');
             console.log('🔧 Sidebar expanded - showing left arrow');
         }
+    }
+    
+    // Force button visibility
+    const toggleBtn = document.querySelector('.sidebar-toggle-btn');
+    if (toggleBtn) {
+        toggleBtn.style.display = 'flex';
+        toggleBtn.style.visibility = 'visible';
+        toggleBtn.style.opacity = '1';
     }
     
     // Save sidebar state to localStorage
@@ -1726,7 +1733,7 @@ function toggleSidebar() {
 }
 
 // Update the initialization to handle the saved state
-// Update the initialization to ensure icon is correct
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🎪 Show Leads System initializing...');
     
@@ -1746,27 +1753,35 @@ document.addEventListener('DOMContentLoaded', function() {
     if (sidebarCollapsed) {
         appContainer.classList.add('sidebar-collapsed');
         if (toggleIcon) {
-            toggleIcon.classList.remove('fa-angle-left');
-            toggleIcon.classList.add('fa-angle-right');
-            console.log('🔄 Initial state: Sidebar collapsed');
+            toggleIcon.classList.remove('fa-arrow-left');
+            toggleIcon.classList.add('fa-arrow-right');
+            console.log('🔄 Initial state: Sidebar collapsed - showing right arrow');
         }
     } else {
+        appContainer.classList.remove('sidebar-collapsed');
         if (toggleIcon) {
-            toggleIcon.classList.remove('fa-angle-right');
-            toggleIcon.classList.add('fa-angle-left');
-            console.log('🔄 Initial state: Sidebar expanded');
+            toggleIcon.classList.remove('fa-arrow-right');
+            toggleIcon.classList.add('fa-arrow-left');
+            console.log('🔄 Initial state: Sidebar expanded - showing left arrow');
         }
     }
     
-    // Force visibility of toggle elements
+    // Force button visibility on load
     setTimeout(() => {
         const toggleBtn = document.querySelector('.sidebar-toggle-btn');
+        const toggleSticky = document.querySelector('.sidebar-toggle-sticky');
         const toggleIcon = document.getElementById('sidebarToggleIcon');
         
         if (toggleBtn) {
             toggleBtn.style.display = 'flex';
             toggleBtn.style.visibility = 'visible';
             toggleBtn.style.opacity = '1';
+        }
+        
+        if (toggleSticky) {
+            toggleSticky.style.display = 'flex';
+            toggleSticky.style.visibility = 'visible';
+            toggleSticky.style.opacity = '1';
         }
         
         if (toggleIcon) {
