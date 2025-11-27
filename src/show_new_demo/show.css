@@ -2009,13 +2009,14 @@ body {
     border-bottom: 2px solid #e9ecef;
 }
 .sidebar-toggle-sticky {
-  position: fixed !important;
-  top: 20px !important;
-  left: 20px !important;
-  right: auto !important;
-  z-index: 9999 !important;
+    position: absolute !important;
+    top: 20px !important;
+    right: -15px !important;
+    z-index: 9999 !important;
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
-
 .sidebar-toggle-btn {
     background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%) !important;
     border: none !important;
