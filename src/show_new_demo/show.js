@@ -1737,9 +1737,11 @@ function downloadCSV(content, filename) {
     document.body.removeChild(link);
 }
 
+// Update the toggleSidebar function
 function toggleSidebar() {
     const appContainer = document.querySelector('.app-container');
     const toggleIcon = document.getElementById('sidebarToggleIcon');
+    const floatingToggle = document.getElementById('floatingSidebarToggle');
     
     const isCollapsed = appContainer.classList.toggle('sidebar-collapsed');
     
@@ -1753,6 +1755,19 @@ function toggleSidebar() {
             // Sidebar is expanded - rotate back to left
             toggleIcon.style.transform = 'rotate(0deg)';
             console.log('🔧 Sidebar expanded - icon pointing left');
+        }
+    }
+    
+    // Handle floating toggle button
+    if (floatingToggle) {
+        if (isCollapsed) {
+            // Add pulse animation when sidebar is collapsed
+            setTimeout(() => {
+                floatingToggle.classList.add('pulse');
+            }, 300);
+        } else {
+            // Remove pulse animation when sidebar is expanded
+            floatingToggle.classList.remove('pulse');
         }
     }
     
@@ -1776,6 +1791,62 @@ function toggleSidebar() {
     localStorage.setItem('sidebarCollapsed', isCollapsed);
     
     console.log('🔧 Sidebar toggled:', isCollapsed ? 'collapsed' : 'expanded');
+}
+
+// Update the DOMContentLoaded event listener to initialize the floating button
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🎪 Show Leads System initializing...');
+    
+    // Check authentication first
+    if (!checkAuthentication()) {
+        console.log('Authentication failed, redirecting to login');
+        return;
+    }
+    
+    console.log('Authentication successful, initializing show leads');
+    
+    // Load sidebar state and set correct icon
+    const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+    const appContainer = document.querySelector('.app-container');
+    const toggleIcon = document.getElementById('sidebarToggleIcon');
+    const floatingToggle = document.getElementById('floatingSidebarToggle');
+    
+    if (sidebarCollapsed) {
+        appContainer.classList.add('sidebar-collapsed');
+        if (toggleIcon) {
+            toggleIcon.classList.remove('fa-chevron-left');
+            toggleIcon.classList.add('fa-chevron-right');
+            console.log('🔄 Initial state: Sidebar collapsed - showing right chevron');
+        }
+        // Add pulse animation to floating button if sidebar starts collapsed
+        setTimeout(() => {
+            if (floatingToggle) {
+                floatingToggle.classList.add('pulse');
+            }
+        }, 500);
+    } else {
+        appContainer.classList.remove('sidebar-collapsed');
+        if (toggleIcon) {
+            toggleIcon.classList.remove('fa-chevron-right');
+            toggleIcon.classList.add('fa-chevron-left');
+            console.log('🔄 Initial state: Sidebar expanded - showing left chevron');
+        }
+    }
+    
+    // Initialize the rest of your functionality
+    initializeShowLeads();
+    setupEventListeners();
+    displayUserName();
+    initializePagination();
+    loadShowLeads();
+    
+    console.log('✅ Show Leads System initialized successfully');
+});
+
+// Add function to handle floating button click specifically
+function handleFloatingToggle() {
+    console.log('🎯 Floating toggle button clicked');
+    toggleSidebar();
 }
 
 function toggleUserMenu() {
