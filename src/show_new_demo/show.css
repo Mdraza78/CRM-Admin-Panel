@@ -201,7 +201,6 @@
     display: none;
 }
 
-/* Smooth sidebar transitions */
 .header,
 .main-content,
 .nav-link,
@@ -214,6 +213,7 @@
     opacity: 0;
     visibility: hidden;
 }
+
 
 .app-container .header {
     transform: translateX(0);
