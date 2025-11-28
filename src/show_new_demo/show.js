@@ -1739,25 +1739,28 @@ function downloadCSV(content, filename) {
 
 function toggleSidebar() {
     const appContainer = document.querySelector('.app-container');
-    const toggleIcon = document.getElementById('sidebarToggleIcon');
-    const floatingToggle = document.getElementById('floatingSidebarToggle');
+    const sidebarToggleIcon = document.getElementById('sidebarToggleIcon');
+    const floatingToggleIcon = document.getElementById('floatingToggleIcon');
     
     const isCollapsed = appContainer.classList.toggle('sidebar-collapsed');
     
-    // Update the icon rotation based on sidebar state
-    if (toggleIcon) {
+    // Update icons based on sidebar state
+    if (sidebarToggleIcon) {
         if (isCollapsed) {
-            // Sidebar is collapsed - rotate to point right
-            toggleIcon.style.transform = 'rotate(180deg)';
-            console.log('🔧 Sidebar collapsed - icon rotated right');
+            // Sidebar is collapsed - change to right chevron
+            sidebarToggleIcon.className = 'fas fa-chevron-right';
+            console.log('🔧 Sidebar collapsed - showing right chevron');
         } else {
-            // Sidebar is expanded - rotate back to left
-            toggleIcon.style.transform = 'rotate(0deg)';
-            console.log('🔧 Sidebar expanded - icon pointing left');
+            // Sidebar is expanded - change to left chevron
+            sidebarToggleIcon.className = 'fas fa-chevron-left';
+            console.log('🔧 Sidebar expanded - showing left chevron');
         }
     }
     
-    // REMOVED: Pulse animation handling for floating toggle
+    // Update floating button icon (always shows right chevron when visible)
+    if (floatingToggleIcon) {
+        floatingToggleIcon.className = 'fas fa-chevron-right';
+    }
     
     // Force button visibility
     const toggleBtn = document.querySelector('.sidebar-toggle-btn');

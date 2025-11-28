@@ -165,31 +165,32 @@
     position: fixed;
     top: 20px;
     left: 20px;
-    width: 40px; /* Decreased from 50px */
-    height: 40px; /* Decreased from 50px */
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
     border: none;
     color: white;
-    font-size: 16px; /* Decreased from 18px */
+    font-size: 16px;
     cursor: pointer;
     display: none;
     align-items: center;
     justify-content: center;
     z-index: 9998;
-    box-shadow: 0 2px 10px rgba(0, 188, 212, 0.3); /* Reduced shadow */
+    box-shadow: 0 2px 10px rgba(0, 188, 212, 0.3);
     transition: all 0.3s ease;
 }
 
+
 .floating-sidebar-toggle:hover {
-    transform: scale(1.05); /* Reduced from 1.1 */
-    box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4); /* Reduced shadow */
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4);
 }
+
 
 .floating-sidebar-toggle:active {
     transform: scale(0.95);
 }
-
 
 /* Show floating button when sidebar is collapsed */
 .app-container.sidebar-collapsed .floating-sidebar-toggle {
