@@ -1685,8 +1685,169 @@ display: none !important;
     display: flex;
     justify-content: flex-end;
     gap: 15px;
-    padding-top: 20px;
-    border-top: 2px solid #f8f9fa;
+    padding-top: 25px;
+    border-top: 1px solid #e9ecef;
+    margin-top: 20px;
+    background: #fafbfc;
+    padding: 20px 25px;
+    border-radius: 0 0 16px 16px;
+    margin: 30px -40px -40px -40px;
+}
+
+.modal-actions .btn-secondary {
+    background: white;
+    color: #6c757d;
+    border: 2px solid #e9ecef;
+    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.1);
+}
+
+.modal-actions .btn-secondary:hover {
+    background: #f8f9fa;
+    color: #495057;
+    border-color: #cbd5e1;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(108, 117, 125, 0.15);
+}
+
+.modal-actions .btn-secondary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.1);
+}
+
+.modal-actions .btn-secondary:focus {
+    outline: none;
+    border-color: #6c757d;
+    box-shadow: 0 0 0 3px rgba(108, 117, 125, 0.1);
+}
+
+.modal-actions .btn-primary i,
+.modal-actions .btn-secondary i {
+    font-size: 14px;
+    transition: transform 0.3s ease;
+}
+
+.modal-actions .btn-primary:hover i {
+    transform: translateX(2px);
+}
+
+.modal-actions .btn-secondary:hover i {
+    transform: translateX(-2px);
+}
+
+.modal-actions .btn-primary.loading,
+.modal-actions .btn-secondary.loading {
+    position: relative;
+    color: transparent;
+}
+
+.modal-actions .btn-primary.loading::after,
+.modal-actions .btn-secondary.loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.modal-actions .btn-primary.loading::after {
+    border-top-color: white;
+}
+
+.modal-actions .btn-secondary.loading::after {
+    border-top-color: #6c757d;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design for Modal Buttons */
+@media (max-width: 768px) {
+    .modal-actions {
+        flex-direction: column-reverse;
+        gap: 12px;
+        padding: 20px;
+        margin: 25px -25px -25px -25px;
+    }
+    
+    .modal-actions .btn-primary,
+    .modal-actions .btn-secondary {
+        min-width: 100%;
+        width: 100%;
+        margin: 0;
+    }
+}
+
+/* Large Modal Specific Adjustments */
+.modal-content.large .modal-actions,
+.modal-content.extra-large .modal-actions {
+    margin: 30px -40px -40px -40px;
+}
+
+/* Button Press Effect */
+.modal-actions .btn-primary:active,
+.modal-actions .btn-secondary:active {
+    transition: transform 0.1s ease;
+}
+
+/* Disabled State */
+.modal-actions .btn-primary:disabled,
+.modal-actions .btn-secondary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Success State Animation */
+.modal-actions .btn-primary.success {
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.modal-actions .btn-primary.success i {
+    animation: bounce 0.6s ease;
+}
+
+@keyframes bounce {
+    0%, 20%, 60%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-5px);
+    }
+    80% {
+        transform: translateY(-2px);
+    }
+}
+
+.modal-actions .btn-primary {
+    background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3);
+    border: 2px solid transparent;
+}
+
+.modal-actions .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 188, 212, 0.4);
+    background: linear-gradient(135deg, #00a8c0 0%, #1976d2 100%);
+}
+
+
+.modal-actions .btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3);
+}
+
+.modal-actions .btn-primary:focus {
+    outline: none;
+    border-color: #00BCD4;
+    box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.2);
 }
 
 /* Form Styles */
