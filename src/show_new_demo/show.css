@@ -2317,11 +2317,10 @@ display: none !important;
 
 /* Updated dashboard header */
 .dashboard-header {
-    display: flex;
-    justify-content: flex-end; /* Align items to the right */
+       display: flex;
+    justify-content: flex-end;
     align-items: center;
-    padding: 0 0 20px 0;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     border-bottom: 2px solid #e9ecef;
 }
 .sidebar-toggle-sticky {
@@ -2384,7 +2383,18 @@ display: none !important;
 
 .dashboard-header-actions {
     display: flex;
-    gap: 15px;
     align-items: center;
+    gap: 16px;              /* space between button and search */
+}
+
+.dashboard-header-actions .search-container {
+    display: flex;
+    align-items: center;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: #fff;
+    border: 1px solid #e1e4f0;
+    min-width: 260px;       /* tweak as you like */
+    max-width: 340px;
 }
 
