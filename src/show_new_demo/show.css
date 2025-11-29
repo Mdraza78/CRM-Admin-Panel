@@ -181,16 +181,17 @@
     transition: all 0.3s ease;
 }
 
-
 .floating-sidebar-toggle:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4);
 }
 
-
 .floating-sidebar-toggle:active {
     transform: scale(0.95);
 }
+
+
+
 
 /* Show floating button when sidebar is collapsed */
 .app-container.sidebar-collapsed .floating-sidebar-toggle {

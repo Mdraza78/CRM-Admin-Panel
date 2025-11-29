@@ -13,7 +13,6 @@ let totalLeadsCount = 0;
 // API Base URL
 const API_BASE_URL = 'https://crm-admin-panel-production.up.railway.app/api';
 
-// Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🎪 Show Leads System initializing...');
     
@@ -25,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log('Authentication successful, initializing show leads');
     
-    // Load sidebar state and set correct icon - SINGLE INITIALIZATION
+    // Load sidebar state and set correct icon
     const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
     const appContainer = document.querySelector('.app-container');
     const toggleIcon = document.getElementById('sidebarToggleIcon');
@@ -46,31 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-
-setTimeout(() => {
-    const toggleBtn = document.querySelector('.sidebar-toggle-btn');
-    const toggleSticky = document.querySelector('.sidebar-toggle-sticky');
-    const toggleIcon = document.getElementById('sidebarToggleIcon');
-    
-    if (toggleBtn) {
-        toggleBtn.style.display = 'flex';
-        toggleBtn.style.visibility = 'visible';
-        toggleBtn.style.opacity = '1';
-    }
-    
-    if (toggleSticky) {
-        toggleSticky.style.display = 'flex';
-        toggleSticky.style.visibility = 'visible';
-        toggleSticky.style.opacity = '1';
-    }
-    
-    if (toggleIcon) {
-        toggleIcon.style.display = 'inline-block';
-        toggleIcon.style.visibility = 'visible';
-        toggleIcon.style.opacity = '1';
-    }
-}, 100);
-    
+    // Initialize the rest of your functionality
     initializeShowLeads();
     setupEventListeners();
     displayUserName();
@@ -1744,7 +1719,7 @@ function toggleSidebar() {
     
     const isCollapsed = appContainer.classList.toggle('sidebar-collapsed');
     
-    // Update icons based on sidebar state
+    // Update sidebar toggle icon based on sidebar state
     if (sidebarToggleIcon) {
         if (isCollapsed) {
             // Sidebar is collapsed - change to right chevron
@@ -1757,7 +1732,7 @@ function toggleSidebar() {
         }
     }
     
-    // Update floating button icon (always shows right chevron when visible)
+    // Update floating button icon - ALWAYS show right chevron (pointing towards hidden sidebar)
     if (floatingToggleIcon) {
         floatingToggleIcon.className = 'fas fa-chevron-right';
     }
