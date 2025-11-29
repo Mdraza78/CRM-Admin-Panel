@@ -1760,7 +1760,7 @@ display: none !important;
 }
 
 .modal-actions-inline .btn-secondary.btn-cancel-show {
-    min-width: 200px;
+    min-width: 220px;
     padding: 14px 28px;        /* more vertical padding = taller button */
     font-size: 15px;
 }
