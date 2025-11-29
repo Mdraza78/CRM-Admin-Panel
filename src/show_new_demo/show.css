@@ -1771,7 +1771,7 @@ display: none !important;
 
 .modal-actions-inline .btn-primary.btn-submit-show {
     min-width: 170px;
-    padding: 6px 20px;      /* ↓ smaller top/bottom padding */
+    padding: 5px 20px;      /* ↓ smaller top/bottom padding */
     font-size: 14px;
     display: inline-flex;
     align-items: center;
