@@ -490,7 +490,7 @@ display: none !important;
     flex-direction: column;
     padding: 20px 0 0 0;
     gap: 15px;
-    width: 100%;
+    width: 240px;
     flex: 1;
     overflow: hidden;
     position: relative;
