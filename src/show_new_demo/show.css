@@ -1752,6 +1752,38 @@ display: none !important;
     background: white;
 }
 
+.modal-actions-inline {
+    display: flex;
+    justify-content: flex-start;   /* or center */
+    gap: 16px;
+    padding: 16px 24px 24px;
+}
+
+.modal-actions-inline .btn-primary,
+.modal-actions-inline .btn-secondary {
+    min-width: 180px;
+    max-width: 220px;
+    padding: 12px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-submit-show {
+    background: linear-gradient(90deg, #0084ff, #00c0ff);
+    color: #fff;
+    border: none;
+}
+
+.btn-cancel-show {
+    background: #f5f7fb;
+    color: #364152;
+    border: 1px solid #d4d7e5;
+}
+
 .modal-actions .btn-primary.loading::after,
 .modal-actions .btn-secondary.loading::after {
     content: '';
