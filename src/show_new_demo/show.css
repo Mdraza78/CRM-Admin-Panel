@@ -68,22 +68,15 @@
 }
 
 /* Responsive adjustments for wider controls */
-@media (max-width: 1200px) {
+/* at large widths, spread things more */
+@media (min-width: 1200px) {
+    .main-content {
+        padding-right: 48px;
+        padding-left: 32px;
+    }
+
     .main-content-area {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-    
-    .controls-section {
-        position: static;
-        order: 2;
-        min-width: unset;
-        max-width: unset;
-        width: 100%;
-    }
-    
-    .show-leads-section {
-        order: 1;
+        grid-template-columns: 320px minmax(0, 1.4fr);
     }
 }
 
@@ -1255,6 +1248,7 @@ display: none !important;
 
 .data-table {
     min-width: 900px;
+        width: 100%;
     max-height: none !important;
     overflow-y: visible !important;
 }
@@ -2305,13 +2299,20 @@ display: none !important;
     }
 }
 
+.show-leads-container,
+.show-leads-table-view,
+.table-container {
+    width: 100%;
+}
+
+
 .show-leads-section {
     background: white;
     padding: 25px;
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     border: 1px solid #e9ecef;
-    width: 680px; /* or 60vw or appropriate px value */
+    width: 100%; /* or 60vw or appropriate px value */
     max-width: 100%;
     min-width: 0;
     box-sizing: border-box;
