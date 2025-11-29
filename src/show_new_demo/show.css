@@ -1754,10 +1754,27 @@ display: none !important;
 
 .modal-actions-inline {
     display: flex;
-    justify-content: flex-start;   /* or center */
+    justify-content: center;   /* center horizontally */
     gap: 16px;
     padding: 16px 24px 24px;
 }
+
+.modal-actions-inline .btn-secondary.btn-cancel-show {
+    min-width: 200px;
+    padding: 14px 28px;        /* more vertical padding = taller button */
+    font-size: 15px;
+}
+
+.modal-actions-inline .btn-primary.btn-submit-show {
+    min-width: 200px;
+    padding: 14px 28px;
+    font-size: 15px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 8px;           /* space between icon and text */
+}
+
 
 .modal-actions-inline .btn-primary,
 .modal-actions-inline .btn-secondary {
@@ -1870,6 +1887,11 @@ display: none !important;
         transform: translateY(-1px);
     }
 }
+
+.modal-actions-inline button i {
+    margin-right: 8px;         /* icon–text spacing */
+}
+
 
 .modal-actions .btn-primary {
     background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
