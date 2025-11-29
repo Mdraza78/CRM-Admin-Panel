@@ -1754,25 +1754,25 @@ display: none !important;
 
 .modal-actions-inline {
     display: flex;
-    justify-content: center;   /* center horizontally */
-    gap: 16px;
-    padding: 16px 24px 24px;
+    justify-content: center;
+    gap: 12px;
+    padding: 12px 20px 20px;
+}
+.modal-actions-inline .btn-secondary.btn-cancel-show {
+    min-width: 170px;
+    padding: 10px 20px;
+    font-size: 14px;
 }
 
-.modal-actions-inline .btn-secondary.btn-cancel-show {
-    min-width: 220px;
-    padding: 14px 28px;        /* more vertical padding = taller button */
-    font-size: 15px;
-}
 
 .modal-actions-inline .btn-primary.btn-submit-show {
-    min-width: 200px;
-    padding: 14px 28px;
-    font-size: 15px;
+    min-width: 170px;      /* was 200 */
+    padding: 10px 20px;    /* less height & width */
+    font-size: 14px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    column-gap: 8px;           /* space between icon and text */
+    column-gap: 8px;       /* icon–text gap */
 }
 
 
