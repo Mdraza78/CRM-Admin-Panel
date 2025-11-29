@@ -1684,54 +1684,58 @@ display: none !important;
 .modal-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 15px;
+    gap: 12px;
     padding-top: 25px;
     border-top: 1px solid #e9ecef;
-    margin-top: 20px;
+    margin-top: 30px;
     background: #fafbfc;
-    padding: 20px 25px;
+    padding: 25px;
     border-radius: 0 0 16px 16px;
-    margin: 30px -40px -40px -40px;
+    margin: 40px -40px -40px -40px;
 }
+
 
 .modal-actions .btn-secondary {
     background: white;
     color: #6c757d;
-    border: 2px solid #e9ecef;
-    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.1);
+    border: 1px solid #dee2e6;
+    box-shadow: 0 1px 4px rgba(108, 117, 125, 0.08);
+    min-width: 100px;
+    font-weight: 500;
 }
 
 .modal-actions .btn-secondary:hover {
     background: #f8f9fa;
     color: #495057;
-    border-color: #cbd5e1;
+    border-color: #adb5bd;
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(108, 117, 125, 0.15);
+    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.12);
 }
+
 
 .modal-actions .btn-secondary:active {
     transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.1);
+    box-shadow: 0 1px 4px rgba(108, 117, 125, 0.08);
 }
 
 .modal-actions .btn-secondary:focus {
     outline: none;
     border-color: #6c757d;
-    box-shadow: 0 0 0 3px rgba(108, 117, 125, 0.1);
+    box-shadow: 0 0 0 3px rgba(108, 117, 125, 0.08);
 }
 
 .modal-actions .btn-primary i,
 .modal-actions .btn-secondary i {
-    font-size: 14px;
-    transition: transform 0.3s ease;
+    font-size: 13px;
+    transition: transform 0.2s ease;
 }
 
 .modal-actions .btn-primary:hover i {
-    transform: translateX(2px);
+    transform: translateX(1px);
 }
 
 .modal-actions .btn-secondary:hover i {
-    transform: translateX(-2px);
+    transform: translateX(-1px);
 }
 
 .modal-actions .btn-primary.loading,
@@ -1739,13 +1743,21 @@ display: none !important;
     position: relative;
     color: transparent;
 }
+.modal-actions .btn-primary,
+.modal-actions .btn-secondary {
+    background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
+}
+
+.modal-actions .btn-secondary {
+    background: white;
+}
 
 .modal-actions .btn-primary.loading::after,
 .modal-actions .btn-secondary.loading::after {
     content: '';
     position: absolute;
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     border: 2px solid transparent;
     border-top: 2px solid currentColor;
     border-radius: 50%;
@@ -1755,10 +1767,10 @@ display: none !important;
 .modal-actions .btn-primary.loading::after {
     border-top-color: white;
 }
-
 .modal-actions .btn-secondary.loading::after {
     border-top-color: #6c757d;
 }
+
 
 @keyframes spin {
     0% { transform: rotate(0deg); }
@@ -1771,7 +1783,7 @@ display: none !important;
         flex-direction: column-reverse;
         gap: 12px;
         padding: 20px;
-        margin: 25px -25px -25px -25px;
+        margin: 30px -25px -25px -25px;
     }
     
     .modal-actions .btn-primary,
@@ -1782,11 +1794,13 @@ display: none !important;
     }
 }
 
+
 /* Large Modal Specific Adjustments */
 .modal-content.large .modal-actions,
 .modal-content.extra-large .modal-actions {
-    margin: 30px -40px -40px -40px;
+    margin: 40px -40px -40px -40px;
 }
+
 
 /* Button Press Effect */
 .modal-actions .btn-primary:active,
@@ -1806,7 +1820,7 @@ display: none !important;
 /* Success State Animation */
 .modal-actions .btn-primary.success {
     background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
 }
 
 .modal-actions .btn-primary.success i {
@@ -1818,36 +1832,37 @@ display: none !important;
         transform: translateY(0);
     }
     40% {
-        transform: translateY(-5px);
+        transform: translateY(-3px);
     }
     80% {
-        transform: translateY(-2px);
+        transform: translateY(-1px);
     }
 }
 
 .modal-actions .btn-primary {
     background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
     color: white;
-    box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3);
-    border: 2px solid transparent;
+    box-shadow: 0 2px 8px rgba(0, 188, 212, 0.25);
+    border: 1px solid transparent;
+    min-width: 160px;
 }
 
 .modal-actions .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 188, 212, 0.4);
+    box-shadow: 0 4px 16px rgba(0, 188, 212, 0.35);
     background: linear-gradient(135deg, #00a8c0 0%, #1976d2 100%);
 }
 
 
 .modal-actions .btn-primary:active {
     transform: translateY(0);
-    box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3);
+    box-shadow: 0 2px 6px rgba(0, 188, 212, 0.3);
 }
 
 .modal-actions .btn-primary:focus {
     outline: none;
     border-color: #00BCD4;
-    box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.2);
+    box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.15);
 }
 
 /* Form Styles */
