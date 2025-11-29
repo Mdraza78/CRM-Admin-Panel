@@ -1770,14 +1770,15 @@ display: none !important;
 
 
 .modal-actions-inline .btn-primary.btn-submit-show {
-    min-width: 170px;      /* was 200 */
-    padding: 10px 20px;    /* less height & width */
+    min-width: 170px;
+    padding: 6px 20px;      /* ↓ smaller top/bottom padding */
     font-size: 14px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    column-gap: 8px;       /* icon–text gap */
+    column-gap: 8px;
 }
+
 
 
 .modal-actions-inline .btn-primary,
