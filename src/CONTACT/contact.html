@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contacts - Globentix CRM</title>
-    <link rel="stylesheet" href="contact.css">
+    <title>Contact Management - Globentix CRM</title>
+    <link rel="stylesheet" href="/CONTACT/contact.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -34,23 +34,23 @@
                             <i class="fas fa-user-plus"></i> 
                             <span>Show Leads</span>
                         </a>
-                        <a href="/industry-leads" class="nav-link" data-page="industry-leads">
+                        <a href="/INDUSTRY_LEAD_PAGE/demo.html" class="nav-link" data-page="industry-leads">
                             <i class="fas fa-headset"></i> 
                             <span>Industry Leads</span>
                         </a>
-                        <a href="https://crm-admin-panel.vercel.app/DEAL/deal.html" class="nav-link" data-page="deals">
+                        <a href="/DEAL/deal.html" class="nav-link" data-page="deals">
                             <i class="fas fa-handshake"></i> 
                             <span>Deals</span>
                         </a>
-                        <a href="https://crm-admin-panel.vercel.app/CONTACT/contact.html" class="nav-link active" data-page="contacts">
+                        <a href="/CONTACT/contact.html" class="nav-link active" data-page="contacts">
                             <i class="fas fa-address-book"></i> 
                             <span>Contacts</span>
                         </a>
-                        <a href="https://crm-admin-panel.vercel.app/INVOICE/invoice.html" class="nav-link" data-page="invoice">
+                        <a href="/INVOICE/invoice.html" class="nav-link" data-page="invoice">
                             <i class="fas fa-file-invoice"></i> 
                             <span>Invoice</span>
                         </a>
-                        <a href="https://crm-admin-panel.vercel.app/main/SALARY/Salary.html" class="nav-link" data-page="salary">
+                        <a href="/SALARY/Salary.html" class="nav-link" data-page="salary">
                             <i class="fas fa-money-bill"></i> 
                             <span>Salary</span>
                         </a>
@@ -91,17 +91,18 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Floating Toggle Button -->
+            <!-- Floating Toggle Button (Visible when sidebar is collapsed) -->
             <button class="floating-sidebar-toggle" id="floatingSidebarToggle" onclick="toggleSidebar()">
                 <i class="fas fa-chevron-right" id="floatingToggleIcon"></i>
             </button>
 
-            <!-- Dashboard Header -->
+            <!-- Dashboard Header with Add New Contact Button -->
             <div class="dashboard-header">
                 <div class="dashboard-header-actions">
                     <button class="btn-primary" onclick="addNewContact()">
                         <i class="fas fa-plus"></i> Add New Contact
                     </button>
+                    <!-- Search container -->
                     <div class="search-container">
                         <i class="fas fa-search"></i>
                         <input type="search" class="search-input" placeholder="Search contacts..." onkeyup="performSearch(this.value)">
@@ -119,9 +120,9 @@
                     
                     <div class="filters-bar">
                         <div class="filter-group">
-                            <label for="statusFilter">Status:</label>
+                            <label for="statusFilter">Contact Status:</label>
                             <select id="statusFilter" class="form-select" onchange="filterContacts()">
-                                <option value="">All Status</option>
+                                <option value="">All Statuses</option>
                                 <option value="Lead">Lead</option>
                                 <option value="Prospect">Prospect</option>
                                 <option value="Customer">Customer</option>
@@ -132,10 +133,6 @@
                             <label for="ownerFilter">Owner:</label>
                             <select id="ownerFilter" class="form-select" onchange="filterContacts()">
                                 <option value="">All Owners</option>
-                                <option value="John Doe">John Doe</option>
-                                <option value="Sarah Smith">Sarah Smith</option>
-                                <option value="Mike Johnson">Mike Johnson</option>
-                                <option value="Emily Wilson">Emily Wilson</option>
                             </select>
                         </div>
                         <div class="filter-group">
@@ -154,27 +151,28 @@
                                 <option value="name_asc">Name A-Z</option>
                                 <option value="name_desc">Name Z-A</option>
                                 <option value="company_asc">Company A-Z</option>
-                                <option value="status_asc">Status</option>
+                                <option value="company_desc">Company Z-A</option>
                             </select>
                         </div>
                     </div>
                 </section>
 
                 <!-- Contacts Section on Right -->
-                <section class="industry-leads-section">
+                <section class="contacts-section">
                     <div class="section-header">
                         <h3><i class="fas fa-address-book"></i> All Contacts</h3>
                         <span class="total-records">Total Records: <span id="totalRecords">0</span></span>
                     </div>
 
-                    <div class="industry-leads-container">
+                    <div class="contacts-container">
                         <!-- Table View Only -->
-                        <div class="industry-leads-table-view active" id="tableView">
+                        <div class="contacts-table-view active" id="tableView">
                             <div class="table-container">
                                 <table class="data-table">
                                     <thead>
                                         <tr>
-                                            <th onclick="sortTable('fullName')">Name <i class="fas fa-sort"></i></th>
+                                            <th><input type="checkbox" onchange="selectAllContacts(this)"></th>
+                                            <th onclick="sortTable('name')">Name <i class="fas fa-sort"></i></th>
                                             <th onclick="sortTable('company')">Company <i class="fas fa-sort"></i></th>
                                             <th onclick="sortTable('email')">Email <i class="fas fa-sort"></i></th>
                                             <th onclick="sortTable('phone')">Phone <i class="fas fa-sort"></i></th>
@@ -191,19 +189,33 @@
                         </div>
                     </div>
 
+                    <!-- Bulk Actions -->
+                    <div class="bulk-actions" id="bulkActions" style="display: none;">
+                        <span class="selected-count">0 contacts selected</span>
+                        <button class="btn-secondary" onclick="bulkUpdateStatus('Customer')">
+                            <i class="fas fa-user-check"></i> Mark as Customer
+                        </button>
+                        <button class="btn-secondary" onclick="bulkUpdateStatus('Inactive')">
+                            <i class="fas fa-user-slash"></i> Mark as Inactive
+                        </button>
+                        <button class="btn-danger" onclick="bulkDeleteContacts()">
+                            <i class="fas fa-trash"></i> Delete Selected
+                        </button>
+                    </div>
+                    <br>
                     <!-- Pagination -->
                     <div class="pagination-container">
                         <div class="pagination-info">
-                            Showing <span id="paginationStart">1</span> to <span id="paginationEnd">6</span> of <span id="paginationTotal">0</span> contacts
+                            Showing <span id="paginationStart">1</span> to <span id="paginationEnd">4</span> of <span id="paginationTotal">0</span> contacts
                         </div>
                         <div class="pagination-controls">
-                            <button class="pagination-btn" onclick="changePage(-1)" id="prevBtn">
+                            <button class="pagination-btn" onclick="previousPage()" id="prevBtn">
                                 <i class="fas fa-chevron-left"></i> Previous
                             </button>
                             <div class="pagination-numbers" id="paginationNumbers">
                                 <!-- Page numbers will be populated by JavaScript -->
                             </div>
-                            <button class="pagination-btn" onclick="changePage(1)" id="nextBtn">
+                            <button class="pagination-btn" onclick="nextPage()" id="nextBtn">
                                 Next <i class="fas fa-chevron-right"></i>
                             </button>
                         </div>
@@ -213,65 +225,78 @@
         </main>
     </div>
 
-    <!-- Add/Edit Contact Modal (Simplified) -->
+    <!-- Contact Form Modal -->
     <div class="modal-overlay" id="contactModal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="contactModalTitle">Add New Contact</h3>
+                <h3 id="contactModalTitle">Create New Contact</h3>
                 <button class="modal-close" onclick="closeContactModal()">×</button>
             </div>
             <div class="modal-body">
                 <form id="contactForm" class="contact-form">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="firstName">First Name *</label>
-                            <input type="text" id="firstName" class="form-input" required>
+                    <div class="form-sections">
+                        <!-- Contact Information Section -->
+                        <div class="form-section">
+                            <h4><i class="fas fa-user"></i> Contact Information</h4>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="firstName">First Name *</label>
+                                    <input type="text" id="firstName" class="form-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastName">Last Name *</label>
+                                    <input type="text" id="lastName" class="form-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="jobTitle">Job Title</label>
+                                    <input type="text" id="jobTitle" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="company">Company *</label>
+                                    <input type="text" id="company" class="form-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Email *</label>
+                                    <input type="email" id="email" class="form-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="phone">Phone</label>
+                                    <input type="tel" id="phone" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="status">Status *</label>
+                                    <select id="status" class="form-select" required>
+                                        <option value="Lead">Lead</option>
+                                        <option value="Prospect">Prospect</option>
+                                        <option value="Customer">Customer</option>
+                                        <option value="Inactive">Inactive</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="owner">Owner</label>
+                                    <input type="text" id="owner" class="form-input" placeholder="Enter owner name">
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="lastName">Last Name *</label>
-                            <input type="text" id="lastName" class="form-input" required>
+
+                        <!-- Notes Section -->
+                        <div class="form-section">
+                            <h4><i class="fas fa-sticky-note"></i> Notes</h4>
+                            <div class="form-group">
+                                <label for="notes">Contact Notes</label>
+                                <textarea id="notes" class="form-textarea" rows="6" placeholder="Contact notes and details..."></textarea>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="jobTitle">Job Title</label>
-                            <input type="text" id="jobTitle" class="form-input">
-                        </div>
-                        <div class="form-group">
-                            <label for="company">Company *</label>
-                            <input type="text" id="company" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Email *</label>
-                            <input type="email" id="email" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="phone">Phone</label>
-                            <input type="tel" id="phone" class="form-input">
-                        </div>
-                        <div class="form-group">
-                            <label for="status">Status *</label>
-                            <select id="status" class="form-select" required>
-                                <option value="Lead">Lead</option>
-                                <option value="Prospect">Prospect</option>
-                                <option value="Customer">Customer</option>
-                                <option value="Inactive">Inactive</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="owner">Owner</label>
-                            <input type="text" id="owner" class="form-input" placeholder="Enter owner name">
-                        </div>
-                    </div>
-                    <div class="form-group full-width">
-                        <label for="notes">Notes</label>
-                        <textarea id="notes" class="form-textarea" rows="3" placeholder="Add any additional notes..."></textarea>
                     </div>
                 </form>
             </div>
-            <div class="modal-actions">
-                <button class="btn-primary" onclick="saveContact()">
+            <div class="modal-actions modal-actions-inline">
+                <button type="button" class="btn-primary btn-submit-contact" onclick="saveContact()">
                     <i class="fas fa-save"></i> Save Contact
                 </button>
-                <button class="btn-secondary" onclick="closeContactModal()">Cancel</button>
+                <button type="button" class="btn-secondary btn-cancel-contact" onclick="closeContactModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
             </div>
         </div>
     </div>
@@ -284,7 +309,7 @@
             </div>
             <div class="modal-body">
                 <p>Are you sure you want to delete this contact?</p>
-                <p><strong id="deleteItemName"></strong></p>
+                <p><strong id="deleteContactName"></strong></p>
                 <p class="warning-text">This action cannot be undone.</p>
             </div>
             <div class="modal-actions">
