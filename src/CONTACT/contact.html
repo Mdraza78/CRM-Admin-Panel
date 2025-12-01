@@ -4,26 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contacts - Globentix CRM</title>
-    <link rel="stylesheet" href="/CONTACT/contact.css">
+    <link rel="stylesheet" href="contact.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="app-container">
-        <!-- Header / Navigation - Updated to match main page -->
+        <!-- Header / Navigation -->
         <header class="header">
             <div class="header-content">
+                <!-- Sidebar Toggle Button - Positioned properly -->
+                <div class="sidebar-toggle-sticky">
+                    <button class="sidebar-toggle-btn" onclick="toggleSidebar()">
+                        <i class="fas fa-chevron-left" id="sidebarToggleIcon"></i>
+                    </button>
+                </div>
+                
                 <div class="header-left">
                     <div class="logo">
                         <img src="../Asset/Globentix_logo.png" alt="Globentix Logo">
                     </div>
                     
                     <nav class="main-nav">
-                        <a href="/dashboard" class="nav-link" data-page="dashboard">
+                        <a href="/MAIN_PAGE/index.html" class="nav-link" data-page="dashboard">
                             <i class="fas fa-tachometer-alt"></i> 
                             <span>Dashboard</span>
                         </a>
-                        <a href="/leads" class="nav-link" data-page="leads">
+                        <a href="/show_new_demo/show.html" class="nav-link" data-page="leads">
                             <i class="fas fa-user-plus"></i> 
                             <span>Show Leads</span>
                         </a>
@@ -31,27 +38,19 @@
                             <i class="fas fa-headset"></i> 
                             <span>Industry Leads</span>
                         </a>
-                        <a href="/deals" class="nav-link" data-page="deals">
+                        <a href="https://crm-admin-panel.vercel.app/DEAL/deal.html" class="nav-link" data-page="deals">
                             <i class="fas fa-handshake"></i> 
                             <span>Deals</span>
                         </a>
-                        <a href="/contacts" class="nav-link active" data-page="contacts">
+                        <a href="https://crm-admin-panel.vercel.app/CONTACT/contact.html" class="nav-link active" data-page="contacts">
                             <i class="fas fa-address-book"></i> 
                             <span>Contacts</span>
                         </a>
-                        <a href="/invoice" class="nav-link" data-page="invoice">
+                        <a href="https://crm-admin-panel.vercel.app/INVOICE/invoice.html" class="nav-link" data-page="invoice">
                             <i class="fas fa-file-invoice"></i> 
                             <span>Invoice</span>
                         </a>
-                        <!-- <a href="/reports" class="nav-link" data-page="reports">
-                            <i class="fas fa-chart-bar"></i> 
-                            <span>Reports</span>
-                        </a> -->
-                        <!-- <a href="/settings" class="nav-link" data-page="settings">
-                            <i class="fas fa-cog"></i> 
-                            <span>Settings</span>
-                        </a> -->
-                        <a href="/salary" class="nav-link" data-page="salary">
+                        <a href="https://crm-admin-panel.vercel.app/main/SALARY/Salary.html" class="nav-link" data-page="salary">
                             <i class="fas fa-money-bill"></i> 
                             <span>Salary</span>
                         </a>
@@ -59,21 +58,13 @@
                 </div>
                 
                 <div class="header-right">
-                    <!-- <div class="notifications" onclick="toggleNotifications()">
-                        <i class="fas fa-bell"></i>
-                        <span>Notification</span>
-                        <span class="notification-badge" id="notificationCount">5</span>
-                    </div> -->
-                    
-                  <!-- In the header-right section -->
-<div class="user-profile" onclick="toggleUserMenu()">
-    <!-- Letter Avatar will be inserted here by JavaScript -->
-    <div class="user-avatar" id="userAvatar">
-        <span class="avatar-letter" id="avatarLetter">U</span>
-    </div>
-    <span class="user-name" id="userDisplayName">Loading...</span>
-    <i class="fas fa-chevron-down"></i>
-</div>
+                    <div class="user-profile" onclick="toggleUserMenu()">
+                        <div class="user-avatar" id="userAvatar">
+                            <span class="avatar-letter" id="avatarLetter">U</span>
+                        </div>
+                        <span class="user-name" id="userDisplayName">Loading...</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
                 </div>
             </div>
             
@@ -96,210 +87,305 @@
                     <span>Logout</span>
                 </div>
             </div>
-            
-            <!-- Notifications Dropdown Menu -->
-            <div class="notifications-dropdown" id="notificationsDropdown">
-                <div class="notifications-header">
-                    <h4>Notifications</h4>
-                    <button class="mark-all-read" onclick="markAllRead()">Mark all as read</button>
-                </div>
-                <div class="notifications-list">
-                    <div class="notification-item urgent" onclick="viewNotification(1)">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <div class="notification-content">
-                            <p>New contact added: Sarah Williams</p>
-                            <span class="notification-time">5 minutes ago</span>
-                        </div>
-                    </div>
-                    <div class="notification-item" onclick="viewNotification(2)">
-                        <i class="fas fa-user-plus"></i>
-                        <div class="notification-content">
-                            <p>Contact follow-up reminder</p>
-                            <span class="notification-time">1 hour ago</span>
-                        </div>
-                    </div>
-                    <div class="notification-item" onclick="viewNotification(3)">
-                        <i class="fas fa-calendar-check"></i>
-                        <div class="notification-content">
-                            <p>Meeting with John Doe tomorrow</p>
-                            <span class="notification-time">2 hours ago</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </header>
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Menu Toggle Button with Horizontal Line -->
+            <!-- Floating Toggle Button (Visible when sidebar is collapsed) -->
+            <button class="floating-sidebar-toggle" id="floatingSidebarToggle" onclick="toggleSidebar()">
+                <i class="fas fa-chevron-right" id="floatingToggleIcon"></i>
+            </button>
+
+            <!-- Dashboard Header with Add New Contact Button -->
             <div class="dashboard-header">
-                <button class="menu-toggle" onclick="toggleSidebar()">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <hr class="toggle-hr">
-            </div>
-
-            <!-- Page Header - Updated to match salary page style -->
-            <div class="page-header">
-                <h1><i class="fas fa-address-book"></i> Contact Management</h1>
-                <p>Manage your contacts and customer relationships</p>
-            </div>
-
-            <!-- Search and Actions Bar - Updated to include buttons in search container -->
-            <div class="actions-bar">
-                <div class="search-container">
-                    <i class="fas fa-search"></i>
-                    <input type="search" class="search-input" placeholder="Search contacts..." onkeyup="performSearch(this.value)">
-                </div>
-                
-                <div class="action-buttons">
+                <div class="dashboard-header-actions">
                     <button class="btn-primary" onclick="addNewContact()">
-                        <i class="fas fa-plus"></i> Add Contact
+                        <i class="fas fa-plus"></i> Add New Contact
                     </button>
-                    <button class="btn-secondary" onclick="exportContacts()">
-                        <i class="fas fa-download"></i> Export
-                    </button>
-                </div>
-            </div>
-
-            <!-- Filters -->
-            <div class="filters-bar">
-                <div class="filter-group">
-                    <select id="statusFilter" class="form-select" onchange="filterContacts()">
-                        <option value="">All Statuses</option>
-                        <option value="Lead">Lead</option>
-                        <option value="Prospect">Prospect</option>
-                        <option value="Customer">Customer</option>
-                        <option value="Inactive">Inactive</option>
-                    </select>
-                </div>
-                
-                <div class="filter-group">
-                    <select id="ownerFilter" class="form-select" onchange="filterContacts()">
-                        <option value="">All Owners</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Contacts Table -->
-            <section class="contacts-section">
-                <div class="table-container">
-                    <table class="contacts-table">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Company</th>
-                                <th>Email</th>
-                                <th>Phone</th>
-                                <th>Status</th>
-                                <th>Owner</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="contactsTableBody">
-                            <!-- Contacts will be populated by JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-                
-                <!-- Loading State -->
-                <div id="loadingState" class="loading-state">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    <p>Loading contacts...</p>
-                </div>
-                
-                <!-- Empty State -->
-                <div id="emptyState" class="empty-state" style="display: none;">
-                    <i class="fas fa-users"></i>
-                    <h3>No Contacts Found</h3>
-                    <center>Get started by adding your first contact</center>
-                    
-                </div>
-            </section>
-
-            <!-- Pagination -->
-            <div class="pagination-container">
-                <div class="pagination-info">
-                    Showing <span id="paginationStart">0</span> to <span id="paginationEnd">0</span> of <span id="paginationTotal">0</span> contacts
-                </div>
-                <div class="pagination-controls">
-                    <button class="pagination-btn" onclick="changePage(-1)" id="prevBtn" disabled>
-                        <i class="fas fa-chevron-left"></i> Previous
-                    </button>
-                    <div class="pagination-numbers" id="paginationNumbers">
-                        <!-- Page numbers will be populated by JavaScript -->
+                    <!-- Move your search-container here -->
+                    <div class="search-container">
+                        <i class="fas fa-search"></i>
+                        <input type="search" class="search-input" placeholder="Search contacts..." onkeyup="performSearch(this.value)">
                     </div>
-                    <button class="pagination-btn" onclick="changePage(1)" id="nextBtn" disabled>
-                        Next <i class="fas fa-chevron-right"></i>
-                    </button>
                 </div>
+            </div>
+
+            <!-- Main Content Area - Side by Side Layout -->
+            <div class="main-content-area">
+                <!-- Controls Section on Left -->
+                <section class="controls-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-filter"></i> Filters & Controls</h3>
+                    </div>
+                    
+                    <div class="filters-bar">
+                        <div class="filter-group">
+                            <label for="statusFilter">Contact Status:</label>
+                            <select id="statusFilter" class="form-select" onchange="filterContacts()">
+                                <option value="">All Status</option>
+                                <option value="Lead">Lead</option>
+                                <option value="Prospect">Prospect</option>
+                                <option value="Customer">Customer</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="ownerFilter">Contact Owner:</label>
+                            <select id="ownerFilter" class="form-select" onchange="filterContacts()">
+                                <option value="">All Owners</option>
+                                <option value="John Doe">John Doe</option>
+                                <option value="Sarah Smith">Sarah Smith</option>
+                                <option value="Mike Johnson">Mike Johnson</option>
+                                <option value="Emily Wilson">Emily Wilson</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="companyFilter">Company:</label>
+                            <select id="companyFilter" class="form-select" onchange="filterContacts()">
+                                <option value="">All Companies</option>
+                                <option value="Acme Corp">Acme Corp</option>
+                                <option value="Globex">Globex</option>
+                                <option value="Initech">Initech</option>
+                                <option value="Umbrella Corp">Umbrella Corp</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <button class="btn-secondary" onclick="resetFilters()">
+                                <i class="fas fa-undo"></i> Reset
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="view-controls">
+                        <div class="sort-controls">
+                            <label for="sortBy">Sort By:</label>
+                            <select id="sortBy" class="form-select" onchange="sortContacts()">
+                                <option value="created_desc">Newest First</option>
+                                <option value="created_asc">Oldest First</option>
+                                <option value="name_asc">Name A-Z</option>
+                                <option value="name_desc">Name Z-A</option>
+                                <option value="company_asc">Company A-Z</option>
+                                <option value="status_asc">Status</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Contacts Section on Right -->
+                <section class="industry-leads-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-address-book"></i> All Contacts</h3>
+                        <span class="total-records">Total Records: <span id="totalRecords">0</span></span>
+                    </div>
+
+                    <div class="industry-leads-container">
+                        <!-- Table View Only -->
+                        <div class="industry-leads-table-view active" id="tableView">
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th><input type="checkbox" onchange="selectAllContacts(this)"></th>
+                                            <th onclick="sortTable('fullName')">Full Name <i class="fas fa-sort"></i></th>
+                                            <th onclick="sortTable('email')">Email <i class="fas fa-sort"></i></th>
+                                            <th onclick="sortTable('jobTitle')">Job Title <i class="fas fa-sort"></i></th>
+                                            <th onclick="sortTable('company')">Company <i class="fas fa-sort"></i></th>
+                                            <th onclick="sortTable('phone')">Phone <i class="fas fa-sort"></i></th>
+                                            <th onclick="sortTable('status')">Status <i class="fas fa-sort"></i></th>
+                                            <th onclick="sortTable('owner')">Owner <i class="fas fa-sort"></i></th>
+                                            <th onclick="sortTable('createdDate')">Created <i class="fas fa-sort"></i></th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="contactsTableBody">
+                                        <!-- Table rows will be populated by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bulk Actions -->
+                    <div class="bulk-actions" id="bulkActions" style="display: none;">
+                        <span class="selected-count">0 contacts selected</span>
+                        <button class="btn-secondary" onclick="bulkUpdateStatus('Customer')">
+                            <i class="fas fa-star"></i> Mark as Customer
+                        </button>
+                        <button class="btn-secondary" onclick="bulkUpdateStatus('Lead')">
+                            <i class="fas fa-user"></i> Mark as Lead
+                        </button>
+                        <button class="btn-danger" onclick="bulkDeleteContacts()">
+                            <i class="fas fa-trash"></i> Delete Selected
+                        </button>
+                    </div>
+                    <br>
+                    <!-- Pagination -->
+                    <div class="pagination-container">
+                        <div class="pagination-info">
+                            Showing <span id="paginationStart">1</span> to <span id="paginationEnd">6</span> of <span id="paginationTotal">0</span> contacts
+                        </div>
+                        <div class="pagination-controls">
+                            <button class="pagination-btn" onclick="changePage(-1)" id="prevBtn">
+                                <i class="fas fa-chevron-left"></i> Previous
+                            </button>
+                            <div class="pagination-numbers" id="paginationNumbers">
+                                <!-- Page numbers will be populated by JavaScript -->
+                            </div>
+                            <button class="pagination-btn" onclick="changePage(1)" id="nextBtn">
+                                Next <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </section>
             </div>
         </main>
     </div>
 
     <!-- Add/Edit Contact Modal -->
-<!-- Add/Edit Contact Modal -->
-<div class="modal-overlay" id="contactModal" style="display: none;">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 id="contactModalTitle">Add New Contact</h3>
-            <button class="modal-close" onclick="closeContactModal()">×</button>
-        </div>
-        <div class="modal-body">
-            <form id="contactForm" class="contact-form">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="firstName">First Name *</label>
-                        <input type="text" id="firstName" class="form-input" required>
+    <div class="modal-overlay" id="contactModal" style="display: none;">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3 id="contactModalTitle">Add New Contact</h3>
+                <button class="modal-close" onclick="closeContactModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="contactForm" class="lead-form">
+                    <div class="form-sections">
+                        <!-- Contact Information -->
+                        <div class="form-section">
+                            <h4><i class="fas fa-user"></i> Personal Information</h4>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="firstName">First Name *</label>
+                                    <input type="text" id="firstName" class="form-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastName">Last Name *</label>
+                                    <input type="text" id="lastName" class="form-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="jobTitle">Job Title</label>
+                                    <input type="text" id="jobTitle" class="form-input" placeholder="e.g., Marketing Director">
+                                </div>
+                                <div class="form-group">
+                                    <label for="phone">Phone</label>
+                                    <input type="tel" id="phone" class="form-input" placeholder="+1 (555) 123-4567">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Company Information -->
+                        <div class="form-section">
+                            <h4><i class="fas fa-building"></i> Company Information</h4>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="company">Company Name *</label>
+                                    <input type="text" id="company" class="form-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="department">Department</label>
+                                    <input type="text" id="department" class="form-input" placeholder="e.g., Marketing, Sales">
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Email *</label>
+                                    <input type="email" id="email" class="form-input" required placeholder="contact@company.com">
+                                </div>
+                                <div class="form-group">
+                                    <label for="website">Website</label>
+                                    <input type="url" id="website" class="form-input" placeholder="https://www.company.com">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact Details -->
+                        <div class="form-section">
+                            <h4><i class="fas fa-info-circle"></i> Contact Details</h4>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="status">Status *</label>
+                                    <select id="status" class="form-select" required>
+                                        <option value="Lead">Lead</option>
+                                        <option value="Prospect">Prospect</option>
+                                        <option value="Customer">Customer</option>
+                                        <option value="Inactive">Inactive</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="owner">Owner</label>
+                                    <select id="owner" class="form-select">
+                                        <option value="">Select Owner</option>
+                                        <option value="John Doe">John Doe</option>
+                                        <option value="Sarah Smith">Sarah Smith</option>
+                                        <option value="Mike Johnson">Mike Johnson</option>
+                                        <option value="Emily Wilson">Emily Wilson</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="source">Source</label>
+                                    <select id="source" class="form-select">
+                                        <option value="">Select Source</option>
+                                        <option value="Website">Website</option>
+                                        <option value="Referral">Referral</option>
+                                        <option value="Event">Event</option>
+                                        <option value="Cold Call">Cold Call</option>
+                                        <option value="Social Media">Social Media</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Address Information -->
+                        <div class="form-section">
+                            <h4><i class="fas fa-map-marker-alt"></i> Address Information</h4>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="street">Street Address</label>
+                                    <input type="text" id="street" class="form-input" placeholder="123 Main St">
+                                </div>
+                                <div class="form-group">
+                                    <label for="city">City</label>
+                                    <input type="text" id="city" class="form-input" placeholder="New York">
+                                </div>
+                                <div class="form-group">
+                                    <label for="state">State/Province</label>
+                                    <input type="text" id="state" class="form-input" placeholder="NY">
+                                </div>
+                                <div class="form-group">
+                                    <label for="country">Country</label>
+                                    <select id="country" class="form-select">
+                                        <option value="">Select Country</option>
+                                        <option value="USA">United States</option>
+                                        <option value="CAN">Canada</option>
+                                        <option value="GBR">United Kingdom</option>
+                                        <option value="DEU">Germany</option>
+                                        <option value="FRA">France</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="form-section">
+                            <h4><i class="fas fa-sticky-note"></i> Additional Notes</h4>
+                            <div class="form-group">
+                                <label for="notes">Notes</label>
+                                <textarea id="notes" class="form-textarea" rows="4" 
+                                    placeholder="Add any additional notes about this contact..."></textarea>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="lastName">Last Name *</label>
-                        <input type="text" id="lastName" class="form-input" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="jobTitle">Job Title</label>
-                        <input type="text" id="jobTitle" class="form-input">
-                    </div>
-                    <div class="form-group">
-                        <label for="company">Company *</label>
-                        <input type="text" id="company" class="form-input" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email *</label>
-                        <input type="email" id="email" class="form-input" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">Phone</label>
-                        <input type="tel" id="phone" class="form-input">
-                    </div>
-                    <div class="form-group">
-                        <label for="status">Status *</label>
-                        <select id="status" class="form-select" required>
-                            <option value="Lead">Lead</option>
-                            <option value="Prospect">Prospect</option>
-                            <option value="Customer">Customer</option>
-                            <option value="Inactive">Inactive</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="owner">Owner</label>
-                        <input type="text" id="owner" class="form-input" placeholder="Enter owner name">
-                    </div>
-                </div>
-                <div class="form-group full-width">
-                    <label for="notes">Notes</label>
-                    <textarea id="notes" class="form-textarea" rows="3" placeholder="Add any additional notes..."></textarea>
-                </div>
-            </form>
-        </div>
-        <div class="modal-actions">
-            <button class="btn-primary" onclick="saveContact()">
-                <i class="fas fa-save"></i> Save Contact
-            </button>
-            <button class="btn-secondary" onclick="closeContactModal()">Cancel</button>
+                </form>
+            </div>
+            <div class="modal-actions modal-actions-inline">
+                <button type="button" class="btn-primary btn-submit-lead" onclick="saveContact()">
+                    <i class="fas fa-save"></i> Save Contact
+                </button>
+                <button type="button" class="btn-secondary btn-cancel-lead" onclick="closeContactModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
         </div>
     </div>
-</div>
 
     <!-- Delete Confirmation Modal -->
     <div class="modal-overlay" id="deleteModal" style="display: none;">
@@ -309,12 +395,33 @@
             </div>
             <div class="modal-body">
                 <p>Are you sure you want to delete this contact?</p>
-                <p><strong id="deleteContactName"></strong></p>
+                <p><strong id="deleteItemName"></strong></p>
                 <p class="warning-text">This action cannot be undone.</p>
             </div>
             <div class="modal-actions">
                 <button class="btn-danger" onclick="confirmDelete()">Delete</button>
                 <button class="btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Details Modal -->
+    <div class="modal-overlay" id="contactDetailsModal" style="display: none;">
+        <div class="modal-content extra-large">
+            <div class="modal-header">
+                <h3><i class="fas fa-address-book"></i> Contact Details</h3>
+                <button class="modal-close" onclick="closeContactDetailsModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="industry-lead-details-content" id="contactDetailsContent">
+                    <!-- Contact details will be populated by JavaScript -->
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-primary" onclick="editContactFromDetails()">
+                    <i class="fas fa-edit"></i> Edit Contact
+                </button>
+                <button class="btn-secondary" onclick="closeContactDetailsModal()">Close</button>
             </div>
         </div>
     </div>
