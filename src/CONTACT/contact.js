@@ -1,4 +1,4 @@
-// Contact Management System with Backend Integration
+// contact.js - Fixed to original design with only 7 columns
 
 // Global variables
 let contacts = [];
@@ -6,86 +6,52 @@ let filteredContacts = [];
 let currentEditingContact = null;
 let currentDeleteContact = null;
 let currentPage = 1;
-let itemsPerPage = 4;
-let totalContacts = 0;
+let itemsPerPage = 6;
+let totalContactsCount = 0;
 
 // API Base URL
-const API_BASE_URL = 'https://crm-admin-panel-production.up.railway.app/api/contacts';
+const API_BASE_URL = 'https://crm-admin-panel-production.up.railway.app/api';
 
+// Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Contact Management System initializing...');
-    
-    // Check authentication first
-    if (!checkAuthentication()) {
-        console.log('Authentication failed, redirecting to login');
-        return;
-    }
-    
-    console.log('Authentication successful, initializing contacts');
-    
-    initializeContacts();
+    console.log('Contact.js - DOM Content Loaded');
     setupEventListeners();
-    displayUserName(); // This will now also update the avatar
-    loadContacts();
+    displayUserName();
+    
+    // Load contacts immediately
+    loadContacts().then(() => {
+        console.log('Contacts loaded successfully');
+    }).catch(error => {
+        console.error('Failed to load contacts:', error);
+        showNotification('Failed to load contacts: ' + error.message, 'error');
+    });
     
     // Load sidebar state
     const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
     if (sidebarCollapsed) {
         document.querySelector('.app-container').classList.add('sidebar-collapsed');
     }
-    
-    console.log('✅ Contact Management System initialized successfully');
 });
 
-function checkAuthentication() {
-    console.log('🔐 Checking authentication...');
-    
-    const userData = getUserData();
+function getToken() {
     const token = localStorage.getItem('authToken');
-    
-    console.log('🔐 Auth check - UserData:', userData);
-    console.log('🔐 Auth check - Token:', !!token);
-    
-    if (!userData || !token) {
-        console.warn('❌ Authentication failed: Missing userData or token');
-        
-        // Clear any inconsistent data
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
-        localStorage.removeItem('userData');
-        localStorage.removeItem('authToken');
-        
-        showNotification('Please login to access contacts', 'error');
-        setTimeout(() => {
-            window.location.href = '/';
-        }, 2000);
-        return false;
-    }
-    
-    console.log('✅ Authentication successful');
-    return true;
+    console.log('🔑 Token available:', !!token);
+    return token || '';
 }
 
 function getUserData() {
     try {
         const userDataString = localStorage.getItem('userData');
-        console.log('👤 Raw userData from localStorage:', userDataString);
-        
         if (!userDataString) {
             console.warn('❌ No user data found in localStorage');
             return null;
         }
         
         const userData = JSON.parse(userDataString);
-        console.log('👤 Parsed userData:', userData);
-        
-        // Validate required fields
-        if (userData && userData.id && userData.name) {
+        if (userData && userData.id) {
             return userData;
-        } else {
-            console.warn('❌ User data missing required fields');
-            return null;
         }
+        return null;
         
     } catch (error) {
         console.error('❌ Error parsing user data:', error);
@@ -93,13 +59,18 @@ function getUserData() {
     }
 }
 
-function initializeContacts() {
-    console.log('📇 Contact Management System initialized with backend integration');
-}
-
 function setupEventListeners() {
-    console.log('🔧 Setting up event listeners...');
-    
+    // Navigation
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const page = this.dataset.page;
+            if (page && page !== 'unknown') {
+                handleNavigation(page);
+            }
+        });
+    });
+
     // Modal close events
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('modal-overlay')) {
@@ -113,192 +84,75 @@ function setupEventListeners() {
             closeAllModals();
         }
     });
-
-    // Close dropdowns when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('.user-profile') && !e.target.closest('.user-dropdown')) {
-            closeAllDropdowns();
-        }
-        if (!e.target.closest('.notifications') && !e.target.closest('.notifications-dropdown')) {
-            closeAllDropdowns();
-        }
-    });
-
-    // Navigation
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const page = this.dataset.page;
-            console.log(`🔄 Navigation clicked: ${page}`);
-            handleNavigation(page);
-        });
-    });
-
-    // Initialize active menu manager
-    window.activeMenuManager = new ActiveMenuManager();
-    
-    console.log('✅ Event listeners setup complete');
 }
 
-// Active Menu Manager
-class ActiveMenuManager {
-    constructor() {
-        this.currentActiveMenu = null;
-        this.init();
-    }
-
-    init() {
-        // Set contacts as default active menu
-        this.setActiveMenu('contacts');
-        
-        // Add click event listeners to all nav links
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const page = link.getAttribute('data-page');
-                this.setActiveMenu(page);
-                
-                // Handle navigation
-                this.navigateToPage(page, link.getAttribute('href'));
-            });
-        });
-
-        // Load saved active menu from session storage
-        this.loadSavedActiveMenu();
-    }
-
-    setActiveMenu(page) {
-        // Remove active class from all nav links
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.classList.remove('active');
-        });
-
-        // Add active class to clicked nav link
-        const activeLink = document.querySelector(`.nav-link[data-page="${page}"]`);
-        if (activeLink) {
-            activeLink.classList.add('active');
-            this.currentActiveMenu = page;
-            
-            // Save to session storage
-            this.saveActiveMenu(page);
-        }
-    }
-
-    saveActiveMenu(page) {
-        sessionStorage.setItem('activeMenu', page);
-    }
-
-    loadSavedActiveMenu() {
-        const savedMenu = sessionStorage.getItem('activeMenu');
-        if (savedMenu) {
-            this.setActiveMenu(savedMenu);
-        }
-    }
-
-    navigateToPage(page, href) {
-        console.log(`🔄 Navigating to: ${page}`);
-        
-        if (href && href !== '#' && !href.includes('javascript')) {
-            showNotification(`Loading ${this.getPageTitle(page)}...`, 'info');
-            // window.location.href = href; // Uncomment for actual navigation
-        }
-    }
-
-    getPageTitle(page) {
-        const titles = {
-            'dashboard': 'Dashboard',
-            'leads': 'Leads Management',
-            'industry-leads': 'Industry Leads',
-            'deals': 'Deals Pipeline',
-            'contacts': 'Contacts',
-            'invoice': 'Invoices',
-            'reports': 'Reports',
-            'settings': 'Settings',
-            'salary': 'Salary'
-        };
-        return titles[page] || page.replace('-', ' ');
-    }
-}
-
-// Update the handleNavigation function in script.js
 function handleNavigation(page) {
-    console.log(`Navigation requested to: ${page}`);
-    
-    // Define navigation routes with actual file paths
+    console.log('Navigation requested to page:', page);
     const routes = {
         'dashboard': '/MAIN_PAGE/index.html',
-        'leads': '/show_new_demo/show.html',
+        'leads': '/show_new_demo/show.html', 
         'industry-leads': '/INDUSTRY_LEAD_PAGE/demo.html',
-        'deals': '/DEAL/deal.html',
-        'contacts': '/CONTACT/contact.html',
-        'invoice': '/INVOICE/invoice.html',
-        'reports': '/REPORTS/reports.html',
-        'settings': '/SETTINGS/setting.html',
-        'salary': '/SALARY/Salary.html'
+        'deals': 'https://crm-admin-panel.vercel.app/DEAL/deal.html',
+        'contacts': 'https://crm-admin-panel.vercel.app/CONTACT/contact.html',
+        'invoice': 'https://crm-admin-panel.vercel.app/INVOICE/invoice.html',
+        'salary': 'https://crm-admin-panel.vercel.app/main/SALARY/Salary.html'
     };
     
     const route = routes[page];
-    
     if (route) {
         showNotification(`Loading ${getPageTitle(page)}...`, 'info');
         setTimeout(() => {
             window.location.href = route;
         }, 500);
-    } else {
-        console.warn(`No route defined for page: ${page}`);
-        showNotification(`Page ${page} is not available yet`, 'warning');
     }
 }
 
 function getPageTitle(page) {
     const titles = {
         'dashboard': 'Dashboard',
-        'leads': 'Leads Management',
+        'leads': 'Show Leads', 
         'industry-leads': 'Industry Leads',
         'deals': 'Deals Pipeline',
         'contacts': 'Contacts',
         'invoice': 'Invoices',
-        'reports': 'Reports',
-        'settings': 'Settings',
         'salary': 'Salary'
     };
-    return titles[page] || page.replace('-', ' ');
+    return titles[page] || page.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 }
 
 function displayUserName() {
-    const userData = getUserData();
-    const userNameElement = document.getElementById('userDisplayName');
-    
-    console.log('👤 Displaying user name for:', userData);
-    
-    if (userData && userData.name) {
-        userNameElement.textContent = userData.name;
-        console.log('✅ User name displayed:', userData.name);
-    } else {
-        // If no name found, try other fields
-        const displayName = userData?.username || userData?.email || 'User';
-        userNameElement.textContent = displayName;
-        console.log('✅ Fallback name displayed:', displayName);
+    try {
+        const userData = getUserData();
+        const userNameElement = document.getElementById('userDisplayName');
+        
+        let displayName = 'User';
+        if (userData) {
+            displayName = userData.name || userData.username || userData.email || 'User';
+        }
+        
+        if (userNameElement) {
+            userNameElement.textContent = displayName;
+        }
+        
+        updateUserAvatar();
+        
+    } catch (error) {
+        console.error('❌ Error displaying user name:', error);
+        const userNameElement = document.getElementById('userDisplayName');
+        if (userNameElement) {
+            userNameElement.textContent = 'User';
+        }
+        updateUserAvatar();
     }
-    
-    // Make the name clickable to open profile
-    userNameElement.style.cursor = 'pointer';
-    userNameElement.title = 'Click to view profile';
-    
-    // Add click event to open profile
-    userNameElement.onclick = function(e) {
-        e.stopPropagation();
-        showNotification('Profile feature coming soon', 'info');
-    };
 }
 
-// API Functions
+// MAIN FUNCTION: Load Contacts
 async function loadContacts() {
     try {
-        showLoading(true);
+        console.log('📡 Loading contacts...');
         
-        const userData = getUserData();
-        if (!userData || !userData.id) {
+        const token = getToken();
+        if (!token) {
             showNotification('Please login to access contacts', 'error');
             setTimeout(() => {
                 window.location.href = '/';
@@ -310,56 +164,81 @@ async function loadContacts() {
         const statusFilter = document.getElementById('statusFilter')?.value || '';
         const ownerFilter = document.getElementById('ownerFilter')?.value || '';
 
-        const params = new URLSearchParams({
-            page: currentPage,
-            limit: itemsPerPage,
-            ...(search && { search }),
-            ...(statusFilter && { status: statusFilter }),
-            ...(ownerFilter && { owner: ownerFilter }),
-            sortBy: 'createdAt',
-            sortOrder: 'desc'
-        });
+        console.log('🔍 Filters:', { search, statusFilter, ownerFilter });
 
-        console.log(`📡 Loading contacts with params:`, Object.fromEntries(params));
-
-        const response = await fetch(`${API_BASE_URL}?${params}`, {
+        // Fetch from API
+        const response = await fetch(`${API_BASE_URL}/contacts`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'user-id': userData.id
+                'Authorization': `Bearer ${token}`
             }
         });
+
+        console.log('📡 Response status:', response.status);
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const result = await response.json();
+        console.log('📊 Server response received');
 
         if (result.success) {
-            console.log(`✅ Successfully loaded ${result.data.length} contacts`);
+            // Get contacts data
+            let contactsData = result.data || result.contacts || [];
+            console.log(`✅ Successfully loaded ${contactsData.length} contacts`);
             
-            contacts = result.data.map(contact => ({
-                id: contact._id,
-                firstName: contact.firstName,
-                lastName: contact.lastName,
-                fullName: contact.fullName,
-                jobTitle: contact.jobTitle,
-                company: contact.company,
-                email: contact.email,
-                phone: contact.phone,
-                status: contact.status,
-                owner: contact.owner,
-                notes: contact.notes,
-                createdAt: contact.createdAt
+            // Transform data to match our structure
+            contacts = contactsData.map(contact => ({
+                id: contact._id || contact.id,
+                firstName: contact.firstName || '',
+                lastName: contact.lastName || '',
+                fullName: contact.fullName || `${contact.firstName || ''} ${contact.lastName || ''}`.trim(),
+                jobTitle: contact.jobTitle || '',
+                company: contact.company || '',
+                email: contact.email || '',
+                phone: contact.phone || '',
+                status: contact.status || 'Lead',
+                owner: contact.owner || 'Unassigned',
+                notes: contact.notes || '',
+                createdDate: contact.createdAt || contact.createdDate || new Date().toISOString()
             }));
 
+            // Apply filters
             filteredContacts = [...contacts];
-            totalContacts = result.total;
+            
+            if (search) {
+                const searchLower = search.toLowerCase();
+                filteredContacts = filteredContacts.filter(contact => 
+                    (contact.fullName && contact.fullName.toLowerCase().includes(searchLower)) ||
+                    (contact.email && contact.email.toLowerCase().includes(searchLower)) ||
+                    (contact.company && contact.company.toLowerCase().includes(searchLower)) ||
+                    (contact.phone && contact.phone.includes(search))
+                );
+            }
+            
+            if (statusFilter) {
+                filteredContacts = filteredContacts.filter(contact => 
+                    contact.status === statusFilter
+                );
+            }
+            
+            if (ownerFilter) {
+                filteredContacts = filteredContacts.filter(contact => 
+                    contact.owner === ownerFilter
+                );
+            }
+            
+            totalContactsCount = filteredContacts.length;
+            
+            // Update total records display
+            document.getElementById('totalRecords').textContent = totalContactsCount;
+            
+            console.log(`🔄 ${filteredContacts.length} contacts after filtering`);
             
             renderContacts();
-            updatePagination(result.pagination);
-            loadOwnersList();
+            updatePagination();
             
         } else {
             throw new Error(result.message || 'Failed to load contacts');
@@ -368,377 +247,119 @@ async function loadContacts() {
         console.error('❌ Error loading contacts:', error);
         showNotification('Failed to load contacts: ' + error.message, 'error');
         
-        // Fallback: Show empty state
+        // Fallback to empty state
         contacts = [];
         filteredContacts = [];
         renderContacts();
-    } finally {
-        showLoading(false);
+        updatePagination();
     }
 }
 
-async function loadOwnersList() {
-    try {
-        const userData = getUserData();
-        if (!userData || !userData.id) return;
-
-        const response = await fetch(`${API_BASE_URL}/owners/list`, {
-            method: 'GET',
-            headers: {
-                'user-id': userData.id
-            }
-        });
-
-        if (response.ok) {
-            const result = await response.json();
-            if (result.success) {
-                populateOwnerFilter(result.data);
-            }
-        }
-    } catch (error) {
-        console.error('Error loading owners list:', error);
-    }
-}
-
-function populateOwnerFilter(owners) {
-    const ownerFilter = document.getElementById('ownerFilter');
-    // Keep the "All Owners" option
-    const allOwnersOption = ownerFilter.querySelector('option[value=""]');
-    ownerFilter.innerHTML = '';
-    ownerFilter.appendChild(allOwnersOption);
-    
-    owners.forEach(owner => {
-        const option = document.createElement('option');
-        option.value = owner;
-        option.textContent = owner;
-        ownerFilter.appendChild(option);
-    });
-}
-
-async function saveContactToAPI(contactData, isUpdate = false) {
-    try {
-        const userData = getUserData();
-        if (!userData || !userData.id) {
-            throw new Error('Authentication required');
-        }
-
-        const url = isUpdate 
-            ? `${API_BASE_URL}/${currentEditingContact.id}`
-            : API_BASE_URL;
-        
-        const method = isUpdate ? 'PUT' : 'POST';
-
-        console.log(`💾 Saving contact:`, { url, method, contactData });
-
-        const response = await fetch(url, {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json',
-                'user-id': userData.id
-            },
-            body: JSON.stringify(contactData)
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        
-        if (result.success) {
-            console.log('✅ Contact saved successfully');
-            return result.data;
-        } else {
-            throw new Error(result.message || 'Failed to save contact');
-        }
-    } catch (error) {
-        console.error('❌ Error saving contact:', error);
-        throw error;
-    }
-}
-
-async function deleteContactFromAPI(contactId) {
-    try {
-        const userData = getUserData();
-        if (!userData || !userData.id) {
-            throw new Error('Authentication required');
-        }
-
-        console.log(`🗑️ Deleting contact: ${contactId}`);
-
-        const response = await fetch(`${API_BASE_URL}/${contactId}`, {
-            method: 'DELETE',
-            headers: {
-                'user-id': userData.id
-            }
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        
-        if (!result.success) {
-            throw new Error(result.message || 'Failed to delete contact');
-        }
-
-        console.log('✅ Contact deleted successfully');
-        return result;
-    } catch (error) {
-        console.error('❌ Error deleting contact:', error);
-        throw error;
-    }
-}
-
-// Contact Management Functions
-function addNewContact() {
-    currentEditingContact = null;
-    document.getElementById('contactModalTitle').textContent = 'Add New Contact';
-    clearContactForm();
-    
-    const modal = document.getElementById('contactModal');
-    modal.style.display = 'flex';
-    setTimeout(() => {
-        modal.classList.add('show');
-    }, 10);
-    
-    console.log('➕ Opening add contact modal');
-}
-
-function editContact(contactId) {
-    const contact = contacts.find(c => c.id === contactId);
-    if (!contact) {
-        console.warn(`❌ Contact not found: ${contactId}`);
-        return;
-    }
-    
-    currentEditingContact = contact;
-    document.getElementById('contactModalTitle').textContent = 'Edit Contact';
-    populateContactForm(contact);
-    
-    const modal = document.getElementById('contactModal');
-    modal.style.display = 'flex';
-    setTimeout(() => {
-        modal.classList.add('show');
-    }, 10);
-    
-    console.log('✏️ Opening edit contact modal for:', contact.fullName);
-}
-
-function populateContactForm(contact) {
-    document.getElementById('firstName').value = contact.firstName || '';
-    document.getElementById('lastName').value = contact.lastName || '';
-    document.getElementById('jobTitle').value = contact.jobTitle || '';
-    document.getElementById('company').value = contact.company || '';
-    document.getElementById('email').value = contact.email || '';
-    document.getElementById('phone').value = contact.phone || '';
-    document.getElementById('status').value = contact.status || 'Lead';
-    document.getElementById('owner').value = contact.owner || 'Unassigned';
-    document.getElementById('notes').value = contact.notes || '';
-}
-
-function clearContactForm() {
-    const form = document.getElementById('contactForm');
-    form.reset();
-    document.getElementById('status').value = 'Lead';
-    document.getElementById('owner').value = 'Unassigned';
-}
-
-async function saveContact() {
-    try {
-        const formData = getContactFormData();
-        
-        // Validation
-        if (!formData.firstName || !formData.lastName || !formData.company || !formData.email) {
-            showNotification('Please fill in all required fields', 'error');
-            return;
-        }
-        
-        if (!isValidEmail(formData.email)) {
-            showNotification('Please enter a valid email address', 'error');
-            return;
-        }
-
-        showLoading(true);
-
-        const savedContact = await saveContactToAPI(formData, !!currentEditingContact);
-
-        showNotification(
-            `Contact ${currentEditingContact ? 'updated' : 'added'} successfully`, 
-            'success'
-        );
-
-        closeContactModal();
-        await loadContacts(); // Reload contacts from server
-        
-    } catch (error) {
-        console.error('❌ Error saving contact:', error);
-        showNotification('Failed to save contact: ' + error.message, 'error');
-    } finally {
-        showLoading(false);
-    }
-}
-
-function getContactFormData() {
-    return {
-        firstName: document.getElementById('firstName').value.trim(),
-        lastName: document.getElementById('lastName').value.trim(),
-        jobTitle: document.getElementById('jobTitle').value.trim(),
-        company: document.getElementById('company').value.trim(),
-        email: document.getElementById('email').value.trim(),
-        phone: document.getElementById('phone').value.trim(),
-        status: document.getElementById('status').value,
-        owner: document.getElementById('owner').value,
-        notes: document.getElementById('notes').value.trim()
-    };
-}
-
-function deleteContact(contactId) {
-    const contact = contacts.find(c => c.id === contactId);
-    if (!contact) {
-        console.warn(`❌ Contact not found for deletion: ${contactId}`);
-        return;
-    }
-    
-    currentDeleteContact = {
-        id: contactId,
-        name: contact.fullName || `${contact.firstName} ${contact.lastName}`
-    };
-    
-    document.getElementById('deleteContactName').textContent = currentDeleteContact.name;
-    const modal = document.getElementById('deleteModal');
-    modal.style.display = 'flex';
-    setTimeout(() => {
-        modal.classList.add('show');
-    }, 10);
-    
-    console.log('🗑️ Opening delete confirmation for:', currentDeleteContact.name);
-}
-
-async function confirmDelete() {
-    if (!currentDeleteContact) return;
-    
-    try {
-        showLoading(true);
-        await deleteContactFromAPI(currentDeleteContact.id);
-        
-        showNotification('Contact deleted successfully', 'success');
-        closeDeleteModal();
-        await loadContacts(); // Reload contacts from server
-        
-    } catch (error) {
-        console.error('❌ Error deleting contact:', error);
-        showNotification('Failed to delete contact: ' + error.message, 'error');
-    } finally {
-        showLoading(false);
-    }
-}
-
-// Rendering Functions
+// Render Contacts Table (7 columns only)
 function renderContacts() {
+    console.log('🔄 Rendering contacts table');
+    
     const tbody = document.getElementById('contactsTableBody');
-    const emptyState = document.getElementById('emptyState');
-    const loadingState = document.getElementById('loadingState');
-    
-    // Hide loading state
-    loadingState.style.display = 'none';
-    
-    if (contacts.length === 0) {
-        tbody.innerHTML = '';
-        emptyState.style.display = 'block';
-        console.log('📭 No contacts to display');
+    if (!tbody) {
+        console.error('Contacts table body not found');
         return;
     }
     
-    emptyState.style.display = 'none';
     tbody.innerHTML = '';
+
+    // If no contacts, show empty state
+    if (filteredContacts.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="no-data" style="text-align: center; padding: 40px;">
+                    <i class="fas fa-users" style="font-size: 48px; color: #cbd5e1; margin-bottom: 20px;"></i>
+                    <h3 style="color: #374151; margin-bottom: 10px;">No Contacts Found</h3>
+                    <p style="color: #6b7280; margin-bottom: 20px;">Get started by adding your first contact</p>
+                    <button class="btn-primary" onclick="addNewContact()">
+                        <i class="fas fa-plus"></i> Add New Contact
+                    </button>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    // Calculate pagination indices
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, filteredContacts.length);
     
-    console.log(`🔄 Rendering ${contacts.length} contacts`);
-    
-    contacts.forEach(contact => {
+    // Get only the contacts for the current page
+    const contactsToRender = filteredContacts.slice(startIndex, endIndex);
+
+    console.log(`📄 Rendering ${contactsToRender.length} contacts for page ${currentPage}`);
+
+    // Render the paginated contacts
+    contactsToRender.forEach(contact => {
         const row = document.createElement('tr');
+        
+        // Format phone number
+        let phoneDisplay = 'NA';
+        if (contact.phone) {
+            phoneDisplay = contact.phone;
+        }
+        
+        // Create full name
+        const fullName = contact.fullName || `${contact.firstName || ''} ${contact.lastName || ''}`.trim() || 'Unknown';
+        
         row.innerHTML = `
-            <td>
-                <div class="contact-name">
-                    <strong>${contact.firstName} ${contact.lastName}</strong>
-                    ${contact.jobTitle ? `<div class="job-title">${contact.jobTitle}</div>` : ''}
-                </div>
-            </td>
-            <td>${contact.company}</td>
-            <td>
-                <a href="mailto:${contact.email}" class="email-link">${contact.email}</a>
-            </td>
-            <td>${contact.phone || 'N/A'}</td>
-            <td>
-                <span class="status-badge ${contact.status}">${contact.status}</span>
-            </td>
-            <td>${contact.owner}</td>
+            <td><strong>${escapeHtml(fullName)}</strong></td>
+            <td>${escapeHtml(contact.company || 'NA')}</td>
+            <td><a href="mailto:${contact.email}" class="email-link">${escapeHtml(contact.email || 'NA')}</a></td>
+            <td>${escapeHtml(phoneDisplay)}</td>
+            <td><span class="status-badge ${contact.status}">${escapeHtml(contact.status)}</span></td>
+            <td>${escapeHtml(contact.owner || 'Unassigned')}</td>
             <td>
                 <div class="table-actions">
-                    <button class="table-action-btn edit" onclick="event.stopPropagation(); editContact('${contact.id}')" title="Edit">
+                    <button class="table-action-btn edit" onclick="editContact('${contact.id}')" title="Edit">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="table-action-btn delete" onclick="event.stopPropagation(); deleteContact('${contact.id}')" title="Delete">
+                    <button class="table-action-btn delete" onclick="deleteContact('${contact.id}')" title="Delete">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
             </td>
         `;
-        
         tbody.appendChild(row);
     });
+
+    console.log('✅ Successfully rendered contacts table');
 }
 
-// Filtering and Search
-function filterContacts() {
-    currentPage = 1;
-    console.log('🔍 Applying filters');
-    loadContacts();
-}
-
-function performSearch(query) {
-    currentPage = 1;
-    console.log(`🔍 Performing search: "${query}"`);
-    loadContacts();
-}
-
-// Pagination
-function updatePagination(paginationData) {
+// Update Pagination
+function updatePagination() {
     const startElement = document.getElementById('paginationStart');
     const endElement = document.getElementById('paginationEnd');
     const totalElement = document.getElementById('paginationTotal');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     
-    if (!startElement || !endElement || !totalElement) {
-        console.warn('❌ Pagination elements not found');
+    if (!startElement || !endElement || !totalElement || !prevBtn || !nextBtn) {
+        console.warn('Pagination elements not found');
         return;
     }
     
-    const startIndex = ((currentPage - 1) * itemsPerPage) + 1;
-    const endIndex = Math.min(currentPage * itemsPerPage, totalContacts);
+    const totalPages = Math.ceil(totalContactsCount / itemsPerPage);
+    const startIndex = totalContactsCount > 0 ? ((currentPage - 1) * itemsPerPage) + 1 : 0;
+    const endIndex = Math.min(currentPage * itemsPerPage, totalContactsCount);
     
     startElement.textContent = startIndex;
     endElement.textContent = endIndex;
-    totalElement.textContent = totalContacts;
+    totalElement.textContent = totalContactsCount;
     
     prevBtn.disabled = currentPage <= 1;
-    nextBtn.disabled = currentPage >= paginationData.pages;
+    nextBtn.disabled = currentPage >= totalPages || totalPages === 0;
     
-    renderPaginationNumbers(paginationData.pages);
-    
-    console.log(`📄 Pagination: Page ${currentPage} of ${paginationData.pages}`);
+    renderPaginationNumbers(totalPages);
 }
 
 function renderPaginationNumbers(totalPages) {
     const container = document.getElementById('paginationNumbers');
-    if (!container) {
-        console.warn('❌ Pagination numbers container not found');
-        return;
-    }
+    if (!container) return;
     
     container.innerHTML = '';
     
@@ -765,249 +386,280 @@ function changePage(direction) {
 }
 
 function goToPage(page) {
+    const totalPages = Math.ceil(totalContactsCount / itemsPerPage);
+    if (page < 1 || page > totalPages) return;
+    
     currentPage = page;
-    console.log(`📄 Changing to page: ${page}`);
+    renderContacts();
+    updatePagination();
+}
+
+// Contact Management Functions
+function addNewContact() {
+    currentEditingContact = null;
+    document.getElementById('contactModalTitle').textContent = 'Add New Contact';
+    clearContactForm();
+    
+    const modal = document.getElementById('contactModal');
+    modal.style.display = 'flex';
+}
+
+function editContact(contactId) {
+    const contact = contacts.find(c => c.id === contactId);
+    if (!contact) return;
+    
+    currentEditingContact = contact;
+    document.getElementById('contactModalTitle').textContent = 'Edit Contact';
+    populateContactForm(contact);
+    
+    const modal = document.getElementById('contactModal');
+    modal.style.display = 'flex';
+}
+
+function populateContactForm(contact) {
+    document.getElementById('firstName').value = contact.firstName || '';
+    document.getElementById('lastName').value = contact.lastName || '';
+    document.getElementById('jobTitle').value = contact.jobTitle || '';
+    document.getElementById('company').value = contact.company || '';
+    document.getElementById('email').value = contact.email || '';
+    document.getElementById('phone').value = contact.phone || '';
+    document.getElementById('status').value = contact.status || 'Lead';
+    document.getElementById('owner').value = contact.owner || '';
+    document.getElementById('notes').value = contact.notes || '';
+}
+
+function clearContactForm() {
+    const form = document.getElementById('contactForm');
+    if (form) {
+        form.reset();
+        document.getElementById('status').value = 'Lead';
+    }
+}
+
+async function saveContact() {
+    try {
+        const formData = getContactFormData();
+        
+        // Validation
+        if (!formData.firstName || !formData.lastName || !formData.company || !formData.email) {
+            showNotification('Please fill in all required fields', 'error');
+            return;
+        }
+        
+        if (!isValidEmail(formData.email)) {
+            showNotification('Please enter a valid email address', 'error');
+            return;
+        }
+
+        const token = getToken();
+        if (!token) {
+            showNotification('Please login to save contact', 'error');
+            return;
+        }
+
+        const url = currentEditingContact 
+            ? `${API_BASE_URL}/contacts/${currentEditingContact.id}`
+            : `${API_BASE_URL}/contacts`;
+        
+        const method = currentEditingContact ? 'PUT' : 'POST';
+
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(formData)
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        
+        if (result.success) {
+            showNotification(
+                `Contact ${currentEditingContact ? 'updated' : 'added'} successfully`, 
+                'success'
+            );
+            closeContactModal();
+            await loadContacts();
+        } else {
+            throw new Error(result.message || 'Failed to save contact');
+        }
+        
+    } catch (error) {
+        console.error('❌ Error saving contact:', error);
+        showNotification('Failed to save contact: ' + error.message, 'error');
+    }
+}
+
+function getContactFormData() {
+    return {
+        firstName: document.getElementById('firstName')?.value.trim() || '',
+        lastName: document.getElementById('lastName')?.value.trim() || '',
+        jobTitle: document.getElementById('jobTitle')?.value.trim() || '',
+        company: document.getElementById('company')?.value.trim() || '',
+        email: document.getElementById('email')?.value.trim() || '',
+        phone: document.getElementById('phone')?.value.trim() || '',
+        status: document.getElementById('status')?.value || 'Lead',
+        owner: document.getElementById('owner')?.value.trim() || '',
+        notes: document.getElementById('notes')?.value.trim() || ''
+    };
+}
+
+function deleteContact(contactId) {
+    const contact = contacts.find(c => c.id === contactId);
+    if (!contact) return;
+    
+    currentDeleteContact = {
+        id: contactId,
+        name: contact.fullName || `${contact.firstName} ${contact.lastName}`
+    };
+    
+    document.getElementById('deleteItemName').textContent = currentDeleteContact.name;
+    document.getElementById('deleteModal').style.display = 'flex';
+}
+
+async function confirmDelete() {
+    if (!currentDeleteContact) return;
+    
+    try {
+        const token = getToken();
+        if (!token) {
+            showNotification('Please login to delete contact', 'error');
+            return;
+        }
+
+        const response = await fetch(`${API_BASE_URL}/contacts/${currentDeleteContact.id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        
+        if (result.success) {
+            showNotification('Contact deleted successfully', 'success');
+            closeDeleteModal();
+            await loadContacts();
+        } else {
+            throw new Error(result.message || 'Failed to delete contact');
+        }
+        
+    } catch (error) {
+        console.error('❌ Error deleting contact:', error);
+        showNotification('Failed to delete contact: ' + error.message, 'error');
+    }
+}
+
+// Filtering and Search
+function filterContacts() {
+    console.log('🔍 Filtering contacts');
+    currentPage = 1;
     loadContacts();
 }
 
-// Export Function
-function exportContacts() {
-    console.log('📤 Exporting contacts');
-    showNotification('Export feature coming soon', 'info');
+function resetFilters() {
+    document.getElementById('statusFilter').value = '';
+    document.getElementById('ownerFilter').value = '';
+    document.querySelector('.search-input').value = '';
+    
+    currentPage = 1;
+    loadContacts();
+    
+    showNotification('Filters reset', 'info');
+}
+
+function sortContacts() {
+    currentPage = 1;
+    loadContacts();
+}
+
+function performSearch(query) {
+    console.log('🔍 Searching:', query);
+    currentPage = 1;
+    loadContacts();
+}
+
+function sortTable(column) {
+    console.log('Sorting by:', column);
+    // You can implement client-side sorting here if needed
 }
 
 // Utility Functions
+function escapeHtml(unsafe) {
+    if (unsafe === null || unsafe === undefined) return '';
+    return unsafe
+        .toString()
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
 }
 
-function showLoading(show) {
-    const loadingState = document.getElementById('loadingState');
-    const contactsSection = document.querySelector('.contacts-section');
-    
-    if (show) {
-        contactsSection.style.opacity = '0.6';
-        loadingState.style.display = 'block';
-        console.log('⏳ Showing loading state');
-    } else {
-        contactsSection.style.opacity = '1';
-        loadingState.style.display = 'none';
-        console.log('✅ Hiding loading state');
-    }
-}
-
 // Modal Management
 function closeContactModal() {
-    const modal = document.getElementById('contactModal');
-    modal.classList.remove('show');
-    setTimeout(() => {
-        modal.style.display = 'none';
-    }, 300);
+    document.getElementById('contactModal').style.display = 'none';
     currentEditingContact = null;
-    console.log('❌ Closing contact modal');
 }
 
 function closeDeleteModal() {
-    const modal = document.getElementById('deleteModal');
-    modal.classList.remove('show');
-    setTimeout(() => {
-        modal.style.display = 'none';
-    }, 300);
+    document.getElementById('deleteModal').style.display = 'none';
     currentDeleteContact = null;
-    console.log('❌ Closing delete modal');
 }
 
 function closeAllModals() {
-    const modals = document.querySelectorAll('.modal-overlay');
-    modals.forEach(modal => {
-        modal.classList.remove('show');
-        setTimeout(() => {
-            modal.style.display = 'none';
-        }, 300);
+    document.querySelectorAll('.modal-overlay').forEach(modal => {
+        modal.style.display = 'none';
     });
     currentEditingContact = null;
     currentDeleteContact = null;
-    console.log('❌ Closing all modals');
 }
 
-// Sidebar and Dashboard Functions
+// Sidebar Functions
 function toggleSidebar() {
     const appContainer = document.querySelector('.app-container');
-    appContainer.classList.toggle('sidebar-collapsed');
+    const sidebarToggleIcon = document.getElementById('sidebarToggleIcon');
+    const floatingToggleIcon = document.getElementById('floatingToggleIcon');
     
-    // Update the menu toggle icon
-    const menuToggleIcon = document.querySelector('.menu-toggle i');
-    if (appContainer.classList.contains('sidebar-collapsed')) {
-        menuToggleIcon.className = 'fas fa-chevron-right';
-    } else {
-        menuToggleIcon.className = 'fas fa-bars';
+    const isCollapsed = appContainer.classList.toggle('sidebar-collapsed');
+    
+    if (sidebarToggleIcon) {
+        sidebarToggleIcon.className = isCollapsed ? 'fas fa-chevron-right' : 'fas fa-chevron-left';
     }
-}
-
-// Avatar color function
-function getAvatarColor() {
-    return 'linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%)';
-}
-
-// Create letter avatar function
-function createLetterAvatar(name, element) {
-    if (!name || name === 'User' || name === 'Loading...') {
-        name = 'User';
+    
+    if (floatingToggleIcon) {
+        floatingToggleIcon.className = 'fas fa-chevron-right';
     }
-
-    // Get first letter of the name
-    const firstLetter = name.charAt(0).toUpperCase();
-    const backgroundColor = getAvatarColor();
-
-    if (element.tagName === 'IMG') {
-        // For image elements, create canvas avatar
-        const canvas = document.createElement('canvas');
-        const size = 200;
-        canvas.width = size;
-        canvas.height = size;
-        const context = canvas.getContext('2d');
-
-        // Create gradient for canvas
-        const gradient = context.createLinearGradient(0, 0, size, size);
-        gradient.addColorStop(0, '#00BCD4');
-        gradient.addColorStop(1, '#1E88E5');
-
-        // Draw background with gradient
-        context.fillStyle = gradient;
-        context.fillRect(0, 0, size, size);
-
-        // Draw letter
-        context.fillStyle = '#FFFFFF';
-        context.font = `bold ${size * 0.4}px Inter, Arial, sans-serif`;
-        context.textAlign = 'center';
-        context.textBaseline = 'middle';
-        context.fillText(firstLetter, size / 2, size / 2);
-
-        element.src = canvas.toDataURL();
-        element.alt = name;
-    } else {
-        // For div elements (like in sidebar), use CSS gradient directly
-        element.style.background = backgroundColor;
-        const letterSpan = element.querySelector('.avatar-letter');
-        if (letterSpan) {
-            letterSpan.textContent = firstLetter;
-        } else {
-            // If no span exists, create one (for sidebar avatar)
-            const newLetterSpan = document.createElement('span');
-            newLetterSpan.className = 'avatar-letter';
-            newLetterSpan.textContent = firstLetter;
-            element.innerHTML = '';
-            element.appendChild(newLetterSpan);
-        }
-    }
+    
+    localStorage.setItem('sidebarCollapsed', isCollapsed);
 }
 
-// Update user avatar function
-function updateUserAvatar() {
-    try {
-        const userData = getUserData();
-        const userName = userData ? (userData.name || userData.username || userData.email || 'User') : 'User';
-        
-        console.log('Updating avatar for user:', userName);
-        
-        // Update sidebar avatar (div element)
-        const sidebarAvatar = document.getElementById('userAvatar');
-        if (sidebarAvatar) {
-            createLetterAvatar(userName, sidebarAvatar);
-        }
-
-    } catch (error) {
-        console.error('Error updating avatar:', error);
-        // Fallback with gradient color
-        const sidebarAvatar = document.getElementById('userAvatar');
-        if (sidebarAvatar) {
-            sidebarAvatar.style.background = 'linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%)';
-            const letterSpan = sidebarAvatar.querySelector('.avatar-letter');
-            if (letterSpan) {
-                letterSpan.textContent = 'U';
-            }
-        }
-    }
-}
-
-// Update the displayUserName function to include avatar
-function displayUserName() {
-    try {
-        const userData = getUserData();
-        const userNameElement = document.getElementById('userDisplayName');
-        
-        console.log('👤 Displaying user name for:', userData);
-        
-        let displayName = 'User';
-        
-        if (userData) {
-            // Priority: name -> username -> email -> 'User'
-            displayName = userData.name || userData.username || userData.email || 'User';
-            console.log('✅ User name found:', displayName);
-        } else {
-            console.warn('❌ No user data found in localStorage');
-        }
-        
-        // Always update the display name
-        if (userNameElement) {
-            userNameElement.textContent = displayName;
-        }
-        
-        // Update avatar with letter
-        updateUserAvatar();
-        
-    } catch (error) {
-        console.error('❌ Error displaying user name:', error);
-        const userNameElement = document.getElementById('userDisplayName');
-        if (userNameElement) {
-            userNameElement.textContent = 'User';
-        }
-        updateUserAvatar();
-    }
-}
-
-// Also add other necessary functions
-function toggleUserMenu() {
-    document.getElementById('userDropdown').classList.toggle('show');
-}
-
-function toggleNotifications() {
-    document.getElementById('notificationsDropdown').classList.toggle('show');
-}
-
-// Close dropdowns when clicking outside
-window.onclick = function(event) {
-    if (!event.target.matches('.user-profile') && !event.target.closest('.user-profile')) {
-        document.getElementById('userDropdown').classList.remove('show');
-    }
-    if (!event.target.matches('.notifications') && !event.target.closest('.notifications')) {
-        document.getElementById('notificationsDropdown').classList.remove('show');
-    }
-}
-
+// User Menu Functions
 function toggleUserMenu() {
     const dropdown = document.getElementById('userDropdown');
     const isVisible = dropdown.classList.contains('show');
     closeAllDropdowns();
     if (!isVisible) {
         dropdown.classList.add('show');
-        console.log('👤 Opening user menu');
-    }
-}
-
-function toggleNotifications() {
-    const dropdown = document.getElementById('notificationsDropdown');
-    const isVisible = dropdown.classList.contains('show');
-    closeAllDropdowns();
-    if (!isVisible) {
-        dropdown.classList.add('show');
-        console.log('🔔 Opening notifications');
     }
 }
 
 function closeAllDropdowns() {
-    document.querySelectorAll('.user-dropdown, .notifications-dropdown').forEach(dropdown => {
+    document.querySelectorAll('.user-dropdown').forEach(dropdown => {
         dropdown.classList.remove('show');
     });
 }
@@ -1030,82 +682,93 @@ function openHelp() {
 function logout() {
     closeAllDropdowns();
     if (confirm('Are you sure you want to logout?')) {
-        const userData = getUserData();
-        const userName = userData ? userData.name : 'User';
+        showNotification('Logging out...', 'info');
         
-        showNotification(`Goodbye, ${userName}! Logging out...`, 'info');
-        
-        // Clear storage
         localStorage.removeItem('userData');
         localStorage.removeItem('authToken');
-        localStorage.removeItem('loginTime');
-        localStorage.removeItem('rememberMe');
-        localStorage.removeItem('savedEmail');
         
-        // Redirect to login page
         setTimeout(() => {
             window.location.href = '/';
         }, 1000);
-        
-        console.log('🚪 User logged out');
     }
 }
 
-function markAllRead() {
-    const badge = document.getElementById('notificationCount');
-    badge.textContent = '0';
-    badge.style.display = 'none';
-    closeAllDropdowns();
-    showNotification('All notifications marked as read', 'success');
-    console.log('📬 All notifications marked as read');
-}
-
-function viewNotification(id) {
-    closeAllDropdowns();
-    showNotification(`Viewing notification ${id}`, 'info');
-    console.log(`👀 Viewing notification: ${id}`);
+// Avatar Functions
+function updateUserAvatar() {
+    try {
+        const userData = getUserData();
+        const userName = userData ? (userData.name || userData.username || userData.email || 'User') : 'User';
+        
+        const sidebarAvatar = document.getElementById('userAvatar');
+        if (sidebarAvatar) {
+            sidebarAvatar.style.background = 'linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%)';
+            const letterSpan = sidebarAvatar.querySelector('.avatar-letter');
+            if (letterSpan) {
+                letterSpan.textContent = userName.charAt(0).toUpperCase();
+            }
+        }
+    } catch (error) {
+        console.error('Error updating avatar:', error);
+    }
 }
 
 // Notification System
 function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `toast-notification toast-${type}`;
+    notification.style.cssText = `
+        position: fixed;
+        top: 25px;
+        right: 25px;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-width: 300px;
+        max-width: 400px;
+        color: white;
+        font-family: 'Inter', sans-serif;
+        font-weight: 500;
+    `;
+    
+    // Set background based on type
+    if (type === 'success') {
+        notification.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+    } else if (type === 'error') {
+        notification.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+    } else if (type === 'warning') {
+        notification.style.background = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
+    } else {
+        notification.style.background = 'linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%)';
+    }
+    
+    notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <i class="fas ${getNotificationIcon(type)}"></i>
+            <span>${message}</span>
+        </div>
+        <button onclick="this.parentElement.remove()" style="background: none; border: none; color: white; cursor: pointer; font-size: 20px; margin-left: 15px;">×</button>
+    `;
+    
     // Remove existing notifications
     const existingNotification = document.querySelector('.toast-notification');
     if (existingNotification) {
         existingNotification.remove();
     }
     
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = `toast-notification toast-${type}`;
-    notification.innerHTML = `
-        <div class="toast-content">
-            <i class="fas ${getNotificationIcon(type)}"></i>
-            <span>${message}</span>
-        </div>
-        <button class="toast-close" onclick="this.parentElement.remove()">×</button>
-    `;
-    
     // Add to document
     document.body.appendChild(notification);
-    
-    // Animate in
-    setTimeout(() => {
-        notification.style.transform = 'translateX(0)';
-    }, 100);
     
     // Auto remove after 4 seconds
     setTimeout(() => {
         if (notification.parentNode) {
-            notification.style.transform = 'translateX(100%)';
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.remove();
-                }
-            }, 400);
+            notification.remove();
         }
     }, 4000);
-    
-    console.log(`💬 Notification: ${type} - ${message}`);
 }
 
 function getNotificationIcon(type) {
@@ -1118,4 +781,4 @@ function getNotificationIcon(type) {
     return icons[type] || icons.info;
 }
 
-console.log('✅ Contact Management System fully initialized');
+console.log('✅ Contact Management System initialized with original 7-column design');
