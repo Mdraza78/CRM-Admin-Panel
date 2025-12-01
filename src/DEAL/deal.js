@@ -1,14 +1,16 @@
-// deal.js - Complete Fixed Version with Navigation
+// deal.js - Updated for new modal-based structure
 
 // Global variables
 let deals = [];
 let filteredDeals = [];
 let currentDealId = null;
-let currentView = 'list';
-let sortColumn = null;
-let sortDirection = 'asc';
+let currentEditingLead = null; // Changed from currentDealId for consistency
+let currentDeleteLead = null;
+let currentView = 'table'; // Force table view only
 let currentPage = 1;
-const itemsPerPage = 5;
+let itemsPerPage = 5; // Changed from 6 to match demo.js
+let uploadedFiles = [];
+let totalDealsCount = 0;
 let currentActivityType = 'past';
 
 // API Base URL
@@ -25,8 +27,6 @@ function handleNavigation(page) {
         'deals': '/DEAL/deal.html',
         'contacts': '/CONTACT/contact.html',
         'invoice': '/INVOICE/invoice.html',
-        'reports': '/REPORTS/reports.html',
-        'settings': '/SETTINGS/setting.html',
         'salary': '/SALARY/Salary.html'
     };
     
@@ -53,8 +53,6 @@ function getPageTitle(page) {
         'deals': 'Deals Pipeline',
         'contacts': 'Contacts',
         'invoice': 'Invoices',
-        'reports': 'Reports',
-        'settings': 'Settings',
         'salary': 'Salary'
     };
     return titles[page] || page.replace('-', ' ');
@@ -83,21 +81,78 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Deal.js - DOM Content Loaded');
     initializeApp();
     setupEventListeners();
-    displayUserName(); // This will now also update the avatar
-    loadDeals();
+    displayUserName();
+    
+    // Load deals immediately
+    loadDeals().then(() => {
+        console.log('Deals loaded successfully');
+    }).catch(error => {
+        console.error('Failed to load deals:', error);
+    });
+    
+    // Load sidebar state
+    const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+    if (sidebarCollapsed) {
+        document.querySelector('.app-container').classList.add('sidebar-collapsed');
+    }
 });
 
 function initializeApp() {
     console.log('Deal Management System initialized with backend integration');
-    setupNavigationEventListeners(); // ✅ ADD THIS LINE
-    showDealsList();
-    updatePagination();
+    setupNavigationEventListeners();
     setMinCloseDate();
+}
+
+function getUserData() {
+    try {
+        const userDataString = localStorage.getItem('userData');
+        console.log('👤 Raw userData from localStorage:', userDataString);
+        
+        if (!userDataString) {
+            console.warn('❌ No user data found in localStorage');
+            return null;
+        }
+        
+        const userData = JSON.parse(userDataString);
+        console.log('👤 Parsed userData:', userData);
+        
+        if (userData && userData.id && userData.name) {
+            return userData;
+        } else {
+            console.warn('❌ User data missing required fields');
+            return null;
+        }
+        
+    } catch (error) {
+        console.error('❌ Error parsing user data:', error);
+        return null;
+    }
 }
 
 function setupEventListeners() {
     // ✅ ADD: Navigation event listeners
     setupNavigationEventListeners();
+
+    // Modal close events
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('modal-overlay')) {
+            closeAllModals();
+        }
+    });
+
+    // Escape key to close modals
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeAllModals();
+        }
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.user-profile') && !e.target.closest('.user-dropdown')) {
+            closeAllDropdowns();
+        }
+    });
 
     // File upload
     const fileInput = document.getElementById('dealAttachments');
@@ -113,42 +168,39 @@ function setupEventListeners() {
         uploadArea.addEventListener('dragleave', handleDragLeave);
     }
 
-    // Close dropdowns when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('.dropdown')) {
-            closeAllDropdowns();
-        }
-    });
-
     // Form validation
     document.addEventListener('input', handleFormValidation);
-
-    // Pipeline stage click events
-    document.addEventListener('click', function(e) {
-        if (e.target.closest('.pipeline-stage')) {
-            const stage = e.target.closest('.pipeline-stage');
-            const stageValue = stage.getAttribute('data-stage');
-            document.getElementById('dealStage').value = stageValue;
-            updatePipelineVisual(stageValue);
-        }
-    });
-
-    // Escape key to close modals
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeAllModals();
-        }
-    });
 }
 
 function displayUserName() {
-    const userData = JSON.parse(localStorage.getItem('userData'));
-    const userNameElement = document.querySelector('.user-name');
-    
-    if (userData && userData.name) {
-        userNameElement.textContent = userData.name;
-    } else {
-        userNameElement.textContent = 'User';
+    try {
+        const userData = getUserData();
+        const userNameElement = document.getElementById('userDisplayName');
+        
+        console.log('👤 Displaying user name for:', userData);
+        
+        let displayName = 'User';
+        
+        if (userData) {
+            displayName = userData.name || userData.username || userData.email || 'User';
+            console.log('✅ User name found:', displayName);
+        } else {
+            console.warn('❌ No user data found in localStorage');
+        }
+        
+        if (userNameElement) {
+            userNameElement.textContent = displayName;
+        }
+        
+        updateUserAvatar();
+        
+    } catch (error) {
+        console.error('❌ Error displaying user name:', error);
+        const userNameElement = document.getElementById('userDisplayName');
+        if (userNameElement) {
+            userNameElement.textContent = 'User';
+        }
+        updateUserAvatar();
     }
 }
 
@@ -160,12 +212,19 @@ function setMinCloseDate() {
     }
 }
 
-// API Functions
+// FIXED: Remove showDealsList function since we don't have separate list/form elements
+// Instead, we'll just close the modal and refresh the table
+function showDealsList() {
+    // Just close any open modals and refresh the table
+    closeAllModals();
+    loadDeals();
+}
+
 async function loadDeals() {
     try {
         showLoading(true);
         
-        const token = localStorage.getItem('authToken');
+        const token = getToken();
         if (!token) {
             showNotification('Please login to access deals', 'error');
             setTimeout(() => {
@@ -177,18 +236,40 @@ async function loadDeals() {
         const search = document.querySelector('.search-input')?.value || '';
         const stageFilter = document.getElementById('stageFilter')?.value || '';
         const priorityFilter = document.getElementById('priorityFilter')?.value || '';
-        const sortBy = 'createdAt';
-        const sortOrder = 'desc';
+        const sortBy = document.getElementById('sortBy')?.value || 'created_desc';
 
+        // Parse sort parameters
+        let sortField = 'createdAt';
+        let sortOrder = 'desc';
+        
+        if (sortBy === 'title_asc') {
+            sortField = 'title';
+            sortOrder = 'asc';
+        } else if (sortBy === 'title_desc') {
+            sortField = 'title';
+            sortOrder = 'desc';
+        } else if (sortBy === 'value_desc') {
+            sortField = 'value';
+            sortOrder = 'desc';
+        } else if (sortBy === 'value_asc') {
+            sortField = 'value';
+            sortOrder = 'asc';
+        } else if (sortBy === 'created_asc') {
+            sortField = 'createdAt';
+            sortOrder = 'asc';
+        }
+
+        // For client-side pagination
         const params = new URLSearchParams({
-            page: currentPage,
-            limit: itemsPerPage,
+            limit: 1000,
             ...(search && { search }),
             ...(stageFilter && { stage: stageFilter }),
             ...(priorityFilter && { priority: priorityFilter }),
-            sortBy: sortBy,
+            sortBy: sortField,
             sortOrder: sortOrder
         });
+
+        console.log('🔍 Loading ALL deals for client-side pagination');
 
         const response = await fetch(`${API_BASE_URL}/deals?${params}`, {
             method: 'GET',
@@ -203,6 +284,11 @@ async function loadDeals() {
         }
 
         const result = await response.json();
+
+        console.log('📊 Server response - ALL DATA:', {
+            success: result.success,
+            dealsLength: result.deals ? result.deals.length : 0
+        });
 
         if (result.deals) {
             deals = result.deals.map(deal => ({
@@ -229,11 +315,29 @@ async function loadDeals() {
             }));
 
             filteredDeals = [...deals];
+            totalDealsCount = deals.length;
+            
+            // Update total records display
+            document.getElementById('totalRecords').textContent = totalDealsCount;
+            
+            console.log('🔄 Stored ALL deals for client-side pagination:', {
+                totalDealsCount: totalDealsCount,
+                dealsLength: deals.length
+            });
+            
             renderDealsTable();
-            updatePagination();
-            updateRecordCount();
+            
+            // Use client-side pagination calculations
+            updatePagination({
+                currentPage: currentPage,
+                totalPages: Math.ceil(totalDealsCount / itemsPerPage),
+                totalDeals: totalDealsCount,
+                hasPrev: currentPage > 1,
+                hasNext: currentPage < Math.ceil(totalDealsCount / itemsPerPage)
+            });
+            
         } else {
-            throw new Error('Failed to load deals');
+            throw new Error(result.message || 'Failed to load deals');
         }
     } catch (error) {
         console.error('Error loading deals:', error);
@@ -243,14 +347,27 @@ async function loadDeals() {
         deals = [];
         filteredDeals = [];
         renderDealsTable();
+        
+        // Update pagination for error state
+        updatePagination({
+            currentPage: 1,
+            totalPages: 1,
+            totalDeals: 0,
+            hasPrev: false,
+            hasNext: false
+        });
     } finally {
         showLoading(false);
     }
 }
 
+function getToken() {
+    return localStorage.getItem('authToken') || '';
+}
+
 async function saveDealToAPI(dealData, isUpdate = false) {
     try {
-        const token = localStorage.getItem('authToken');
+        const token = getToken();
         if (!token) {
             throw new Error('Authentication required');
         }
@@ -277,7 +394,7 @@ async function saveDealToAPI(dealData, isUpdate = false) {
             winProbability: dealData.winProbability,
             grossMargin: dealData.grossMargin,
             notes: dealData.notes,
-            attachments: dealData.attachments
+            attachments: uploadedFiles.map(file => file.name)
         };
 
         const response = await fetch(url, {
@@ -305,7 +422,7 @@ async function saveDealToAPI(dealData, isUpdate = false) {
 
 async function deleteDealFromAPI(dealId) {
     try {
-        const token = localStorage.getItem('authToken');
+        const token = getToken();
         if (!token) {
             throw new Error('Authentication required');
         }
@@ -337,7 +454,7 @@ async function deleteDealFromAPI(dealId) {
 
 async function updateDealStageAPI(dealId, stage) {
     try {
-        const token = localStorage.getItem('authToken');
+        const token = getToken();
         if (!token) {
             throw new Error('Authentication required');
         }
@@ -364,91 +481,97 @@ async function updateDealStageAPI(dealId, stage) {
     }
 }
 
-async function addActivityToDealAPI(dealId, activityData) {
-    try {
-        const token = localStorage.getItem('authToken');
-        if (!token) {
-            throw new Error('Authentication required');
-        }
-
-        const response = await fetch(`${API_BASE_URL}/deals/${dealId}/activities`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(activityData)
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        return result;
-    } catch (error) {
-        console.error('Error adding activity:', error);
-        throw error;
-    }
-}
-
-// Navigation functions
-function showDealsList() {
-    document.getElementById('dealsList').style.display = 'block';
-    document.getElementById('dealForm').style.display = 'none';
-    currentView = 'list';
-    renderDealsTable();
-}
-
+// Deal Management Functions
 function AddDeals() {
     currentDealId = null;
-    resetDealForm();
+    currentEditingLead = null;
     document.getElementById('formTitle').textContent = 'Create New Deal';
+    
+    // Clear form
+    clearDealForm();
+    
+    const modal = document.getElementById('dealForm');
+    modal.style.display = 'flex';
+    modal.classList.add('show');
+    
+    // Hide win/lost buttons for new deals
     document.getElementById('markWonBtn').style.display = 'none';
     document.getElementById('markLostBtn').style.display = 'none';
-    document.getElementById('dealsList').style.display = 'none';
-    document.getElementById('dealForm').style.display = 'block';
-    currentView = 'form';
-    updatePipelineVisual('Prospecting');
-    loadRelatedDeals();
 }
 
-function editDeal(id) {
-    currentDealId = id;
-    const deal = deals.find(d => d.id === id);
-    if (deal) {
-        populateDealForm(deal);
-        document.getElementById('formTitle').textContent = 'Edit Deal';
-        document.getElementById('markWonBtn').style.display = 'inline-block';
-        document.getElementById('markLostBtn').style.display = 'inline-block';
-        document.getElementById('dealsList').style.display = 'none';
-        document.getElementById('dealForm').style.display = 'block';
-        currentView = 'form';
-        updatePipelineVisual(deal.stage);
-        updateDealInfo(deal);
-        loadRelatedDeals(deal);
-        loadActivities(deal);
-    }
-}
-
-function viewDeal(id) {
-    editDeal(id);
-}
-
-function cancelForm() {
-    showDealsList();
-}
-
-// CRUD Operations
-async function saveDeal() {
-    if (!validateForm()) {
-        return;
-    }
-
-    const formData = collectFormData();
+function editDeal(dealId) {
+    const deal = deals.find(d => d.id === dealId);
+    if (!deal) return;
     
+    currentDealId = dealId;
+    currentEditingLead = deal;
+    document.getElementById('formTitle').textContent = 'Edit Deal';
+    
+    // Populate form
+    populateDealForm(deal);
+    
+    const modal = document.getElementById('dealForm');
+    modal.style.display = 'flex';
+    modal.classList.add('show');
+    
+    // Show win/lost buttons for existing deals
+    document.getElementById('markWonBtn').style.display = 'inline-block';
+    document.getElementById('markLostBtn').style.display = 'inline-block';
+}
+
+function populateDealForm(deal) {
+    document.getElementById('dealTitle').value = deal.title || '';
+    document.getElementById('dealValue').value = deal.value || '';
+    document.getElementById('dealStage').value = deal.stage || 'Prospecting';
+    document.getElementById('closeDate').value = deal.closeDate ? deal.closeDate.split('T')[0] : '';
+    document.getElementById('assignedOwner').value = deal.assignedOwner || '';
+    document.getElementById('priority').value = deal.priority || 'Medium';
+    document.getElementById('companyName').value = deal.companyName || '';
+    document.getElementById('primaryContact').value = deal.primaryContact || '';
+    document.getElementById('contactEmail').value = deal.contactEmail || '';
+    document.getElementById('contactPhone').value = deal.contactPhone || '';
+    document.getElementById('secondaryContacts').value = deal.secondaryContacts || '';
+    document.getElementById('winProbability').value = deal.winProbability || '';
+    document.getElementById('grossMargin').value = deal.grossMargin || '';
+    document.getElementById('dealNotes').value = deal.notes || '';
+    
+    // Populate attachments
+    uploadedFiles = [];
+    const fileList = document.getElementById('fileList');
+    fileList.innerHTML = '';
+    if (deal.attachments && deal.attachments.length > 0) {
+        deal.attachments.forEach(fileName => {
+            const fileObj = {
+                id: Date.now() + Math.random(),
+                name: fileName,
+                size: 0, // Unknown size from API
+                type: 'unknown',
+                file: null
+            };
+            uploadedFiles.push(fileObj);
+            addFileToList(fileName);
+        });
+    }
+}
+
+function clearDealForm() {
+    const form = document.getElementById('dealFormContent');
+    if (form) form.reset();
+    uploadedFiles = [];
+    updateUploadedFilesDisplay();
+}
+
+async function saveDeal() {
     try {
+        const formData = collectFormData();
+        
+        // Validation
+        if (!formData.title || !formData.value || !formData.stage || !formData.closeDate || 
+            !formData.companyName || !formData.primaryContact) {
+            showNotification('Please fill in all required fields', 'error');
+            return;
+        }
+
         showLoading(true);
 
         const savedDeal = await saveDealToAPI(formData, !!currentDealId);
@@ -458,7 +581,7 @@ async function saveDeal() {
             'success'
         );
 
-        closeForm();
+        cancelForm();
         await loadDeals();
         
     } catch (error) {
@@ -469,21 +592,44 @@ async function saveDeal() {
     }
 }
 
-async function deleteDeal(id) {
-    const deal = deals.find(d => d.id === id);
-    if (deal) {
-        document.getElementById('deleteDealName').textContent = deal.title;
-        currentDealId = id;
-        document.getElementById('deleteModal').style.display = 'flex';
-    }
+function collectFormData() {
+    return {
+        title: document.getElementById('dealTitle')?.value.trim() || '',
+        value: parseFloat(document.getElementById('dealValue').value) || 0,
+        stage: document.getElementById('dealStage')?.value || '',
+        closeDate: document.getElementById('closeDate')?.value || '',
+        assignedOwner: document.getElementById('assignedOwner')?.value.trim() || '',
+        priority: document.getElementById('priority')?.value || 'Medium',
+        companyName: document.getElementById('companyName')?.value.trim() || '',
+        primaryContact: document.getElementById('primaryContact')?.value.trim() || '',
+        contactEmail: document.getElementById('contactEmail')?.value.trim() || '',
+        contactPhone: document.getElementById('contactPhone')?.value.trim() || '',
+        secondaryContacts: document.getElementById('secondaryContacts')?.value.trim() || '',
+        winProbability: parseInt(document.getElementById('winProbability').value) || 0,
+        grossMargin: parseFloat(document.getElementById('grossMargin').value) || 0,
+        notes: document.getElementById('dealNotes')?.value.trim() || ''
+    };
+}
+
+function deleteDeal(leadId) {
+    const lead = deals.find(l => l.id === leadId);
+    if (!lead) return;
+    
+    currentDeleteLead = {
+        id: leadId,
+        name: lead.title
+    };
+    
+    document.getElementById('deleteDealName').textContent = lead.title;
+    document.getElementById('deleteModal').style.display = 'flex';
 }
 
 async function confirmDelete() {
-    if (!currentDealId) return;
+    if (!currentDeleteLead) return;
     
     try {
         showLoading(true);
-        await deleteDealFromAPI(currentDealId);
+        await deleteDealFromAPI(currentDeleteLead.id);
         
         showNotification('Deal deleted successfully', 'success');
         closeDeleteModal();
@@ -504,7 +650,7 @@ async function markAsWon() {
             await updateDealStageAPI(currentDealId, 'Won');
             
             showNotification('Deal marked as Won!', 'success');
-            closeForm();
+            cancelForm();
             await loadDeals();
             
         } catch (error) {
@@ -523,7 +669,7 @@ async function markAsLost() {
             await updateDealStageAPI(currentDealId, 'Lost');
             
             showNotification('Deal marked as Lost', 'info');
-            closeForm();
+            cancelForm();
             await loadDeals();
             
         } catch (error) {
@@ -535,248 +681,446 @@ async function markAsLost() {
     }
 }
 
-// Form handling
-function collectFormData() {
-    const attachments = Array.from(document.querySelectorAll('.file-item')).map(item => 
-        item.querySelector('.file-name').textContent
-    );
-
-    return {
-        title: document.getElementById('dealTitle').value.trim(),
-        value: parseFloat(document.getElementById('dealValue').value) || 0,
-        stage: document.getElementById('dealStage').value,
-        closeDate: document.getElementById('closeDate').value,
-        assignedOwner: document.getElementById('assignedOwner').value,
-        priority: document.getElementById('priority').value,
-        companyName: document.getElementById('companyName').value.trim(),
-        primaryContact: document.getElementById('primaryContact').value.trim(),
-        contactEmail: document.getElementById('contactEmail').value.trim(),
-        contactPhone: document.getElementById('contactPhone').value.trim(),
-        secondaryContacts: document.getElementById('secondaryContacts').value.trim(),
-        winProbability: parseInt(document.getElementById('winProbability').value) || 0,
-        grossMargin: parseFloat(document.getElementById('grossMargin').value) || 0,
-        notes: document.getElementById('dealNotes').value.trim(),
-        attachments: attachments
-    };
+// File Upload
+function selectEmailFile() {
+    document.getElementById('dealAttachments').click();
 }
 
-function populateDealForm(deal) {
-    document.getElementById('dealTitle').value = deal.title || '';
-    document.getElementById('dealValue').value = deal.value || '';
-    document.getElementById('dealStage').value = deal.stage || 'Prospecting';
-    document.getElementById('closeDate').value = deal.closeDate ? deal.closeDate.split('T')[0] : '';
-    document.getElementById('assignedOwner').value = deal.assignedOwner || '';
-    document.getElementById('priority').value = deal.priority || 'Medium';
-    document.getElementById('companyName').value = deal.companyName || '';
-    document.getElementById('primaryContact').value = deal.primaryContact || '';
-    document.getElementById('contactEmail').value = deal.contactEmail || '';
-    document.getElementById('contactPhone').value = deal.contactPhone || '';
-    document.getElementById('secondaryContacts').value = deal.secondaryContacts || '';
-    document.getElementById('winProbability').value = deal.winProbability || '';
-    document.getElementById('grossMargin').value = deal.grossMargin || '';
-    document.getElementById('dealNotes').value = deal.notes || '';
+function handleFileSelect(input) {
+    const files = Array.from(input.files);
     
-    // Populate attachments
-    const fileList = document.getElementById('fileList');
-    fileList.innerHTML = '';
-    if (deal.attachments && deal.attachments.length > 0) {
-        deal.attachments.forEach(fileName => {
-            addFileToList(fileName);
-        });
-    }
-}
-
-function resetDealForm() {
-    document.getElementById('dealTitle').value = '';
-    document.getElementById('dealValue').value = '';
-    document.getElementById('dealStage').value = 'Prospecting';
-    document.getElementById('closeDate').value = '';
-    document.getElementById('assignedOwner').value = '';
-    document.getElementById('priority').value = 'Medium';
-    document.getElementById('companyName').value = '';
-    document.getElementById('primaryContact').value = '';
-    document.getElementById('contactEmail').value = '';
-    document.getElementById('contactPhone').value = '';
-    document.getElementById('secondaryContacts').value = '';
-    document.getElementById('winProbability').value = '';
-    document.getElementById('grossMargin').value = '';
-    document.getElementById('dealNotes').value = '';
-    document.getElementById('fileList').innerHTML = '';
-    document.getElementById('dealAttachments').value = '';
-    
-    // Reset deal info
-    document.getElementById('daysInStage').textContent = '-';
-    document.getElementById('daysSinceCreated').textContent = '-';
-    document.getElementById('lastActivity').textContent = '-';
-    
-    // Clear activities
-    document.getElementById('pastTimeline').innerHTML = '<p>No past activities</p>';
-    document.getElementById('upcomingTimeline').innerHTML = '<p>No upcoming activities</p>';
-}
-
-// Pipeline Visual Update
-function updatePipelineVisual(currentStage) {
-    const stages = ['Prospecting', 'Qualification', 'Proposal', 'Negotiation', 'Won'];
-    const pipelineStages = document.querySelectorAll('.pipeline-stage');
-    
-    pipelineStages.forEach(stage => {
-        const stageValue = stage.getAttribute('data-stage');
-        stage.classList.remove('active', 'completed');
-        
-        if (stageValue === currentStage) {
-            stage.classList.add('active');
-        } else if (stages.indexOf(stageValue) < stages.indexOf(currentStage) && currentStage !== 'Lost') {
-            stage.classList.add('completed');
+    files.forEach(file => {
+        if (file.size > 10 * 1024 * 1024) {
+            showNotification(`File ${file.name} is too large. Maximum size is 10MB.`, 'error');
+            return;
         }
+        
+        const fileObj = {
+            id: Date.now() + Math.random(),
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            file: file
+        };
+        uploadedFiles.push(fileObj);
     });
+    
+    updateUploadedFilesDisplay();
+    input.value = '';
 }
 
-// Deal Info Update
-function updateDealInfo(deal) {
-    if (!deal) return;
+function updateUploadedFilesDisplay() {
+    const container = document.getElementById('fileList');
+    if (!container) return;
     
-    const now = new Date();
-    const created = new Date(deal.created);
-    const modified = new Date(deal.modified);
+    container.innerHTML = '';
     
-    const daysSinceCreated = Math.floor((now - created) / (1000 * 60 * 60 * 24));
-    const daysSinceModified = Math.floor((now - modified) / (1000 * 60 * 60 * 24));
-    
-    document.getElementById('daysInStage').textContent = daysSinceModified + ' days';
-    document.getElementById('daysSinceCreated').textContent = daysSinceCreated + ' days';
-    
-    const lastActivity = deal.activities && deal.activities.length > 0 
-        ? deal.activities[deal.activities.length - 1] 
-        : null;
-    
-    document.getElementById('lastActivity').textContent = lastActivity 
-        ? `${lastActivity.type} (${formatDateShort(lastActivity.date)})` 
-        : 'None';
-}
-
-// Activity Management
-function switchActivityTab(tab) {
-    currentActivityType = tab;
-    
-    // Update tab buttons
-    document.querySelectorAll('.activity-tab').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    document.querySelector(`.activity-tab[data-tab="${tab}"]`).classList.add('active');
-    
-    // Update content
-    document.querySelectorAll('.activity-pane').forEach(pane => {
-        pane.classList.remove('active');
-    });
-    document.getElementById(tab === 'past' ? 'pastActivities' : 'upcomingActivities').classList.add('active');
-}
-
-function loadActivities(deal) {
-    if (!deal.activities) deal.activities = [];
-    
-    const pastTimeline = document.getElementById('pastTimeline');
-    const upcomingTimeline = document.getElementById('upcomingTimeline');
-    
-    const pastActivities = deal.activities.filter(a => a.isPast);
-    const upcomingActivities = deal.activities.filter(a => !a.isPast);
-    
-    // Load past activities
-    if (pastActivities.length === 0) {
-        pastTimeline.innerHTML = '<p>No past activities</p>';
-    } else {
-        pastTimeline.innerHTML = pastActivities.map(activity => `
-            <div class="activity-item">
-                <div class="activity-icon">${getActivityIcon(activity.type)}</div>
-                <div class="activity-content-text">
-                    <h5>${activity.type}</h5>
-                    <p>${activity.description}</p>
-                    <div class="activity-date">${formatDate(activity.date)}</div>
-                </div>
+    uploadedFiles.forEach(file => {
+        const fileDiv = document.createElement('div');
+        fileDiv.className = 'uploaded-file';
+        fileDiv.innerHTML = `
+            <div class="file-info">
+                <i class="fas fa-file"></i>
+                <span>${file.name} (${formatFileSize(file.size)})</span>
             </div>
-        `).join('');
-    }
+            <button class="remove-file" onclick="removeFile(${file.id})">×</button>
+        `;
+        container.appendChild(fileDiv);
+    });
+}
+
+function removeFile(fileId) {
+    uploadedFiles = uploadedFiles.filter(file => file.id !== fileId);
+    updateUploadedFilesDisplay();
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+    const uploadArea = e.currentTarget;
+    uploadArea.style.borderColor = '#667eea';
+    uploadArea.style.background = 'linear-gradient(135deg, #f0f8ff 0%, #e6f2ff 100%)';
+}
+
+function handleDragLeave(e) {
+    e.preventDefault();
+    const uploadArea = e.currentTarget;
+    uploadArea.style.borderColor = '#e9ecef';
+    uploadArea.style.background = 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)';
+}
+
+function handleFileDrop(e) {
+    e.preventDefault();
+    const uploadArea = e.currentTarget;
+    uploadArea.style.borderColor = '#e9ecef';
+    uploadArea.style.background = 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)';
     
-    // Load upcoming activities
-    if (upcomingActivities.length === 0) {
-        upcomingTimeline.innerHTML = '<p>No upcoming activities</p>';
-    } else {
-        upcomingTimeline.innerHTML = upcomingActivities.map(activity => `
-            <div class="activity-item">
-                <div class="activity-icon">${getActivityIcon(activity.type)}</div>
-                <div class="activity-content-text">
-                    <h5>${activity.type}</h5>
-                    <p>${activity.description}</p>
-                    <div class="activity-date">${formatDate(activity.date)}</div>
-                </div>
-            </div>
-        `).join('');
-    }
-}
-
-function getActivityIcon(type) {
-    const icons = {
-        'Call': '📞',
-        'Email': '📧',
-        'Meeting': '👥',
-        'Follow-up': '📅',
-        'Proposal': '📄',
-        'Deal Won': '🏆',
-        'Deal Lost': '❌'
-    };
-    return icons[type] || '📋';
-}
-
-function addActivity() {
-    document.getElementById('activityModalTitle').textContent = 'Add Activity';
-    document.getElementById('activityModal').style.display = 'flex';
+    const files = Array.from(e.dataTransfer.files);
+    files.forEach(file => {
+        if (file.size > 10 * 1024 * 1024) {
+            showNotification(`File ${file.name} is too large. Maximum size is 10MB.`, 'error');
+            return;
+        }
+        
+        const fileObj = {
+            id: Date.now() + Math.random(),
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            file: file
+        };
+        uploadedFiles.push(fileObj);
+    });
     
-    // Set default date to now
-    const now = new Date();
-    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-    document.getElementById('activityDate').value = now.toISOString().slice(0, 16);
+    updateUploadedFilesDisplay();
 }
 
-function addPastActivity() {
-    currentActivityType = 'past';
-    addActivity();
+function addFileToList(fileName) {
+    const fileList = document.getElementById('fileList');
+    const fileDiv = document.createElement('div');
+    fileDiv.className = 'uploaded-file';
+    fileDiv.innerHTML = `
+        <div class="file-info">
+            <i class="fas fa-file"></i>
+            <span>${fileName}</span>
+        </div>
+        <button class="remove-file" onclick="removeFileByName('${fileName}')">×</button>
+    `;
+    fileList.appendChild(fileDiv);
 }
 
-function scheduleActivity() {
-    currentActivityType = 'upcoming';
-    addActivity();
+function removeFileByName(fileName) {
+    uploadedFiles = uploadedFiles.filter(file => file.name !== fileName);
+    updateUploadedFilesDisplay();
 }
 
-async function saveActivity() {
-    const type = document.getElementById('activityType').value;
-    const date = document.getElementById('activityDate').value;
-    const description = document.getElementById('activityDescription').value.trim();
-    
-    if (!type || !date || !description) {
-        showNotification('Please fill in all activity fields', 'error');
+// Rendering Functions
+function renderDealsTable() {
+    const tbody = document.getElementById('dealsTableBody');
+    if (!tbody) {
+        console.error('Deals table body not found');
         return;
     }
     
-    if (currentDealId) {
-        try {
-            const isPast = new Date(date) < new Date();
-            const activityData = {
-                type: type,
-                description: description,
-                date: date,
-                isPast: isPast
-            };
+    tbody.innerHTML = '';
 
-            await addActivityToDealAPI(currentDealId, activityData);
-            
-            showNotification('Activity added successfully', 'success');
-            closeActivityModal();
-            await loadDeals();
-            
-        } catch (error) {
-            console.error('Error adding activity:', error);
-            showNotification('Failed to add activity: ' + error.message, 'error');
-        }
+    console.log('🎯 Rendering table - CLIENT-SIDE PAGINATION:', {
+        totalDealsCount: totalDealsCount,
+        dealsLength: deals.length,
+        currentPage: currentPage,
+        itemsPerPage: itemsPerPage,
+        totalPages: Math.ceil(totalDealsCount / itemsPerPage)
+    });
+
+    // If no deals, show empty state
+    if (deals.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="9" class="no-data">
+                    <div class="no-leads-message">
+                        <i class="fas fa-handshake"></i>
+                        <h3>No Deals Found</h3>
+                        <p>Get started by creating your first deal</p>
+                        <button class="btn-primary" onclick="AddDeals()">
+                            <i class="fas fa-plus"></i> Add New Deal
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+        return;
     }
+
+    // Calculate pagination indices for client-side pagination
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, deals.length);
+    
+    console.log('📄 Pagination slice:', {
+        startIndex: startIndex,
+        endIndex: endIndex,
+        calculation: `(${currentPage} - 1) * ${itemsPerPage} = ${startIndex} to min(${startIndex} + ${itemsPerPage}, ${deals.length}) = ${endIndex}`,
+        expectedRecords: endIndex - startIndex
+    });
+
+    // Get only the deals for the current page
+    const dealsToRender = deals.slice(startIndex, endIndex);
+
+    console.log('🔄 Deals to render for page', currentPage, ':', dealsToRender.length, 'records');
+
+    // Render the paginated deals
+    dealsToRender.forEach((deal, index) => {
+        const actualIndex = startIndex + index;
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td><input type="checkbox" value="${deal.id}" onchange="toggleDealSelection()"></td>
+            <td>${escapeHtml(deal.title)}</td>
+            <td>${escapeHtml(deal.companyName)}</td>
+            <td>$${deal.value.toLocaleString()}</td>
+            <td><span class="stage-badge ${deal.stage.toLowerCase()}">${escapeHtml(deal.stage)}</span></td>
+            <td>${formatDateShort(deal.closeDate)}</td>
+            <td><span class="priority-badge ${deal.priority.toLowerCase()}">${escapeHtml(deal.priority)}</span></td>
+            <td>${escapeHtml(deal.assignedOwner || '-')}</td>
+            <td>
+                <div class="table-actions">
+                    <button class="table-action-btn edit" onclick="editDeal('${deal.id}')" title="Edit">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="table-action-btn delete" onclick="deleteDeal('${deal.id}')" title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+
+    console.log('✅ Successfully rendered', dealsToRender.length, 'deals for page', currentPage);
+}
+
+function escapeHtml(unsafe) {
+    if (unsafe === null || unsafe === undefined) return '';
+    return unsafe
+        .toString()
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+// Filtering and Sorting
+function filterDeals() {
+    currentPage = 1;
+    loadDeals();
+}
+
+function resetFilters() {
+    document.getElementById('stageFilter').value = '';
+    document.getElementById('priorityFilter').value = '';
+    document.querySelector('.search-input').value = '';
+    
+    currentPage = 1;
+    loadDeals();
+    
+    showNotification('Filters reset', 'info');
+}
+
+function sortDeals() {
+    currentPage = 1;
+    loadDeals();
+}
+
+function searchDeals(query) {
+    currentPage = 1;
+    loadDeals();
+}
+
+// Bulk Operations
+function selectAllDeals(checkbox) {
+    const checkboxes = document.querySelectorAll('#dealsTableBody input[type="checkbox"]');
+    checkboxes.forEach(cb => {
+        cb.checked = checkbox.checked;
+    });
+    toggleDealSelection();
+}
+
+function toggleDealSelection() {
+    const selectedCheckboxes = document.querySelectorAll('#dealsTableBody input[type="checkbox"]:checked');
+    const bulkActions = document.getElementById('bulkActions');
+    const selectedCount = document.querySelector('.selected-count');
+    
+    if (selectedCheckboxes.length > 0 && bulkActions && selectedCount) {
+        bulkActions.style.display = 'flex';
+        selectedCount.textContent = `${selectedCheckboxes.length} deal${selectedCheckboxes.length > 1 ? 's' : ''} selected`;
+    } else if (bulkActions) {
+        bulkActions.style.display = 'none';
+    }
+}
+
+async function bulkUpdateStage(stage) {
+    const selectedCheckboxes = document.querySelectorAll('#dealsTableBody input[type="checkbox"]:checked');
+    const selectedIds = Array.from(selectedCheckboxes).map(cb => cb.value);
+    
+    if (selectedIds.length === 0) {
+        showNotification('Please select deals to update', 'warning');
+        return;
+    }
+
+    try {
+        showLoading(true);
+        
+        // Update each deal individually
+        for (const dealId of selectedIds) {
+            await updateDealStageAPI(dealId, stage);
+        }
+        
+        showNotification(`${selectedIds.length} deals updated to ${stage}`, 'success');
+        toggleDealSelection();
+        await loadDeals();
+        
+    } catch (error) {
+        console.error('Error bulk updating deals:', error);
+        showNotification('Failed to update deals: ' + error.message, 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function bulkDeleteDeals() {
+    const selectedCheckboxes = document.querySelectorAll('#dealsTableBody input[type="checkbox"]:checked');
+    const selectedIds = Array.from(selectedCheckboxes).map(cb => cb.value);
+    
+    if (selectedIds.length === 0) {
+        showNotification('Please select deals to delete', 'warning');
+        return;
+    }
+
+    if (!confirm(`Are you sure you want to delete ${selectedIds.length} deal${selectedIds.length > 1 ? 's' : ''}?`)) {
+        return;
+    }
+
+    try {
+        showLoading(true);
+        
+        // Delete each deal individually
+        for (const dealId of selectedIds) {
+            await deleteDealFromAPI(dealId);
+        }
+        
+        showNotification(`${selectedIds.length} deals deleted successfully`, 'success');
+        toggleDealSelection();
+        await loadDeals();
+        
+    } catch (error) {
+        console.error('Error bulk deleting deals:', error);
+        showNotification('Failed to delete deals: ' + error.message, 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+// Pagination
+function updatePagination(paginationData) {
+    const startElement = document.getElementById('paginationStart');
+    const endElement = document.getElementById('paginationEnd');
+    const totalElement = document.getElementById('paginationTotal');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    if (!startElement || !endElement || !totalElement || !prevBtn || !nextBtn) {
+        console.warn('Pagination elements not found in DOM');
+        return;
+    }
+    
+    // Always calculate based on client-side data to ensure consistency
+    const totalPages = Math.ceil(totalDealsCount / itemsPerPage);
+    const startIndex = ((currentPage - 1) * itemsPerPage) + 1;
+    const endIndex = Math.min(currentPage * itemsPerPage, totalDealsCount);
+    
+    console.log('📊 Pagination calculations:', {
+        totalDealsCount: totalDealsCount,
+        itemsPerPage: itemsPerPage,
+        totalPages: totalPages,
+        currentPage: currentPage,
+        startIndex: startIndex,
+        endIndex: endIndex
+    });
+    
+    startElement.textContent = startIndex;
+    endElement.textContent = endIndex;
+    totalElement.textContent = totalDealsCount;
+    
+    prevBtn.disabled = currentPage <= 1;
+    nextBtn.disabled = currentPage >= totalPages;
+    
+    renderPaginationNumbers(totalPages);
+}
+
+function renderPaginationNumbers(totalPages) {
+    const container = document.getElementById('paginationNumbers');
+    if (!container) {
+        console.warn('Pagination numbers container not found');
+        return;
+    }
+    
+    container.innerHTML = '';
+    
+    const maxVisible = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+    
+    if (endPage - startPage + 1 < maxVisible) {
+        startPage = Math.max(1, endPage - maxVisible + 1);
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+        const pageBtn = document.createElement('button');
+        pageBtn.className = `page-number ${i === currentPage ? 'active' : ''}`;
+        pageBtn.textContent = i;
+        pageBtn.onclick = () => goToPage(i);
+        container.appendChild(pageBtn);
+    }
+}
+
+function changePage(direction) {
+    const newPage = currentPage + direction;
+    console.log('🔄 Changing page:', {
+        from: currentPage,
+        to: newPage,
+        direction: direction,
+        totalPages: Math.ceil(totalDealsCount / itemsPerPage)
+    });
+    
+    if (newPage < 1 || newPage > Math.ceil(totalDealsCount / itemsPerPage)) {
+        console.warn('Cannot navigate to page:', newPage);
+        return;
+    }
+    
+    goToPage(newPage);
+}
+
+function goToPage(page) {
+    if (page < 1 || page > Math.ceil(totalDealsCount / itemsPerPage)) {
+        console.warn('Invalid page number:', page);
+        return;
+    }
+    
+    console.log('🔄 Navigating to page:', page, 'from current page:', currentPage);
+    currentPage = page;
+    renderDealsTable();
+    
+    // Update pagination UI
+    updatePagination({
+        currentPage: currentPage,
+        totalPages: Math.ceil(totalDealsCount / itemsPerPage),
+        totalDeals: totalDealsCount,
+        hasPrev: currentPage > 1,
+        hasNext: currentPage < Math.ceil(totalDealsCount / itemsPerPage)
+    });
+}
+
+function previousPage() {
+    changePage(-1);
+}
+
+function nextPage() {
+    changePage(1);
+}
+
+// Modal Management
+function cancelForm() {
+    closeLeadModal();
+    loadDeals();
+}
+
+function closeLeadModal() {
+    document.getElementById('dealForm').style.display = 'none';
+    currentDealId = null;
+    currentEditingLead = null;
+}
+
+function closeDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+    currentDeleteLead = null;
 }
 
 function closeActivityModal() {
@@ -786,58 +1130,59 @@ function closeActivityModal() {
     document.getElementById('activityDescription').value = '';
 }
 
-// Related Deals
-function loadRelatedDeals(currentDeal) {
-    const relatedDealsContainer = document.getElementById('relatedDealsList');
-    
-    if (!currentDeal) {
-        relatedDealsContainer.innerHTML = '<p>No related deals found</p>';
-        return;
-    }
-    
-    const relatedDeals = deals.filter(d => 
-        d.id !== currentDeal.id && 
-        (d.companyName === currentDeal.companyName || d.primaryContact === currentDeal.primaryContact)
-    );
-    
-    if (relatedDeals.length === 0) {
-        relatedDealsContainer.innerHTML = '<p>No related deals found</p>';
-    } else {
-        relatedDealsContainer.innerHTML = relatedDeals.map(deal => `
-            <div class="related-deal-card" onclick="viewDeal('${deal.id}')">
-                <h6>${deal.title}</h6>
-                <p>Value: $${deal.value.toLocaleString()}</p>
-                <p>Stage: ${deal.stage}</p>
-                <p>Close Date: ${formatDateShort(deal.closeDate)}</p>
-            </div>
-        `).join('');
+function closeAllModals() {
+    const modals = document.querySelectorAll('.modal-overlay');
+    modals.forEach(modal => {
+        modal.style.display = 'none';
+        modal.classList.remove('show');
+    });
+    currentDealId = null;
+    currentEditingLead = null;
+    currentDeleteLead = null;
+}
+
+// Utility Functions
+function formatDate(dateString) {
+    if (!dateString) return 'N/A';
+    try {
+        const date = new Date(dateString);
+        return date.toLocaleDateString();
+    } catch (error) {
+        return dateString;
     }
 }
 
-// Quick Actions
-function callContact() {
-    const phone = document.getElementById('contactPhone').value;
-    if (phone) {
-        window.open(`tel:${phone}`);
-        showNotification(`Calling ${phone}`, 'info');
-    } else {
-        showNotification('No phone number available', 'warning');
+function formatDateShort(dateString) {
+    if (!dateString) return '-';
+    try {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric',
+            year: 'numeric'
+        });
+    } catch (error) {
+        return dateString;
     }
 }
 
-function emailContact() {
-    const email = document.getElementById('contactEmail').value;
-    const subject = encodeURIComponent(`Regarding: ${document.getElementById('dealTitle').value}`);
-    
-    if (email) {
-        window.open(`mailto:${email}?subject=${subject}`);
-        showNotification(`Emailing ${email}`, 'info');
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+function showLoading(show) {
+    if (show) {
+        document.body.style.cursor = 'wait';
     } else {
-        showNotification('No email address available', 'warning');
+        document.body.style.cursor = 'default';
     }
 }
 
-// Validation
+// Form Validation
 function validateForm() {
     const requiredFields = [
         { id: 'dealTitle', name: 'Deal Title' },
@@ -879,16 +1224,6 @@ function validateForm() {
         isValid = false;
     }
     
-    // Email validation
-    const emailField = document.getElementById('contactEmail');
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (emailField.value.trim() && !emailPattern.test(emailField.value.trim())) {
-        emailField.style.borderColor = '#dc3545';
-        emailField.style.boxShadow = '0 0 0 4px rgba(220, 53, 69, 0.1)';
-        showNotification('Please enter a valid email address', 'error');
-        isValid = false;
-    }
-    
     if (!isValid) {
         if (firstErrorField) {
             firstErrorField.focus();
@@ -908,125 +1243,6 @@ function handleFormValidation(e) {
     }
 }
 
-// File handling
-function handleFileSelect(e) {
-    const files = Array.from(e.target.files);
-    files.forEach(file => {
-        addFileToList(file.name);
-    });
-}
-
-function handleDragOver(e) {
-    e.preventDefault();
-    e.currentTarget.style.borderColor = '#667eea';
-    e.currentTarget.style.background = 'linear-gradient(135deg, #f0f8ff 0%, #e6f2ff 100%)';
-}
-
-function handleDragLeave(e) {
-    e.preventDefault();
-    e.currentTarget.style.borderColor = '#e9ecef';
-    e.currentTarget.style.background = 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)';
-}
-
-function handleFileDrop(e) {
-    e.preventDefault();
-    e.currentTarget.style.borderColor = '#e9ecef';
-    e.currentTarget.style.background = 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)';
-    
-    const files = Array.from(e.dataTransfer.files);
-    files.forEach(file => {
-        addFileToList(file.name);
-    });
-}
-
-function addFileToList(fileName) {
-    const fileList = document.getElementById('fileList');
-    const fileItem = document.createElement('div');
-    fileItem.className = 'file-item';
-    fileItem.innerHTML = `
-        <span class="file-name">${fileName}</span>
-        <button class="file-remove" onclick="removeFile(this)" title="Remove file">×</button>
-    `;
-    fileList.appendChild(fileItem);
-}
-
-function removeFile(button) {
-    button.parentElement.remove();
-}
-
-// Table rendering
-function renderDealsTable() {
-    const tbody = document.getElementById('dealsTableBody');
-    const emptyState = document.getElementById('emptyState');
-    
-    // Apply filters and search
-    applyFilters();
-    
-    if (filteredDeals.length === 0) {
-        tbody.innerHTML = '';
-        emptyState.style.display = 'block';
-        updateRecordCount();
-        updatePagination();
-        return;
-    }
-    
-    emptyState.style.display = 'none';
-    
-    // Pagination
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedDeals = filteredDeals.slice(startIndex, endIndex);
-    
-    tbody.innerHTML = '';
-    
-    paginatedDeals.forEach((deal, index) => {
-        const row = document.createElement('tr');
-        row.onclick = () => viewDeal(deal.id);
-        
-        // Add alternating row colors for better readability
-        if (index % 2 === 0) {
-            row.style.backgroundColor = '#fafbfc';
-        }
-        
-        row.innerHTML = `
-            <td>
-                <div class="deal-title-cell">
-                    <strong>${deal.title}</strong>
-                    ${deal.notes ? '<br><small class="text-muted">' + (deal.notes.length > 50 ? deal.notes.substring(0, 50) + '...' : deal.notes) + '</small>' : ''}
-                </div>
-            </td>
-            <td>
-                <div class="company-cell">
-                    <strong>${deal.companyName}</strong>
-                    ${deal.contactEmail ? '<br><small class="text-muted">' + deal.contactEmail + '</small>' : ''}
-                </div>
-            </td>
-            <td><strong>$${deal.value.toLocaleString()}</strong></td>
-            <td><span class="stage-badge ${deal.stage.toLowerCase()}">${deal.stage}</span></td>
-            <td>
-                <div class="date-cell">
-                    <strong>${formatDateShort(deal.closeDate)}</strong>
-                    ${getDaysUntilClose(deal.closeDate) ? '<br><small class="text-muted">' + getDaysUntilClose(deal.closeDate) + '</small>' : ''}
-                </div>
-            </td>
-            <td><span class="priority-badge ${deal.priority.toLowerCase()}">${deal.priority}</span></td>
-            <td>${deal.assignedOwner || '-'}</td>
-    <td class="actions-cell">
-        <button class="action-btn" title="View" onclick="event.stopPropagation(); viewDeal('${deal.id}')"><i class="fas fa-eye"></i></button>
-        <button class="action-btn" title="Edit" onclick="event.stopPropagation(); editDeal('${deal.id}')"><i class="fas fa-edit"></i></button>
-        <button class="action-btn" title="Delete" onclick="event.stopPropagation(); deleteDeal('${deal.id}')"><i class="fas fa-trash"></i></button>
-    </td>
-
-
-        `;
-        
-        tbody.appendChild(row);
-    });
-    
-    updateRecordCount();
-    updatePagination();
-}
-
 // Avatar color function
 function getAvatarColor() {
     return 'linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%)';
@@ -1038,28 +1254,23 @@ function createLetterAvatar(name, element) {
         name = 'User';
     }
 
-    // Get first letter of the name
     const firstLetter = name.charAt(0).toUpperCase();
     const backgroundColor = getAvatarColor();
 
     if (element.tagName === 'IMG') {
-        // For image elements, create canvas avatar
         const canvas = document.createElement('canvas');
         const size = 200;
         canvas.width = size;
         canvas.height = size;
         const context = canvas.getContext('2d');
 
-        // Create gradient for canvas
         const gradient = context.createLinearGradient(0, 0, size, size);
         gradient.addColorStop(0, '#00BCD4');
         gradient.addColorStop(1, '#1E88E5');
 
-        // Draw background with gradient
         context.fillStyle = gradient;
         context.fillRect(0, 0, size, size);
 
-        // Draw letter
         context.fillStyle = '#FFFFFF';
         context.font = `bold ${size * 0.4}px Inter, Arial, sans-serif`;
         context.textAlign = 'center';
@@ -1069,13 +1280,11 @@ function createLetterAvatar(name, element) {
         element.src = canvas.toDataURL();
         element.alt = name;
     } else {
-        // For div elements (like in sidebar), use CSS gradient directly
         element.style.background = backgroundColor;
         const letterSpan = element.querySelector('.avatar-letter');
         if (letterSpan) {
             letterSpan.textContent = firstLetter;
         } else {
-            // If no span exists, create one (for sidebar avatar)
             const newLetterSpan = document.createElement('span');
             newLetterSpan.className = 'avatar-letter';
             newLetterSpan.textContent = firstLetter;
@@ -1088,12 +1297,11 @@ function createLetterAvatar(name, element) {
 // Update user avatar function
 function updateUserAvatar() {
     try {
-        const userData = JSON.parse(localStorage.getItem('userData'));
+        const userData = getUserData();
         const userName = userData ? (userData.name || userData.username || userData.email || 'User') : 'User';
         
         console.log('Updating avatar for user:', userName);
         
-        // Update sidebar avatar (div element)
         const sidebarAvatar = document.getElementById('userAvatar');
         if (sidebarAvatar) {
             createLetterAvatar(userName, sidebarAvatar);
@@ -1101,7 +1309,6 @@ function updateUserAvatar() {
 
     } catch (error) {
         console.error('Error updating avatar:', error);
-        // Fallback with gradient color
         const sidebarAvatar = document.getElementById('userAvatar');
         if (sidebarAvatar) {
             sidebarAvatar.style.background = 'linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%)';
@@ -1113,295 +1320,173 @@ function updateUserAvatar() {
     }
 }
 
-// Update the displayUserName function to include avatar
-function displayUserName() {
-    try {
-        const userData = JSON.parse(localStorage.getItem('userData'));
-        const userNameElement = document.getElementById('userDisplayName');
-        
-        console.log('👤 Displaying user name for:', userData);
-        
-        let displayName = 'User';
-        
-        if (userData) {
-            // Priority: name -> username -> email -> 'User'
-            displayName = userData.name || userData.username || userData.email || 'User';
-            console.log('✅ User name found:', displayName);
+// Notification System
+function showNotification(message, type = 'info') {
+    // Remove existing notifications
+    const existingNotification = document.querySelector('.toast-notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+    
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `toast-notification toast-${type}`;
+    notification.innerHTML = `
+        <div class="toast-content">
+            <i class="fas ${getNotificationIcon(type)}"></i>
+            <span>${message}</span>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+    `;
+    
+    // Add to document
+    document.body.appendChild(notification);
+    
+    // Animate in
+    setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+    }, 100);
+    
+    // Auto remove after 4 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 400);
+        }
+    }, 4000);
+    
+    console.log(`💬 Notification: ${type} - ${message}`);
+}
+
+function getNotificationIcon(type) {
+    const icons = {
+        success: 'fa-check-circle',
+        error: 'fa-times-circle',
+        warning: 'fa-exclamation-triangle',
+        info: 'fa-info-circle'
+    };
+    return icons[type] || icons.info;
+}
+
+function getNotificationColor(type) {
+    const colors = {
+        success: 'linear-gradient(135deg, #28a745 0%, #20c997 100%)',
+        error: 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)',
+        warning: 'linear-gradient(135deg, #ffc107 0%, #fd7e14 100%)',
+        info: 'linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%)'
+    };
+    return colors[type] || colors.info;
+}
+
+// Dashboard Functions
+function toggleSidebar() {
+    const appContainer = document.querySelector('.app-container');
+    const sidebarToggleIcon = document.getElementById('sidebarToggleIcon');
+    const floatingToggleIcon = document.getElementById('floatingToggleIcon');
+    
+    const isCollapsed = appContainer.classList.toggle('sidebar-collapsed');
+    
+    // Update sidebar toggle icon based on sidebar state
+    if (sidebarToggleIcon) {
+        if (isCollapsed) {
+            sidebarToggleIcon.className = 'fas fa-chevron-right';
+            console.log('🔧 Sidebar collapsed - showing right chevron');
         } else {
-            console.warn('❌ No user data found in localStorage');
+            sidebarToggleIcon.className = 'fas fa-chevron-left';
+            console.log('🔧 Sidebar expanded - showing left chevron');
         }
-        
-        // Always update the display name
-        if (userNameElement) {
-            userNameElement.textContent = displayName;
-        }
-        
-        // Update avatar with letter
-        updateUserAvatar();
-        
-    } catch (error) {
-        console.error('❌ Error displaying user name:', error);
-        const userNameElement = document.getElementById('userDisplayName');
-        if (userNameElement) {
-            userNameElement.textContent = 'User';
-        }
-        updateUserAvatar();
-    }
-}
-
-// Add getUserData helper function
-function getUserData() {
-    try {
-        const userDataString = localStorage.getItem('userData');
-        console.log('👤 Raw userData from localStorage:', userDataString);
-        
-        if (!userDataString) {
-            console.warn('❌ No user data found in localStorage');
-            return null;
-        }
-        
-        const userData = JSON.parse(userDataString);
-        console.log('👤 Parsed userData:', userData);
-        
-        // Validate required fields
-        if (userData && userData.id && userData.name) {
-            return userData;
-        } else {
-            console.warn('❌ User data missing required fields');
-            return null;
-        }
-        
-    } catch (error) {
-        console.error('❌ Error parsing user data:', error);
-        return null;
-    }
-}
-
-function getDaysUntilClose(closeDate) {
-    if (!closeDate) return '';
-    
-    const today = new Date();
-    const close = new Date(closeDate);
-    const diffTime = close - today;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 0) return 'Due today';
-    if (diffDays === 1) return 'Due tomorrow';
-    if (diffDays === -1) return 'Overdue by 1 day';
-    if (diffDays < 0) return `Overdue by ${Math.abs(diffDays)} days`;
-    if (diffDays > 0) return `${diffDays} days left`;
-    
-    return '';
-}
-
-// Search and filter functions
-function searchDeals(query) {
-    currentPage = 1;
-    applyFilters();
-    renderDealsTable();
-}
-
-function filterDeals() {
-    currentPage = 1;
-    applyFilters();
-    renderDealsTable();
-}
-
-function applyFilters() {
-    const searchQuery = document.querySelector('.search-input').value.toLowerCase().trim();
-    const stageFilter = document.getElementById('stageFilter').value;
-    const priorityFilter = document.getElementById('priorityFilter').value;
-    
-    filteredDeals = deals.filter(deal => {
-        const matchesSearch = !searchQuery || 
-            deal.title.toLowerCase().includes(searchQuery) ||
-            deal.companyName.toLowerCase().includes(searchQuery) ||
-            deal.primaryContact.toLowerCase().includes(searchQuery) ||
-            (deal.assignedOwner && deal.assignedOwner.toLowerCase().includes(searchQuery));
-        
-        const matchesStage = !stageFilter || deal.stage === stageFilter;
-        const matchesPriority = !priorityFilter || deal.priority === priorityFilter;
-        
-        return matchesSearch && matchesStage && matchesPriority;
-    });
-}
-
-// Sorting
-function sortTable(columnIndex) {
-    const columns = ['title', 'companyName', 'value', 'stage', 'closeDate', 'priority', 'assignedOwner'];
-    const column = columns[columnIndex];
-    
-    if (sortColumn === column) {
-        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-    } else {
-        sortColumn = column;
-        sortDirection = 'asc';
     }
     
-    filteredDeals.sort((a, b) => {
-        let valueA, valueB;
-        
-        if (column === 'value') {
-            valueA = a[column] || 0;
-            valueB = b[column] || 0;
-        } else if (column === 'closeDate') {
-            valueA = new Date(a[column] || '9999-12-31');
-            valueB = new Date(b[column] || '9999-12-31');
-        } else {
-            valueA = (a[column] || '').toLowerCase();
-            valueB = (b[column] || '').toLowerCase();
-        }
-        
-        if (sortDirection === 'asc') {
-            return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
-        } else {
-            return valueA < valueB ? 1 : valueA > valueB ? -1 : 0;
-        }
-    });
-    
-    renderDealsTable();
-    updateSortIcons(columnIndex);
-}
-
-function updateSortIcons(activeColumn) {
-    const sortIcons = document.querySelectorAll('.sort-icon');
-    sortIcons.forEach((icon, index) => {
-        if (index === activeColumn) {
-            icon.textContent = sortDirection === 'asc' ? '↑' : '↓';
-        } else {
-            icon.textContent = '↕';
-        }
-    });
-}
-
-// Enhanced Pagination
-function updatePagination() {
-    const totalPages = Math.ceil(filteredDeals.length / itemsPerPage);
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const prevBtnBottom = document.getElementById('prevBtnBottom');
-    const nextBtnBottom = document.getElementById('nextBtnBottom');
-    const firstBtn = document.getElementById('firstBtn');
-    const lastBtn = document.getElementById('lastBtn');
-    
-    // Update top pagination buttons
-    prevBtn.disabled = currentPage <= 1;
-    nextBtn.disabled = currentPage >= totalPages;
-    
-    // Update bottom pagination buttons
-    prevBtnBottom.disabled = currentPage <= 1;
-    nextBtnBottom.disabled = currentPage >= totalPages;
-    firstBtn.disabled = currentPage <= 1;
-    lastBtn.disabled = currentPage >= totalPages;
-    
-    // Update page numbers
-    updatePageNumbers(totalPages);
-}
-
-function updatePageNumbers(totalPages) {
-    const pageNumbersContainer = document.getElementById('pageNumbers');
-    pageNumbersContainer.innerHTML = '';
-    
-    // Show max 5 page numbers
-    let startPage = Math.max(1, currentPage - 2);
-    let endPage = Math.min(totalPages, startPage + 4);
-    
-    // Adjust start page if we're near the end
-    if (endPage - startPage < 4) {
-        startPage = Math.max(1, endPage - 4);
+    // Update floating button icon - ALWAYS show right chevron (pointing towards hidden sidebar)
+    if (floatingToggleIcon) {
+        floatingToggleIcon.className = 'fas fa-chevron-right';
     }
     
-    for (let i = startPage; i <= endPage; i++) {
-        const pageNumber = document.createElement('button');
-        pageNumber.className = `page-number ${i === currentPage ? 'active' : ''}`;
-        pageNumber.textContent = i;
-        pageNumber.onclick = () => goToPage(i);
-        pageNumbersContainer.appendChild(pageNumber);
-    }
-}
-
-function updateRecordCount() {
-    const startIndex = filteredDeals.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
-    const endIndex = Math.min(currentPage * itemsPerPage, filteredDeals.length);
-    const total = filteredDeals.length;
+    // Force button visibility
+    const toggleBtn = document.querySelector('.sidebar-toggle-btn');
+    const toggleSticky = document.querySelector('.sidebar-toggle-sticky');
     
-    document.getElementById('recordCount').textContent = `${startIndex}-${endIndex} / ${total}`;
-    document.getElementById('recordCountBottom').textContent = `Showing ${startIndex}-${endIndex} of ${total} records`;
-}
-
-function previousPage() {
-    if (currentPage > 1) {
-        currentPage--;
-        renderDealsTable();
+    if (toggleBtn) {
+        toggleBtn.style.display = 'flex';
+        toggleBtn.style.visibility = 'visible';
+        toggleBtn.style.opacity = '1';
     }
-}
-
-function nextPage() {
-    const totalPages = Math.ceil(filteredDeals.length / itemsPerPage);
-    if (currentPage < totalPages) {
-        currentPage++;
-        renderDealsTable();
+    
+    if (toggleSticky) {
+        toggleSticky.style.display = 'flex';
+        toggleSticky.style.visibility = 'visible';
+        toggleSticky.style.opacity = '1';
     }
+    
+    // Save sidebar state to localStorage
+    localStorage.setItem('sidebarCollapsed', isCollapsed);
+    
+    console.log('🔧 Sidebar toggled:', isCollapsed ? 'collapsed' : 'expanded');
 }
 
-function goToPage(page) {
-    const totalPages = Math.ceil(filteredDeals.length / itemsPerPage);
-    if (page >= 1 && page <= totalPages) {
-        currentPage = page;
-        renderDealsTable();
-    }
-}
-
-function goToLastPage() {
-    const totalPages = Math.ceil(filteredDeals.length / itemsPerPage);
-    if (totalPages > 0) {
-        currentPage = totalPages;
-        renderDealsTable();
-    }
-}
-
-// Action menu functions
-function toggleActionMenu(event, id) {
-    event.stopPropagation();
+function toggleUserMenu() {
+    const dropdown = document.getElementById('userDropdown');
+    const isVisible = dropdown.classList.contains('show');
     closeAllDropdowns();
-    currentDealId = id;
-    const menu = document.getElementById(`actionMenu${id}`);
-    if (menu) {
-        menu.classList.toggle('show');
+    if (!isVisible) {
+        dropdown.classList.add('show');
+        console.log('👤 Opening user menu');
     }
 }
 
 function closeAllDropdowns() {
-    const dropdowns = document.querySelectorAll('.dropdown-menu');
-    dropdowns.forEach(dropdown => {
+    document.querySelectorAll('.user-dropdown').forEach(dropdown => {
         dropdown.classList.remove('show');
     });
 }
 
-// Modal functions
-function closeDeleteModal() {
-    document.getElementById('deleteModal').style.display = 'none';
-    currentDealId = null;
+function viewProfile() {
+    closeAllDropdowns();
+    showNotification('Profile feature coming soon', 'info');
 }
 
-function closeForm() {
-    document.getElementById('dealForm').style.display = 'none';
-    document.getElementById('dealsList').style.display = 'block';
-    currentView = 'list';
+function openSettings() {
+    closeAllDropdowns();
+    showNotification('Opening settings...', 'info');
 }
 
-function closeAllModals() {
-    const modals = document.querySelectorAll('.modal-overlay');
-    modals.forEach(modal => {
-        modal.style.display = 'none';
-    });
-    currentDealId = null;
+function openHelp() {
+    closeAllDropdowns();
+    showNotification('Opening help center...', 'info');
+}
+
+function logout() {
+    closeAllDropdowns();
+    if (confirm('Are you sure you want to logout?')) {
+        const userData = getUserData();
+        const userName = userData ? userData.name : 'User';
+        
+        showNotification(`Goodbye, ${userName}! Logging out...`, 'info');
+        
+        // Clear storage
+        localStorage.removeItem('userData');
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('loginTime');
+        localStorage.removeItem('rememberMe');
+        localStorage.removeItem('savedEmail');
+        
+        // Redirect to login page
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 1000);
+        
+        console.log('🚪 User logged out');
+    }
 }
 
 // Export function
 async function exportDeals() {
     try {
-        const token = localStorage.getItem('authToken');
+        const token = getToken();
         if (!token) {
             showNotification('Please login to export deals', 'error');
             return;
@@ -1436,172 +1521,4 @@ async function exportDeals() {
     }
 }
 
-// Utility functions
-function formatDate(dateString) {
-    if (!dateString) return '-';
-    try {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    } catch (error) {
-        return dateString;
-    }
-}
-
-function formatDateShort(dateString) {
-    if (!dateString) return '-';
-    try {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', { 
-            month: 'short', 
-            day: 'numeric',
-            year: 'numeric'
-        });
-    } catch (error) {
-        return dateString;
-    }
-}
-
-function showLoading(show) {
-    if (show) {
-        document.body.style.cursor = 'wait';
-        // You can add a loading spinner here
-    } else {
-        document.body.style.cursor = 'default';
-    }
-}
-
-// Notification system
-function showNotification(message, type = 'info') {
-    // Remove existing notifications
-    const existingNotification = document.querySelector('.toast-notification');
-    if (existingNotification) {
-        existingNotification.remove();
-    }
-    
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = `toast-notification toast-${type}`;
-    notification.innerHTML = `
-        <div class="toast-content">
-            <i class="fas ${getNotificationIcon(type)}"></i>
-            <span>${message}</span>
-        </div>
-        <button class="toast-close" onclick="this.parentElement.remove()">×</button>
-    `;
-    
-    document.body.appendChild(notification);
-    
-    // Animate in
-    setTimeout(() => {
-        notification.style.transform = 'translateX(0)';
-    }, 100);
-    
-    // Auto remove after 5 seconds
-    setTimeout(() => {
-        if (notification.parentNode) {
-            notification.style.transform = 'translateX(100%)';
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.remove();
-                }
-            }, 400);
-        }
-    }, 5000);
-}
-
-function getNotificationIcon(type) {
-    const icons = {
-        success: 'fa-check-circle',
-        error: 'fa-times-circle',
-        warning: 'fa-exclamation-triangle',
-        info: 'fa-info-circle'
-    };
-    return icons[type] || icons.info;
-}
-
-// Dashboard Functions
-function toggleUserMenu() {
-    const dropdown = document.getElementById('userDropdown');
-    const isVisible = dropdown.classList.contains('show');
-    closeAllDropdowns();
-    if (!isVisible) {
-        dropdown.classList.add('show');
-    }
-}
-
-function toggleNotifications() {
-    const dropdown = document.getElementById('notificationsDropdown');
-    const isVisible = dropdown.classList.contains('show');
-    closeAllDropdowns();
-    if (!isVisible) {
-        dropdown.classList.add('show');
-    }
-}
-
-function viewProfile() {
-    closeAllDropdowns();
-    showNotification('Profile feature coming soon', 'info');
-}
-
-function openSettings() {
-    closeAllDropdowns();
-    showNotification('Opening settings...', 'info');
-}
-
-function openHelp() {
-    closeAllDropdowns();
-    showNotification('Opening help center...', 'info');
-}
-function toggleSidebar() {
-    const appContainer = document.querySelector('.app-container');
-    appContainer.classList.toggle('sidebar-collapsed');
-    
-    // Update the menu toggle icon
-    const menuToggleIcon = document.querySelector('.menu-toggle i');
-    if (appContainer.classList.contains('sidebar-collapsed')) {
-        menuToggleIcon.className = 'fas fa-chevron-right';
-    } else {
-        menuToggleIcon.className = 'fas fa-bars';
-    }
-}
-
-function logout() {
-    closeAllDropdowns();
-    if (confirm('Are you sure you want to logout?')) {
-        const userData = JSON.parse(localStorage.getItem('userData'));
-        const userName = userData ? userData.name : 'User';
-        
-        showNotification(`Goodbye, ${userName}! Logging out...`, 'info');
-        
-        // Clear storage
-        localStorage.removeItem('userData');
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('loginTime');
-        
-        // Redirect to login page
-        setTimeout(() => {
-            window.location.href = '/';
-        }, 1000);
-    }
-}
-
-function markAllRead() {
-    const badge = document.getElementById('notificationCount');
-    badge.textContent = '0';
-    badge.style.display = 'none';
-    closeAllDropdowns();
-    showNotification('All notifications marked as read', 'success');
-}
-
-function viewNotification(id) {
-    closeAllDropdowns();
-    showNotification(`Viewing notification ${id}`, 'info');
-}
-
-console.log('Deal Management System initialized with enhanced table styling and pagination');
+console.log('Deal Management System initialized with new modal-based structure');
