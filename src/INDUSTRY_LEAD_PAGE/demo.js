@@ -5,9 +5,9 @@ let leads = [];
 let filteredLeads = [];
 let currentEditingLead = null;
 let currentDeleteLead = null;
-let currentView = 'cards';
+let currentView = 'table'; // Force table view only
 let currentPage = 1;
-let itemsPerPage = 12;
+let itemsPerPage = 6; // Change from 15 to 6 to match show.html
 let uploadedFiles = [];
 let totalLeadsCount = 0;
 
@@ -22,12 +22,12 @@ function handleNavigation(page) {
         'dashboard': '/MAIN_PAGE/index.html',
         'leads': '/show_new_demo/show.html',
         'industry-leads': '/INDUSTRY_LEAD_PAGE/demo.html',
-        'deals': '/DEAL/deal.html',
-        'contacts': '/CONTACT/contact.html',
-        'invoice': '/INVOICE/invoice.html',
+        'deals': '/main/DEAL/deal.html',
+        'contacts': '/main/CONTACT/contact.html',
+        'invoice': '/main/INVOICE/invoice.html',
         'reports': '/REPORTS/reports.html',
         'settings': '/SETTINGS/setting.html',
-        'salary': '/SALARY/Salary.html'
+        'salary': '/main/SALARY/Salary.html'
     };
     
     const route = routes[page];
@@ -48,7 +48,7 @@ function handleNavigation(page) {
 function getPageTitle(page) {
     const titles = {
         'dashboard': 'Dashboard',
-        'leads': 'Leads Management',
+        'leads': 'Show Leads',
         'industry-leads': 'Industry Leads',
         'deals': 'Deals Pipeline',
         'contacts': 'Contacts',
@@ -85,9 +85,9 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
     displayUserName(); // This will now also update the avatar
     
-    // Load leads and stats immediately
+    // Load leads immediately
     loadLeads().then(() => {
-        console.log('Leads and stats loaded successfully');
+        console.log('Leads loaded successfully');
     }).catch(error => {
         console.error('Failed to load leads:', error);
     });
@@ -161,13 +161,37 @@ function setupEventListeners() {
 }
 
 function displayUserName() {
-    const userData = JSON.parse(localStorage.getItem('userData'));
-    const userNameElement = document.getElementById('userDisplayName');
-    
-    if (userData && userData.name) {
-        userNameElement.textContent = userData.name;
-    } else {
-        userNameElement.textContent = 'User';
+    try {
+        const userData = getUserData();
+        const userNameElement = document.getElementById('userDisplayName');
+        
+        console.log('👤 Displaying user name for:', userData);
+        
+        let displayName = 'User';
+        
+        if (userData) {
+            // Priority: name -> username -> email -> 'User'
+            displayName = userData.name || userData.username || userData.email || 'User';
+            console.log('✅ User name found:', displayName);
+        } else {
+            console.warn('❌ No user data found in localStorage');
+        }
+        
+        // Always update the display name
+        if (userNameElement) {
+            userNameElement.textContent = displayName;
+        }
+        
+        // Update avatar with letter
+        updateUserAvatar();
+        
+    } catch (error) {
+        console.error('❌ Error displaying user name:', error);
+        const userNameElement = document.getElementById('userDisplayName');
+        if (userNameElement) {
+            userNameElement.textContent = 'User';
+        }
+        updateUserAvatar();
     }
 }
 
@@ -175,7 +199,7 @@ async function loadLeads() {
     try {
         showLoading(true);
         
-        const token = localStorage.getItem('authToken');
+        const token = getToken();
         if (!token) {
             showNotification('Please login to access leads', 'error');
             setTimeout(() => {
@@ -206,11 +230,14 @@ async function loadLeads() {
         } else if (sortBy === 'created_asc') {
             sortField = 'createdAt';
             sortOrder = 'asc';
+        } else if (sortBy === 'status_asc') {
+            sortField = 'leadStatus';
+            sortOrder = 'asc';
         }
 
+        // For client-side pagination, we need to get ALL data first
         const params = new URLSearchParams({
-            page: currentPage,
-            limit: itemsPerPage,
+            limit: 1000, // Get a large number to ensure we get all records
             ...(search && { search }),
             ...(sourceFilter && { leadSource: sourceFilter }),
             ...(statusFilter && { leadStatus: statusFilter }),
@@ -218,6 +245,8 @@ async function loadLeads() {
             sortBy: sortField,
             sortOrder: sortOrder
         });
+
+        console.log('🔍 Loading ALL industry leads for client-side pagination');
 
         const response = await fetch(`${API_BASE_URL}/industry-leads?${params}`, {
             method: 'GET',
@@ -233,7 +262,14 @@ async function loadLeads() {
 
         const result = await response.json();
 
+        console.log('📊 Server response - ALL DATA:', {
+            success: result.success,
+            dataLength: result.data ? result.data.length : 0,
+            totalLeads: result.pagination ? result.pagination.totalLeads : result.data.length
+        });
+
         if (result.success) {
+            // Store ALL leads from server for client-side pagination
             leads = result.data.map(lead => ({
                 id: lead._id,
                 contactName: lead.contactName,
@@ -258,26 +294,59 @@ async function loadLeads() {
             }));
 
             filteredLeads = [...leads];
-            totalLeadsCount = result.pagination.totalLeads;
+            totalLeadsCount = result.pagination ? result.pagination.totalLeads : result.data.length;
             
-            // Update stats with real data from backend
-            updateStats(result.stats);
+            // Update total records display
+            document.getElementById('totalRecords').textContent = totalLeadsCount;
+            
+            console.log('🔄 Stored ALL leads for client-side pagination:', {
+                totalLeadsCount: totalLeadsCount,
+                leadsLength: leads.length
+            });
+            
             renderLeads();
-            updatePagination(result.pagination);
+            
+            // Use client-side pagination calculations
+            updatePagination({
+                currentPage: currentPage,
+                totalPages: Math.ceil(totalLeadsCount / itemsPerPage),
+                totalLeads: totalLeadsCount,
+                hasPrev: currentPage > 1,
+                hasNext: currentPage < Math.ceil(totalLeadsCount / itemsPerPage)
+            });
+            
         } else {
             throw new Error(result.message || 'Failed to load leads');
         }
     } catch (error) {
         console.error('Error loading leads:', error);
         showNotification('Failed to load leads: ' + error.message, 'error');
+        
+        // Fallback: Try to render with empty data
+        leads = [];
+        filteredLeads = [];
+        renderLeads();
+        
+        // Update pagination for error state
+        updatePagination({
+            currentPage: 1,
+            totalPages: 1,
+            totalLeads: 0,
+            hasPrev: false,
+            hasNext: false
+        });
     } finally {
         showLoading(false);
     }
 }
 
+function getToken() {
+    return localStorage.getItem('authToken') || '';
+}
+
 async function saveLeadToAPI(leadData, isUpdate = false) {
     try {
-        const token = localStorage.getItem('authToken');
+        const token = getToken();
         if (!token) {
             throw new Error('Authentication required');
         }
@@ -317,7 +386,7 @@ async function saveLeadToAPI(leadData, isUpdate = false) {
 
 async function deleteLeadFromAPI(leadId) {
     try {
-        const token = localStorage.getItem('authToken');
+        const token = getToken();
         if (!token) {
             throw new Error('Authentication required');
         }
@@ -349,7 +418,7 @@ async function deleteLeadFromAPI(leadId) {
 
 async function bulkUpdateStatusAPI(leadIds, status) {
     try {
-        const token = localStorage.getItem('authToken');
+        const token = getToken();
         if (!token) {
             throw new Error('Authentication required');
         }
@@ -383,7 +452,7 @@ async function bulkUpdateStatusAPI(leadIds, status) {
 
 async function bulkDeleteLeadsAPI(leadIds) {
     try {
-        const token = localStorage.getItem('authToken');
+        const token = getToken();
         if (!token) {
             throw new Error('Authentication required');
         }
@@ -444,8 +513,8 @@ function editLead(leadId) {
 }
 
 function populateLeadForm(lead) {
-    document.getElementById('contactName').value = lead.contactName || '';
     document.getElementById('clientEmail').value = lead.clientEmail || '';
+    document.getElementById('contactName').value = lead.contactName || '';
     document.getElementById('jobTitle').value = lead.jobTitle || '';
     document.getElementById('clientPhone').value = lead.clientPhone || '';
     document.getElementById('companyName').value = lead.companyName || '';
@@ -464,7 +533,7 @@ function populateLeadForm(lead) {
 
 function clearLeadForm() {
     const form = document.getElementById('leadForm');
-    form.reset();
+    if (form) form.reset();
     uploadedFiles = [];
     updateUploadedFilesDisplay();
 }
@@ -503,8 +572,7 @@ async function saveLead() {
             leadStatus: formData.leadStatus,
             isProspect: formData.isProspect,
             emailMessage: formData.emailMessage,
-            leadNotes: formData.leadNotes,
-            attachments: uploadedFiles
+            leadNotes: formData.leadNotes
         };
 
         const savedLead = await saveLeadToAPI(apiData, !!currentEditingLead);
@@ -515,7 +583,7 @@ async function saveLead() {
         );
 
         closeLeadModal();
-        await loadLeads(); // This will reload stats too
+        await loadLeads();
         
     } catch (error) {
         console.error('Error saving lead:', error);
@@ -525,71 +593,24 @@ async function saveLead() {
     }
 }
 
-async function confirmDelete() {
-    if (!currentDeleteLead) return;
-    
-    try {
-        showLoading(true);
-        await deleteLeadFromAPI(currentDeleteLead.id);
-        
-        showNotification('Industry lead deleted successfully', 'success');
-        closeDeleteModal();
-        await loadLeads(); // This will reload stats too
-        
-    } catch (error) {
-        console.error('Error deleting lead:', error);
-        showNotification('Failed to delete lead: ' + error.message, 'error');
-    } finally {
-        showLoading(false);
-    }
-}
-
-// Manual stats refresh function
-async function refreshStats() {
-    try {
-        const token = localStorage.getItem('authToken');
-        if (!token) return;
-
-        const response = await fetch(`${API_BASE_URL}/industry-leads?page=1&limit=1`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-
-        if (response.ok) {
-            const result = await response.json();
-            if (result.success) {
-                updateStats(result.stats);
-            }
-        }
-    } catch (error) {
-        console.error('Error refreshing stats:', error);
-        calculateStatsFromLeads(); // Fallback to local calculation
-    }
-}
-
-// Call this on page load and after operations
-refreshStats();
-
 function getLeadFormData() {
     return {
-        contactName: document.getElementById('contactName').value.trim(),
-        clientEmail: document.getElementById('clientEmail').value.trim(),
-        jobTitle: document.getElementById('jobTitle').value.trim(),
-        clientPhone: document.getElementById('clientPhone').value.trim(),
-        companyName: document.getElementById('companyName').value.trim(),
-        companyWebsite: document.getElementById('companyWebsite').value.trim(),
-        companyCountry: document.getElementById('companyCountry').value,
-        companyPhone: document.getElementById('companyPhone').value.trim(),
-        industryType: document.getElementById('industryType').value,
-        companySize: document.getElementById('companySize').value,
-        annualRevenue: document.getElementById('annualRevenue').value,
-        leadSource: document.getElementById('leadSource').value,
-        leadStatus: document.getElementById('leadStatus').value,
-        isProspect: document.getElementById('isProspect').checked,
-        emailMessage: document.getElementById('emailMessage').value.trim(),
-        leadNotes: document.getElementById('leadNotes').value.trim()
+        contactName: document.getElementById('contactName')?.value.trim() || '',
+        clientEmail: document.getElementById('clientEmail')?.value.trim() || '',
+        jobTitle: document.getElementById('jobTitle')?.value.trim() || '',
+        clientPhone: document.getElementById('clientPhone')?.value.trim() || '',
+        companyName: document.getElementById('companyName')?.value.trim() || '',
+        companyWebsite: document.getElementById('companyWebsite')?.value.trim() || '',
+        companyCountry: document.getElementById('companyCountry')?.value || '',
+        companyPhone: document.getElementById('companyPhone')?.value.trim() || '',
+        industryType: document.getElementById('industryType')?.value || '',
+        companySize: document.getElementById('companySize')?.value || '',
+        annualRevenue: document.getElementById('annualRevenue')?.value || '',
+        leadSource: document.getElementById('leadSource')?.value || '',
+        leadStatus: document.getElementById('leadStatus')?.value || 'new',
+        isProspect: document.getElementById('isProspect')?.checked || false,
+        emailMessage: document.getElementById('emailMessage')?.value.trim() || '',
+        leadNotes: document.getElementById('leadNotes')?.value.trim() || ''
     };
 }
 
@@ -615,7 +636,7 @@ async function confirmDelete() {
         
         showNotification('Industry lead deleted successfully', 'success');
         closeDeleteModal();
-        await loadLeads(); // Reload leads from server
+        await loadLeads();
         
     } catch (error) {
         console.error('Error deleting lead:', error);
@@ -627,7 +648,7 @@ async function confirmDelete() {
 
 async function viewLeadDetails(leadId) {
     try {
-        const token = localStorage.getItem('authToken');
+        const token = getToken();
         if (!token) {
             showNotification('Please login to view lead details', 'error');
             return;
@@ -661,24 +682,26 @@ async function viewLeadDetails(leadId) {
 
 function renderLeadDetails(lead) {
     const content = document.getElementById('leadDetailsContent');
+    if (!content) return;
+    
     content.innerHTML = `
         <div class="details-section">
             <h4><i class="fas fa-user"></i> Contact Information</h4>
             <div class="detail-row">
                 <span class="detail-label">Name:</span>
-                <span class="detail-value">${lead.contactName}</span>
+                <span class="detail-value">${escapeHtml(lead.contactName)}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Email:</span>
-                <span class="detail-value">${lead.clientEmail}</span>
+                <span class="detail-value">${escapeHtml(lead.clientEmail)}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Job Title:</span>
-                <span class="detail-value">${lead.jobTitle || 'N/A'}</span>
+                <span class="detail-value">${escapeHtml(lead.jobTitle || 'N/A')}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Phone:</span>
-                <span class="detail-value">${lead.clientPhone || 'N/A'}</span>
+                <span class="detail-value">${escapeHtml(lead.clientPhone || 'N/A')}</span>
             </div>
         </div>
         
@@ -686,19 +709,19 @@ function renderLeadDetails(lead) {
             <h4><i class="fas fa-building"></i> Company Information</h4>
             <div class="detail-row">
                 <span class="detail-label">Company:</span>
-                <span class="detail-value">${lead.companyName}</span>
+                <span class="detail-value">${escapeHtml(lead.companyName)}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Website:</span>
-                <span class="detail-value">${lead.companyWebsite || 'N/A'}</span>
+                <span class="detail-value">${escapeHtml(lead.companyWebsite || 'N/A')}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Country:</span>
-                <span class="detail-value">${lead.companyCountry || 'N/A'}</span>
+                <span class="detail-value">${escapeHtml(lead.companyCountry || 'N/A')}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Company Phone:</span>
-                <span class="detail-value">${lead.companyPhone || 'N/A'}</span>
+                <span class="detail-value">${escapeHtml(lead.companyPhone || 'N/A')}</span>
             </div>
         </div>
         
@@ -706,15 +729,15 @@ function renderLeadDetails(lead) {
             <h4><i class="fas fa-industry"></i> Industry Information</h4>
             <div class="detail-row">
                 <span class="detail-label">Industry Type:</span>
-                <span class="detail-value">${lead.industryType || 'N/A'}</span>
+                <span class="detail-value">${escapeHtml(lead.industryType || 'N/A')}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Company Size:</span>
-                <span class="detail-value">${lead.companySize || 'N/A'}</span>
+                <span class="detail-value">${escapeHtml(lead.companySize || 'N/A')}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Annual Revenue:</span>
-                <span class="detail-value">${lead.annualRevenue || 'N/A'}</span>
+                <span class="detail-value">${escapeHtml(lead.annualRevenue || 'N/A')}</span>
             </div>
         </div>
         
@@ -722,11 +745,11 @@ function renderLeadDetails(lead) {
             <h4><i class="fas fa-info-circle"></i> Lead Status</h4>
             <div class="detail-row">
                 <span class="detail-label">Source:</span>
-                <span class="detail-value">${lead.leadSource}</span>
+                <span class="detail-value">${escapeHtml(lead.leadSource)}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Status:</span>
-                <span class="detail-value">${lead.leadStatus}</span>
+                <span class="detail-value">${escapeHtml(lead.leadStatus)}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Qualified Prospect:</span>
@@ -741,14 +764,14 @@ function renderLeadDetails(lead) {
         ${lead.emailMessage ? `
         <div class="communication-section">
             <h4><i class="fas fa-envelope"></i> Email Communication</h4>
-            <div class="message-content">${lead.emailMessage}</div>
+            <div class="message-content">${escapeHtml(lead.emailMessage)}</div>
         </div>
         ` : ''}
         
         ${lead.leadNotes ? `
         <div class="communication-section">
             <h4><i class="fas fa-sticky-note"></i> Notes</h4>
-            <div class="message-content">${lead.leadNotes}</div>
+            <div class="message-content">${escapeHtml(lead.leadNotes)}</div>
         </div>
         ` : ''}
     `;
@@ -756,111 +779,36 @@ function renderLeadDetails(lead) {
 
 // Rendering Functions
 function renderLeads() {
-    if (currentView === 'cards') {
-        renderLeadsCards();
-    } else {
-        renderLeadsTable();
-    }
-}
-
-function renderLeadsCards() {
-    const grid = document.getElementById('industryLeadsGrid');
+    console.log('Rendering industry leads. Current view:', currentView);
     
-    if (leads.length === 0) {
-        grid.innerHTML = `
-            <div class="no-leads-message">
-                <i class="fas fa-inbox"></i>
-                <h3>No Industry Leads Found</h3>
-                <p>Get started by adding your first industry lead</p>
-                <button class="btn-primary" onclick="addNewLead()">
-                    <i class="fas fa-plus"></i> Add New Lead
-                </button>
-            </div>
-        `;
-        return;
-    }
-    
-    grid.innerHTML = '';
-    
-    leads.forEach(lead => {
-        const card = document.createElement('div');
-        card.className = 'industry-lead-card';
-        card.onclick = () => viewLeadDetails(lead.id);
-        
-        card.innerHTML = `
-            <div class="industry-lead-card-header">
-                <div class="lead-info">
-                    <h3>${lead.contactName}</h3>
-                    <p>${lead.jobTitle || 'No title specified'}</p>
-                    <p class="company-name">${lead.companyName}</p>
-                </div>
-                <span class="lead-source-badge ${lead.leadSource}">${lead.leadSource}</span>
-            </div>
-            <div class="industry-lead-card-body">
-                <div class="industry-info">
-                    <h4><i class="fas fa-industry"></i> ${lead.industryType || 'General Industry'}</h4>
-                    <div class="detail-item">
-                        <i class="fas fa-users"></i>
-                        <span class="label">Size:</span>
-                        <span class="value">${lead.companySize || 'N/A'}</span>
-                    </div>
-                    ${lead.annualRevenue ? `
-                        <div class="detail-item">
-                            <i class="fas fa-dollar-sign"></i>
-                            <span class="label">Revenue:</span>
-                            <span class="value">${lead.annualRevenue}</span>
-                        </div>
-                    ` : ''}
-                </div>
-                <div class="lead-details">
-                    <div class="detail-item">
-                        <i class="fas fa-envelope"></i>
-                        <span class="label">Email:</span>
-                        <span class="value">${lead.clientEmail}</span>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-phone"></i>
-                        <span class="label">Phone:</span>
-                        <span class="value">${lead.clientPhone || 'N/A'}</span>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-globe"></i>
-                        <span class="label">Country:</span>
-                        <span class="value">${lead.companyCountry || 'N/A'}</span>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-calendar"></i>
-                        <span class="label">Created:</span>
-                        <span class="value">${formatDate(lead.createdDate)}</span>
-                    </div>
-                </div>
-            </div>
-            <div class="industry-lead-card-actions">
-                <div class="card-actions-left">
-                    <button class="action-btn edit" onclick="event.stopPropagation(); editLead('${lead.id}')">
-                        <i class="fas fa-edit"></i> Edit
-                    </button>
-                    <button class="action-btn delete" onclick="event.stopPropagation(); deleteLead('${lead.id}')">
-                        <i class="fas fa-trash"></i> Delete
-                    </button>
-                </div>
-                <span class="status-badge ${lead.leadStatus}">${lead.leadStatus}</span>
-            </div>
-        `;
-        
-        grid.appendChild(card);
-    });
+    // Only render table view
+    renderLeadsTable();
 }
 
 function renderLeadsTable() {
     const tbody = document.getElementById('industryLeadsTableBody');
+    if (!tbody) {
+        console.error('Industry leads table body not found');
+        return;
+    }
     
+    tbody.innerHTML = '';
+
+    console.log('🎯 Rendering table - CLIENT-SIDE PAGINATION:', {
+        totalLeadsCount: totalLeadsCount,
+        leadsLength: leads.length,
+        currentPage: currentPage,
+        itemsPerPage: itemsPerPage,
+        totalPages: Math.ceil(totalLeadsCount / itemsPerPage)
+    });
+
+    // If no leads, show empty state
     if (leads.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="10" class="no-data">
+                <td colspan="11" class="no-data">
                     <div class="no-leads-message">
-                        <i class="fas fa-inbox"></i>
+                        <i class="fas fa-headset"></i>
                         <h3>No Industry Leads Found</h3>
                         <p>Get started by adding your first industry lead</p>
                         <button class="btn-primary" onclick="addNewLead()">
@@ -872,81 +820,67 @@ function renderLeadsTable() {
         `;
         return;
     }
+
+    // Calculate pagination indices for client-side pagination
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, leads.length);
     
-    tbody.innerHTML = '';
-    
-    leads.forEach(lead => {
+    console.log('📄 Pagination slice:', {
+        startIndex: startIndex,
+        endIndex: endIndex,
+        calculation: `(${currentPage} - 1) * ${itemsPerPage} = ${startIndex} to min(${startIndex} + ${itemsPerPage}, ${leads.length}) = ${endIndex}`,
+        expectedRecords: endIndex - startIndex
+    });
+
+    // Get only the leads for the current page
+    const leadsToRender = leads.slice(startIndex, endIndex);
+
+    console.log('🔄 Leads to render for page', currentPage, ':', leadsToRender.length, 'records');
+
+    // Render the paginated leads
+    leadsToRender.forEach((lead, index) => {
+        const actualIndex = startIndex + index;
         const row = document.createElement('tr');
         row.innerHTML = `
             <td><input type="checkbox" value="${lead.id}" onchange="toggleLeadSelection()"></td>
-            <td>${lead.contactName}</td>
-            <td>${lead.jobTitle || 'N/A'}</td>
-            <td>${lead.companyName}</td>
-            <td>${lead.clientEmail}</td>
-            <td>${lead.clientPhone || 'N/A'}</td>
-            <td><span class="lead-source-badge ${lead.leadSource}">${lead.leadSource}</span></td>
-            <td><span class="status-badge ${lead.leadStatus}">${lead.leadStatus}</span></td>
+            <td>${escapeHtml(lead.contactName)}</td>
+            <td>${escapeHtml(lead.clientEmail)}</td>
+            <td>${escapeHtml(lead.jobTitle || 'NA')}</td>
+            <td>${escapeHtml(lead.companyName)}</td>
+            <td>${escapeHtml(lead.industryType || 'NA')}</td>
+            <td>${escapeHtml(lead.companySize || 'NA')}</td>
+            <td><span class="lead-source-badge ${lead.leadSource}">${escapeHtml(lead.leadSource)}</span></td>
+            <td><span class="status-badge ${lead.leadStatus}">${escapeHtml(lead.leadStatus)}</span></td>
             <td>${formatDate(lead.createdDate)}</td>
             <td>
                 <div class="table-actions">
-                    <button class="table-action-btn" onclick="viewLeadDetails('${lead.id}')" title="View">
+                    <button class="table-action-btn view" onclick="viewLeadDetails('${lead.id}')" title="View">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button class="table-action-btn" onclick="editLead('${lead.id}')" title="Edit">
+                    <button class="table-action-btn edit" onclick="editLead('${lead.id}')" title="Edit">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="table-action-btn" onclick="deleteLead('${lead.id}')" title="Delete">
+                    <button class="table-action-btn delete" onclick="deleteLead('${lead.id}')" title="Delete">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
             </td>
         `;
-        
         tbody.appendChild(row);
     });
+
+    console.log('✅ Successfully rendered', leadsToRender.length, 'leads for page', currentPage);
 }
 
-// View Management
-// View Management
-function switchView(view) {
-    console.log('Switching view to:', view);
-    currentView = view;
-    
-    // Update view buttons
-    document.querySelectorAll('.view-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    document.querySelector(`[data-view="${view}"]`).classList.add('active');
-    
-    // Get the containers
-    const cardsView = document.getElementById('cardsView');
-    const tableView = document.getElementById('tableView');
-    
-    if (!cardsView || !tableView) {
-        console.error('View containers not found!');
-        return;
-    }
-    
-    // CRITICAL: Reset itemsPerPage based on view
-    if (view === 'cards') {
-        itemsPerPage = 12;
-        // Show cards, hide table
-        cardsView.style.display = 'block';
-        cardsView.classList.add('active');
-        tableView.style.display = 'none';
-        tableView.classList.remove('active');
-    } else if (view === 'table') {
-        itemsPerPage = 15;
-        // Show table, hide cards
-        tableView.style.display = 'block';
-        tableView.classList.add('active');
-        cardsView.style.display = 'none';
-        cardsView.classList.remove('active');
-    }
-    
-    currentPage = 1;
-    console.log('View switched. CurrentView:', currentView, 'ItemsPerPage:', itemsPerPage);
-    loadLeads();
+function escapeHtml(unsafe) {
+    if (unsafe === null || unsafe === undefined) return '';
+    return unsafe
+        .toString()
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 // Filtering and Sorting
@@ -991,10 +925,10 @@ function toggleLeadSelection() {
     const bulkActions = document.getElementById('bulkActions');
     const selectedCount = document.querySelector('.selected-count');
     
-    if (selectedCheckboxes.length > 0) {
+    if (selectedCheckboxes.length > 0 && bulkActions && selectedCount) {
         bulkActions.style.display = 'flex';
         selectedCount.textContent = `${selectedCheckboxes.length} lead${selectedCheckboxes.length > 1 ? 's' : ''} selected`;
-    } else {
+    } else if (bulkActions) {
         bulkActions.style.display = 'none';
     }
 }
@@ -1014,7 +948,7 @@ async function bulkUpdateStatus(status) {
         
         showNotification(`${result.modifiedCount} leads updated to ${status}`, 'success');
         toggleLeadSelection();
-        await loadLeads(); // Reload leads from server
+        await loadLeads();
         
     } catch (error) {
         console.error('Error bulk updating leads:', error);
@@ -1043,7 +977,7 @@ async function bulkDeleteLeads() {
         
         showNotification(`${result.deletedCount} leads deleted successfully`, 'success');
         toggleLeadSelection();
-        await loadLeads(); // Reload leads from server
+        await loadLeads();
         
     } catch (error) {
         console.error('Error bulk deleting leads:', error);
@@ -1055,21 +989,48 @@ async function bulkDeleteLeads() {
 
 // Pagination
 function updatePagination(paginationData) {
+    const startElement = document.getElementById('paginationStart');
+    const endElement = document.getElementById('paginationEnd');
+    const totalElement = document.getElementById('paginationTotal');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    if (!startElement || !endElement || !totalElement || !prevBtn || !nextBtn) {
+        console.warn('Pagination elements not found in DOM');
+        return;
+    }
+    
+    // Always calculate based on client-side data to ensure consistency
+    const totalPages = Math.ceil(totalLeadsCount / itemsPerPage);
     const startIndex = ((currentPage - 1) * itemsPerPage) + 1;
-    const endIndex = Math.min(currentPage * itemsPerPage, paginationData.totalLeads);
+    const endIndex = Math.min(currentPage * itemsPerPage, totalLeadsCount);
     
-    document.getElementById('paginationStart').textContent = startIndex;
-    document.getElementById('paginationEnd').textContent = endIndex;
-    document.getElementById('paginationTotal').textContent = paginationData.totalLeads;
+    console.log('📊 Pagination calculations:', {
+        totalLeadsCount: totalLeadsCount,
+        itemsPerPage: itemsPerPage,
+        totalPages: totalPages,
+        currentPage: currentPage,
+        startIndex: startIndex,
+        endIndex: endIndex
+    });
     
-    document.getElementById('prevBtn').disabled = !paginationData.hasPrev;
-    document.getElementById('nextBtn').disabled = !paginationData.hasNext;
+    startElement.textContent = startIndex;
+    endElement.textContent = endIndex;
+    totalElement.textContent = totalLeadsCount;
     
-    renderPaginationNumbers(paginationData.totalPages);
+    prevBtn.disabled = currentPage <= 1;
+    nextBtn.disabled = currentPage >= totalPages;
+    
+    renderPaginationNumbers(totalPages);
 }
 
 function renderPaginationNumbers(totalPages) {
     const container = document.getElementById('paginationNumbers');
+    if (!container) {
+        console.warn('Pagination numbers container not found');
+        return;
+    }
+    
     container.innerHTML = '';
     
     const maxVisible = 5;
@@ -1091,145 +1052,42 @@ function renderPaginationNumbers(totalPages) {
 
 function changePage(direction) {
     const newPage = currentPage + direction;
+    console.log('🔄 Changing page:', {
+        from: currentPage,
+        to: newPage,
+        direction: direction,
+        totalPages: Math.ceil(totalLeadsCount / itemsPerPage)
+    });
+    
+    if (newPage < 1 || newPage > Math.ceil(totalLeadsCount / itemsPerPage)) {
+        console.warn('Cannot navigate to page:', newPage);
+        return;
+    }
+    
     goToPage(newPage);
 }
 
 function goToPage(page) {
+    if (page < 1 || page > Math.ceil(totalLeadsCount / itemsPerPage)) {
+        console.warn('Invalid page number:', page);
+        return;
+    }
+    
+    console.log('🔄 Navigating to page:', page, 'from current page:', currentPage);
     currentPage = page;
-    loadLeads();
+    renderLeads();
+    
+    // Update pagination UI
+    updatePagination({
+        currentPage: currentPage,
+        totalPages: Math.ceil(totalLeadsCount / itemsPerPage),
+        totalLeads: totalLeadsCount,
+        hasPrev: currentPage > 1,
+        hasNext: currentPage < Math.ceil(totalLeadsCount / itemsPerPage)
+    });
 }
 
-function updateStats(stats) {
-    console.log('Updating stats with:', stats);
-    
-    if (!stats) {
-        console.error('No stats provided');
-        // Calculate stats from current leads as fallback
-        calculateStatsFromLeads();
-        return;
-    }
-
-    // Animate the values with smooth counting
-    animateCounter('totalLeads', stats.totalLeads || 0);
-    animateCounter('qualifiedLeads', stats.qualifiedLeads || 0);
-    animateCounter('convertedLeads', stats.convertedLeads || 0);
-    animatePercentage('conversionRate', stats.conversionRate || 0);
-}
-
-// Smooth counter animation for numbers
-function animateCounter(elementId, targetValue) {
-    const element = document.getElementById(elementId);
-    const currentValue = parseInt(element.textContent) || 0;
-    
-    // If values are the same, no need to animate
-    if (currentValue === targetValue) {
-        return;
-    }
-
-    const duration = 1500; // 1.5 seconds
-    const frameRate = 60; // 60 FPS
-    const totalFrames = (duration / 1000) * frameRate;
-    const increment = (targetValue - currentValue) / totalFrames;
-    
-    let currentFrame = 0;
-    let displayedValue = currentValue;
-
-    const counter = setInterval(() => {
-        currentFrame++;
-        displayedValue += increment;
-        
-        if (currentFrame >= totalFrames) {
-            displayedValue = targetValue;
-            clearInterval(counter);
-        }
-        
-        element.textContent = Math.round(displayedValue);
-    }, 1000 / frameRate);
-}
-
-// Smooth animation for percentage
-function animatePercentage(elementId, targetPercentage) {
-    const element = document.getElementById(elementId);
-    const currentText = element.textContent;
-    const currentPercentage = parseFloat(currentText) || 0;
-    
-    // If values are the same, no need to animate
-    if (currentPercentage === targetPercentage) {
-        element.textContent = `${targetPercentage}%`;
-        return;
-    }
-
-    const duration = 1500; // 1.5 seconds
-    const frameRate = 60; // 60 FPS
-    const totalFrames = (duration / 1000) * frameRate;
-    const increment = (targetPercentage - currentPercentage) / totalFrames;
-    
-    let currentFrame = 0;
-    let displayedPercentage = currentPercentage;
-
-    const counter = setInterval(() => {
-        currentFrame++;
-        displayedPercentage += increment;
-        
-        if (currentFrame >= totalFrames) {
-            displayedPercentage = targetPercentage;
-            clearInterval(counter);
-        }
-        
-        element.textContent = `${displayedPercentage.toFixed(1)}%`;
-    }, 1000 / frameRate);
-}
-
-// Fallback function to calculate stats from current leads
-function calculateStatsFromLeads() {
-    console.log('Calculating stats from current leads...');
-    
-    const totalLeads = leads.length;
-    const qualifiedLeads = leads.filter(lead => 
-        lead.leadStatus === 'qualified' || lead.isProspect === true
-    ).length;
-    const convertedLeads = leads.filter(lead => 
-        lead.leadStatus === 'converted'
-    ).length;
-    
-    const conversionRate = totalLeads > 0 
-        ? ((convertedLeads / totalLeads) * 100).toFixed(1)
-        : 0;
-
-    const calculatedStats = {
-        totalLeads,
-        qualifiedLeads,
-        convertedLeads,
-        conversionRate: parseFloat(conversionRate)
-    };
-
-    console.log('Calculated stats from leads:', calculatedStats);
-    
-    // Update the UI with animated stats
-    animateCounter('totalLeads', totalLeads);
-    animateCounter('qualifiedLeads', qualifiedLeads);
-    animateCounter('convertedLeads', convertedLeads);
-    animatePercentage('conversionRate', parseFloat(conversionRate));
-}
-
-function animateValue(elementId, endValue) {
-    const element = document.getElementById(elementId);
-    const startValue = parseInt(element.textContent) || 0;
-    const duration = 1000;
-    const step = (endValue - startValue) / (duration / 16);
-    let currentValue = startValue;
-    
-    const timer = setInterval(() => {
-        currentValue += step;
-        if ((step > 0 && currentValue >= endValue) || (step < 0 && currentValue <= endValue)) {
-            currentValue = endValue;
-            clearInterval(timer);
-        }
-        element.textContent = Math.round(currentValue);
-    }, 16);
-}
-
-// File Upload (Keep existing file upload functions)
+// File Upload
 function selectEmailFile() {
     document.getElementById('emailAttachment').click();
 }
@@ -1259,6 +1117,8 @@ function handleFileSelect(input) {
 
 function updateUploadedFilesDisplay() {
     const container = document.getElementById('uploadedFiles');
+    if (!container) return;
+    
     container.innerHTML = '';
     
     uploadedFiles.forEach(file => {
@@ -1278,48 +1138,6 @@ function updateUploadedFilesDisplay() {
 function removeFile(fileId) {
     uploadedFiles = uploadedFiles.filter(file => file.id !== fileId);
     updateUploadedFilesDisplay();
-}
-
-// Import/Export Functions
-async function exportLeads() {
-    try {
-        const token = localStorage.getItem('authToken');
-        if (!token) {
-            showNotification('Please login to export leads', 'error');
-            return;
-        }
-
-        const response = await fetch(`${API_BASE_URL}/industry-leads/export/csv`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.href = url;
-        a.download = 'industry_leads.csv';
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-
-        showNotification('Industry leads exported successfully', 'success');
-    } catch (error) {
-        console.error('Error exporting leads:', error);
-        showNotification('Failed to export leads: ' + error.message, 'error');
-    }
-}
-
-function importLeads() {
-    showNotification('Import industry leads feature coming soon', 'info');
 }
 
 // Modal Management
@@ -1380,7 +1198,6 @@ function isValidEmail(email) {
 }
 
 function showLoading(show) {
-    // You can implement a loading spinner here
     if (show) {
         document.body.style.cursor = 'wait';
     } else {
@@ -1388,66 +1205,6 @@ function showLoading(show) {
     }
 }
 
-// Notification System (Keep existing notification functions)
-function showNotification(message, type = 'info') {
-    const notification = document.createElement('div');
-    notification.className = `toast-notification toast-${type}`;
-    notification.innerHTML = `
-        <div class="toast-content">
-            <i class="fas ${getNotificationIcon(type)}"></i>
-            <span>${message}</span>
-        </div>
-        <button class="toast-close" onclick="this.parentElement.remove()">×</button>
-    `;
-    
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: ${getNotificationColor(type)};
-        color: white;
-        padding: 16px 20px;
-        border-radius: 10px;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        z-index: 10000;
-        font-size: 14px;
-        font-weight: 500;
-        max-width: 400px;
-        transform: translateX(100%);
-        transition: transform 0.4s ease;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-    `;
-    
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-        notification.style.transform = 'translateX(0)';
-    }, 100);
-    
-    setTimeout(() => {
-        if (notification.parentNode) {
-            notification.style.transform = 'translateX(100%)';
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.remove();
-                }
-            }, 400);
-        }
-    }, 4000);
-}
-
-function getNotificationIcon(type) {
-    const icons = {
-        success: 'fa-check-circle',
-        error: 'fa-times-circle',
-        warning: 'fa-exclamation-triangle',
-        info: 'fa-info-circle'
-    };
-    return icons[type] || icons.info;
-}
 // Avatar color function
 function getAvatarColor() {
     return 'linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%)';
@@ -1509,7 +1266,7 @@ function createLetterAvatar(name, element) {
 // Update user avatar function
 function updateUserAvatar() {
     try {
-        const userData = JSON.parse(localStorage.getItem('userData'));
+        const userData = getUserData();
         const userName = userData ? (userData.name || userData.username || userData.email || 'User') : 'User';
         
         console.log('Updating avatar for user:', userName);
@@ -1534,63 +1291,114 @@ function updateUserAvatar() {
     }
 }
 
-// Update the displayUserName function to include avatar
-function displayUserName() {
-    try {
-        const userData = JSON.parse(localStorage.getItem('userData'));
-        const userNameElement = document.getElementById('userDisplayName');
-        
-        console.log('👤 Displaying user name for:', userData);
-        
-        let displayName = 'User';
-        
-        if (userData) {
-            // Priority: name -> username -> email -> 'User'
-            displayName = userData.name || userData.username || userData.email || 'User';
-            console.log('✅ User name found:', displayName);
-        } else {
-            console.warn('❌ No user data found in localStorage');
-        }
-        
-        // Always update the display name
-        if (userNameElement) {
-            userNameElement.textContent = displayName;
-        }
-        
-        // Update avatar with letter
-        updateUserAvatar();
-        
-    } catch (error) {
-        console.error('❌ Error displaying user name:', error);
-        const userNameElement = document.getElementById('userDisplayName');
-        if (userNameElement) {
-            userNameElement.textContent = 'User';
-        }
-        updateUserAvatar();
+// Notification System
+function showNotification(message, type = 'info') {
+    // Remove existing notifications
+    const existingNotification = document.querySelector('.toast-notification');
+    if (existingNotification) {
+        existingNotification.remove();
     }
+    
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `toast-notification toast-${type}`;
+    notification.innerHTML = `
+        <div class="toast-content">
+            <i class="fas ${getNotificationIcon(type)}"></i>
+            <span>${message}</span>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+    `;
+    
+    // Add to document
+    document.body.appendChild(notification);
+    
+    // Animate in
+    setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+    }, 100);
+    
+    // Auto remove after 4 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 400);
+        }
+    }, 4000);
+    
+    console.log(`💬 Notification: ${type} - ${message}`);
 }
+
+function getNotificationIcon(type) {
+    const icons = {
+        success: 'fa-check-circle',
+        error: 'fa-times-circle',
+        warning: 'fa-exclamation-triangle',
+        info: 'fa-info-circle'
+    };
+    return icons[type] || icons.info;
+}
+
 function getNotificationColor(type) {
     const colors = {
         success: 'linear-gradient(135deg, #28a745 0%, #20c997 100%)',
         error: 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)',
         warning: 'linear-gradient(135deg, #ffc107 0%, #fd7e14 100%)',
-        info: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+        info: 'linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%)'
     };
     return colors[type] || colors.info;
 }
 
-// Dashboard Functions (Keep existing sidebar functions)
+// Dashboard Functions
 function toggleSidebar() {
     const appContainer = document.querySelector('.app-container');
-    appContainer.classList.toggle('sidebar-collapsed');
+    const sidebarToggleIcon = document.getElementById('sidebarToggleIcon');
+    const floatingToggleIcon = document.getElementById('floatingToggleIcon');
     
-    // Update the menu toggle icon
-    const menuToggleIcon = document.querySelector('.menu-toggle i');
-    if (appContainer.classList.contains('sidebar-collapsed')) {
-        menuToggleIcon.className = 'fas fa-bars';
-    } else {
-        menuToggleIcon.className = 'fas fa-bars';
+    const isCollapsed = appContainer.classList.toggle('sidebar-collapsed');
+    
+    // Update sidebar toggle icon based on sidebar state
+    if (sidebarToggleIcon) {
+        if (isCollapsed) {
+            // Sidebar is collapsed - change to right chevron
+            sidebarToggleIcon.className = 'fas fa-chevron-right';
+            console.log('🔧 Sidebar collapsed - showing right chevron');
+        } else {
+            // Sidebar is expanded - change to left chevron
+            sidebarToggleIcon.className = 'fas fa-chevron-left';
+            console.log('🔧 Sidebar expanded - showing left chevron');
+        }
     }
+    
+    // Update floating button icon - ALWAYS show right chevron (pointing towards hidden sidebar)
+    if (floatingToggleIcon) {
+        floatingToggleIcon.className = 'fas fa-chevron-right';
+    }
+    
+    // Force button visibility
+    const toggleBtn = document.querySelector('.sidebar-toggle-btn');
+    const toggleSticky = document.querySelector('.sidebar-toggle-sticky');
+    
+    if (toggleBtn) {
+        toggleBtn.style.display = 'flex';
+        toggleBtn.style.visibility = 'visible';
+        toggleBtn.style.opacity = '1';
+    }
+    
+    if (toggleSticky) {
+        toggleSticky.style.display = 'flex';
+        toggleSticky.style.visibility = 'visible';
+        toggleSticky.style.opacity = '1';
+    }
+    
+    // Save sidebar state to localStorage
+    localStorage.setItem('sidebarCollapsed', isCollapsed);
+    
+    console.log('🔧 Sidebar toggled:', isCollapsed ? 'collapsed' : 'expanded');
 }
 
 function toggleUserMenu() {
@@ -1599,15 +1407,7 @@ function toggleUserMenu() {
     closeAllDropdowns();
     if (!isVisible) {
         dropdown.classList.add('show');
-    }
-}
-
-function toggleNotifications() {
-    const dropdown = document.getElementById('notificationsDropdown');
-    const isVisible = dropdown.classList.contains('show');
-    closeAllDropdowns();
-    if (!isVisible) {
-        dropdown.classList.add('show');
+        console.log('👤 Opening user menu');
     }
 }
 
@@ -1635,7 +1435,7 @@ function openHelp() {
 function logout() {
     closeAllDropdowns();
     if (confirm('Are you sure you want to logout?')) {
-        const userData = JSON.parse(localStorage.getItem('userData'));
+        const userData = getUserData();
         const userName = userData ? userData.name : 'User';
         
         showNotification(`Goodbye, ${userName}! Logging out...`, 'info');
@@ -1644,25 +1444,16 @@ function logout() {
         localStorage.removeItem('userData');
         localStorage.removeItem('authToken');
         localStorage.removeItem('loginTime');
+        localStorage.removeItem('rememberMe');
+        localStorage.removeItem('savedEmail');
         
         // Redirect to login page
         setTimeout(() => {
             window.location.href = '/';
         }, 1000);
+        
+        console.log('🚪 User logged out');
     }
-}
-
-function markAllRead() {
-    const badge = document.getElementById('notificationCount');
-    badge.textContent = '0';
-    badge.style.display = 'none';
-    closeAllDropdowns();
-    showNotification('All notifications marked as read', 'success');
-}
-
-function viewNotification(id) {
-    closeAllDropdowns();
-    showNotification(`Viewing notification ${id}`, 'info');
 }
 
 console.log('Industry Leads Management System initialized with backend integration');
