@@ -16,49 +16,47 @@ const API_BASE_URL = 'https://crm-admin-panel-production.up.railway.app/api';
 
 // ✅ ADD: Navigation function matching MAIN_PAGE/script.js
 function handleNavigation(page) {
-    console.log(`Navigation requested to: ${page}`);
-    
+    console.log('Navigation requested to page:', page);
+    // Define routes - UPDATED with your external URLs
     const routes = {
         'dashboard': '/MAIN_PAGE/index.html',
-        'leads': '/show_new_demo/show.html',
-        'industry-leads': '/INDUSTRY_LEAD_PAGE/demo.html',
-        'deals': '/main/DEAL/deal.html',
-        'contacts': '/main/CONTACT/contact.html',
-        'invoice': '/main/INVOICE/invoice.html',
-        'reports': '/REPORTS/reports.html',
-        'settings': '/SETTINGS/setting.html',
-        'salary': '/main/SALARY/Salary.html'
+        'leads': '/show_new_demo/show.html', 
+        'industry-leads': '/industry-leads',
+        'deals': 'https://crm-admin-panel.vercel.app/DEAL/deal.html',
+        'contacts': 'https://crm-admin-panel.vercel.app/CONTACT/contact.html',
+        'invoice': 'https://crm-admin-panel.vercel.app/INVOICE/invoice.html',
+        'salary': 'https://crm-admin-panel.vercel.app/main/SALARY/Salary.html'
     };
     
     const route = routes[page];
     
     if (route) {
         showNotification(`Loading ${getPageTitle(page)}...`, 'info');
+        console.log('Redirecting to:', route);
         setTimeout(() => {
-            console.log(`Redirecting to: ${route}`);
             window.location.href = route;
         }, 500);
     } else {
-        console.warn(`No route defined for page: ${page}`);
-        showNotification(`Page ${page} is not available yet`, 'warning');
+        console.warn('No route defined for page:', page);
+        showNotification(`Page "${getPageTitle(page)}" is not available yet.`, 'warning');
     }
 }
+
 
 // ✅ ADD: Get page title function
 function getPageTitle(page) {
     const titles = {
         'dashboard': 'Dashboard',
-        'leads': 'Show Leads',
+        'leads': 'Show Leads', 
         'industry-leads': 'Industry Leads',
         'deals': 'Deals Pipeline',
         'contacts': 'Contacts',
         'invoice': 'Invoices',
-        'reports': 'Reports',
-        'settings': 'Settings',
         'salary': 'Salary'
     };
-    return titles[page] || page.replace('-', ' ');
+    return titles[page] || page.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 }
+
 
 // ✅ ADD: Navigation event listeners setup
 function setupNavigationEventListeners() {
