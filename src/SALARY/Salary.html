@@ -374,22 +374,19 @@
                     <!-- Salary Slip Header -->
                     <div class="slip-header">
                         <div class="company-info">
-                            <h1>Global Datasys Group</h1>
-                            <div class="company-details">
-                                <p><i class="fas fa-map-marker-alt"></i> 1309, Coffeen Avenue, STE 1200</p>
-                                <p>Sheridan, Wyoming 82801</p>
-                            </div>
+                            <img src="../Asset/Globentix_logo.png" alt="Globentix Logo" class="slip-logo">
                         </div>
                         <div class="slip-title">
-                            <h2>SALARY SLIP</h2>
+                            <h2>EMPLOYEE SUMMARY</h2>
                             <div class="slip-period">
                                 <div class="period-item">
-                                    <span class="label">Month:</span>
-                                    <span class="value" id="preview-month">October</span>
+                                    <span class="label">Pay Period:</span>
+                                    <span class="value" id="preview-month">March</span>
+                                    <span class="value" id="preview-year">2024</span>
                                 </div>
                                 <div class="period-item">
-                                    <span class="label">Year:</span>
-                                    <span class="value" id="preview-year">2025</span>
+                                    <span class="label">Pay Date:</span>
+                                    <span class="value" id="preview-pay-date">29/03/2024</span>
                                 </div>
                             </div>
                         </div>
@@ -397,121 +394,127 @@
 
                     <!-- Employee Information -->
                     <div class="employee-section">
-                        <h3><i class="fas fa-user-tie"></i> Employee Information</h3>
                         <div class="info-grid">
                             <div class="info-row">
+                                <span class="info-label">Employee Name:</span>
+                                <span class="info-value" id="preview-employeeName">Gaurav</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Designation:</span>
+                                <span class="info-value" id="preview-employeeTitle">Associate Editor</span>
+                            </div>
+                            <div class="info-row">
                                 <span class="info-label">Employee ID:</span>
-                                <span class="info-value" id="preview-employeeId">GD-001</span>
+                                <span class="info-value" id="preview-employeeId">43521</span>
                             </div>
                             <div class="info-row">
-                                <span class="info-label">Name:</span>
-                                <span class="info-value" id="preview-employeeName">John Doe</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="info-label">Title:</span>
-                                <span class="info-value" id="preview-employeeTitle">Software Engineer</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="info-label">Email:</span>
-                                <span class="info-value" id="preview-employeeEmail">john.doe@company.com</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="info-label">PAN:</span>
-                                <span class="info-value" id="preview-employeePan">ABCDE1234F</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="info-label">Account No:</span>
-                                <span class="info-value" id="preview-employeeAccount">123456789012</span>
+                                <span class="info-label">Date of Joining:</span>
+                                <span class="info-value" id="preview-date-of-joining">30/06/2020</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Salary Breakdown -->
-                    <div class="salary-breakdown-section">
-                        <div class="breakdown-grid">
-                            <!-- Earnings -->
-                            <div class="breakdown-card earnings">
-                                <div class="card-header">
-                                    <h4><i class="fas fa-money-bill-wave"></i> Earnings</h4>
-                                </div>
-                                <div class="card-body">
-                                    <div class="amount-row">
-                                        <span>Basic Pay</span>
-                                        <span class="amount" id="preview-basicPay">₹15,000.00</span>
-                                    </div>
-                                    <div class="amount-row">
-                                        <span>Special Allowance</span>
-                                        <span class="amount" id="preview-specialAllowance">₹5,000.00</span>
-                                    </div>
-                                    <div class="amount-row total">
-                                        <strong>Total Earnings</strong>
-                                        <strong class="amount" id="preview-totalEarnings">₹20,000.00</strong>
-                                    </div>
-                                </div>
+                    <!-- PF & UAN Details -->
+                    <div class="pf-section">
+                        <div class="pf-info">
+                            <div class="pf-row">
+                                <span class="pf-label">PF A/C Number:</span>
+                                <span class="pf-value" id="preview-pf-number">AA/AAA/9999999/99G/9899999</span>
                             </div>
-
-                            <!-- Deductions -->
-                            <div class="breakdown-card deductions">
-                                <div class="card-header">
-                                    <h4><i class="fas fa-minus-circle"></i> Deductions</h4>
-                                </div>
-                                <div class="card-body">
-                                    <div class="amount-row">
-                                        <span>Tax Deduction</span>
-                                        <span class="amount" id="preview-taxDeduction">₹500.00</span>
-                                    </div>
-                                    <div class="amount-row">
-                                        <span>LOP Deduction</span>
-                                        <span class="amount" id="preview-lopDeduction">₹0.00</span>
-                                    </div>
-                                    <div class="amount-row total">
-                                        <strong>Total Deductions</strong>
-                                        <strong class="amount" id="preview-totalDeductions">₹500.00</strong>
-                                    </div>
-                                </div>
+                            <div class="pf-row">
+                                <span class="pf-label">UAN:</span>
+                                <span class="pf-value" id="preview-uan">1111111111111</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Net Salary -->
-                    <div class="net-salary-section">
+                    <!-- Earnings & Deductions Table -->
+                    <div class="salary-table-section">
+                        <table class="salary-table">
+                            <thead>
+                                <tr>
+                                    <th colspan="2">EARNINGS</th>
+                                    <th>AMOUNT</th>
+                                    <th>YTD</th>
+                                    <th colspan="2">DEDUCTIONS</th>
+                                    <th>AMOUNT</th>
+                                    <th>YTD</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="2">Basic</td>
+                                    <td class="amount" id="preview-basicPay">₹43,750.00</td>
+                                    <td class="ytd" id="preview-basic-ytd">₹1,31,250.00</td>
+                                    <td colspan="2">EPF Contribution</td>
+                                    <td class="amount" id="preview-epf">₹5,250.00</td>
+                                    <td class="ytd" id="preview-epf-ytd">₹15,750.00</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">House Rent Allowance</td>
+                                    <td class="amount" id="preview-hra">₹21,875.00</td>
+                                    <td class="ytd" id="preview-hra-ytd">₹65,625.00</td>
+                                    <td colspan="2">Professional Tax</td>
+                                    <td class="amount" id="preview-prof-tax">₹0.00</td>
+                                    <td class="ytd" id="preview-prof-tax-ytd">₹1,250.00</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">Conveyance Allowance</td>
+                                    <td class="amount" id="preview-conveyance">₹6,000.00</td>
+                                    <td class="ytd" id="preview-conveyance-ytd">₹18,000.00</td>
+                                    <td colspan="2"></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">Children Education Allowance</td>
+                                    <td class="amount" id="preview-education">₹4,000.00</td>
+                                    <td class="ytd" id="preview-education-ytd">₹12,000.00</td>
+                                    <td colspan="2"></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">Fixed Allowance</td>
+                                    <td class="amount" id="preview-fixed">₹6,625.00</td>
+                                    <td class="ytd" id="preview-fixed-ytd">₹19,875.00</td>
+                                    <td colspan="2"></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr class="total-row">
+                                    <td colspan="2"><strong>Gross Earnings</strong></td>
+                                    <td class="amount total" id="preview-gross-earnings">₹82,250.00</td>
+                                    <td></td>
+                                    <td colspan="2"><strong>Total Deductions</strong></td>
+                                    <td class="amount total" id="preview-total-deductions">₹5,250.00</td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Net Salary Section -->
+                    <div class="net-salary-display">
                         <div class="net-salary-card">
+                            <div class="net-salary-header">
+                                <h3>TOTAL NET PAYABLE</h3>
+                                <p>Gross Earnings - Total Deductions</p>
+                            </div>
                             <div class="net-amount">
-                                <h3>Net Salary</h3>
-                                <div class="amount-display">
-                                    <span class="currency">₹</span>
-                                    <span class="net-amount-value" id="preview-netSalary">19,500.00</span>
-                                </div>
+                                <span class="currency">₹</span>
+                                <span class="net-amount-value" id="preview-netSalary">77,000.00</span>
                             </div>
                             <div class="amount-in-words">
-                                <p id="preview-salaryInWords">Nineteen thousand five hundred rupees only</p>
+                                <p><strong>Amount In Words:</strong> <span id="preview-salaryInWords">Indian Rupee Seventy-Seven Thousand Only</span></p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Footer -->
                     <div class="slip-footer">
-                        <div class="signature-section">
-                            <div class="signature-box">
-                                <div class="signature-line"></div>
-                                <p class="signature-label">Authorized Signature</p>
-                            </div>
-                        </div>
-                        <div class="company-seal">
-                            <div class="seal-circle">
-                                <i class="fas fa-stamp"></i>
-                            </div>
-                            <p class="seal-label">For Global Datasys Group</p>
-                        </div>
-                    </div>
-
-                    <!-- Payment Details -->
-                    <div class="payment-details">
-                        <h4><i class="fas fa-credit-card"></i> Payment Details</h4>
-                        <div class="payment-info">
-                            <p><strong>Payment Mode:</strong> Bank Transfer</p>
-                            <p><strong>Payment Date:</strong> 5th of each month</p>
-                            <p><strong>Account Credited:</strong> As per company payroll cycle</p>
+                        <div class="payslip-footer-note">
+                            <p class="payslip-for-month">Payslip For the Month <span id="preview-footer-month">March 2024</span></p>
                         </div>
                     </div>
                 </div>
