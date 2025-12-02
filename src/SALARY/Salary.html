@@ -362,7 +362,7 @@
         </div>
     </div>
 
-    <!-- Salary Preview Modal -->
+    <!-- Salary Preview Modal (CLEAN VERSION - KEEP THIS ONE) -->
     <div class="modal-overlay" id="salaryPreviewModal" style="display: none;">
         <div class="modal-content extra-large">
             <div class="modal-header">
@@ -377,7 +377,7 @@
                             <img src="../Asset/Globentix_logo.png" alt="Globentix Logo" class="slip-logo">
                         </div>
                         <div class="slip-title">
-                            <h2>EMPLOYEE SUMMARY</h2>
+                            <h2>SALARY SLIP</h2>
                             <div class="slip-period">
                                 <div class="period-item">
                                     <span class="label">Pay Period:</span>
@@ -394,119 +394,70 @@
 
                     <!-- Employee Information -->
                     <div class="employee-section">
+                        <h3>Employee Information</h3>
                         <div class="info-grid">
                             <div class="info-row">
+                                <span class="info-label">Employee ID:</span>
+                                <span class="info-value" id="preview-employeeId">GD-001</span>
+                            </div>
+                            <div class="info-row">
                                 <span class="info-label">Employee Name:</span>
-                                <span class="info-value" id="preview-employeeName">Gaurav</span>
+                                <span class="info-value" id="preview-employeeName">John Doe</span>
                             </div>
                             <div class="info-row">
                                 <span class="info-label">Designation:</span>
-                                <span class="info-value" id="preview-employeeTitle">Associate Editor</span>
+                                <span class="info-value" id="preview-employeeTitle">Software Engineer</span>
                             </div>
                             <div class="info-row">
-                                <span class="info-label">Employee ID:</span>
-                                <span class="info-value" id="preview-employeeId">43521</span>
+                                <span class="info-label">Email:</span>
+                                <span class="info-value" id="preview-employeeEmail">john.doe@company.com</span>
                             </div>
                             <div class="info-row">
-                                <span class="info-label">Date of Joining:</span>
-                                <span class="info-value" id="preview-date-of-joining">30/06/2020</span>
+                                <span class="info-label">Account Number:</span>
+                                <span class="info-value" id="preview-employeeAccount">123456789012</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- PF & UAN Details -->
-                    <div class="pf-section">
-                        <div class="pf-info">
-                            <div class="pf-row">
-                                <span class="pf-label">PF A/C Number:</span>
-                                <span class="pf-value" id="preview-pf-number">AA/AAA/9999999/99G/9899999</span>
+                    <!-- Salary Details -->
+                    <div class="salary-details-section">
+                        <h3>Salary Details</h3>
+                        <div class="salary-details-grid">
+                            <div class="detail-row">
+                                <span class="detail-label">Working Days:</span>
+                                <span class="detail-value" id="preview-working-days">30</span>
                             </div>
-                            <div class="pf-row">
-                                <span class="pf-label">UAN:</span>
-                                <span class="pf-value" id="preview-uan">1111111111111</span>
+                            <div class="detail-row">
+                                <span class="detail-label">Loss of Pay Days:</span>
+                                <span class="detail-value" id="preview-lop-days">0</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Basic Pay:</span>
+                                <span class="detail-value amount" id="preview-basicPay">₹43,750.00</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Special Allowance:</span>
+                                <span class="detail-value amount" id="preview-specialAllowance">₹5,000.00</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Tax Deduction:</span>
+                                <span class="detail-value amount" id="preview-taxDeduction">₹500.00</span>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Earnings & Deductions Table -->
-                    <div class="salary-table-section">
-                        <table class="salary-table">
-                            <thead>
-                                <tr>
-                                    <th colspan="2">EARNINGS</th>
-                                    <th>AMOUNT</th>
-                                    <th>YTD</th>
-                                    <th colspan="2">DEDUCTIONS</th>
-                                    <th>AMOUNT</th>
-                                    <th>YTD</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td colspan="2">Basic</td>
-                                    <td class="amount" id="preview-basicPay">₹43,750.00</td>
-                                    <td class="ytd" id="preview-basic-ytd">₹1,31,250.00</td>
-                                    <td colspan="2">EPF Contribution</td>
-                                    <td class="amount" id="preview-epf">₹5,250.00</td>
-                                    <td class="ytd" id="preview-epf-ytd">₹15,750.00</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2">House Rent Allowance</td>
-                                    <td class="amount" id="preview-hra">₹21,875.00</td>
-                                    <td class="ytd" id="preview-hra-ytd">₹65,625.00</td>
-                                    <td colspan="2">Professional Tax</td>
-                                    <td class="amount" id="preview-prof-tax">₹0.00</td>
-                                    <td class="ytd" id="preview-prof-tax-ytd">₹1,250.00</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2">Conveyance Allowance</td>
-                                    <td class="amount" id="preview-conveyance">₹6,000.00</td>
-                                    <td class="ytd" id="preview-conveyance-ytd">₹18,000.00</td>
-                                    <td colspan="2"></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2">Children Education Allowance</td>
-                                    <td class="amount" id="preview-education">₹4,000.00</td>
-                                    <td class="ytd" id="preview-education-ytd">₹12,000.00</td>
-                                    <td colspan="2"></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2">Fixed Allowance</td>
-                                    <td class="amount" id="preview-fixed">₹6,625.00</td>
-                                    <td class="ytd" id="preview-fixed-ytd">₹19,875.00</td>
-                                    <td colspan="2"></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr class="total-row">
-                                    <td colspan="2"><strong>Gross Earnings</strong></td>
-                                    <td class="amount total" id="preview-gross-earnings">₹82,250.00</td>
-                                    <td></td>
-                                    <td colspan="2"><strong>Total Deductions</strong></td>
-                                    <td class="amount total" id="preview-total-deductions">₹5,250.00</td>
-                                    <td></td>
-                                </tr>
-                            </tbody>
-                        </table>
                     </div>
 
                     <!-- Net Salary Section -->
-                    <div class="net-salary-display">
+                    <div class="net-salary-section">
                         <div class="net-salary-card">
                             <div class="net-salary-header">
                                 <h3>TOTAL NET PAYABLE</h3>
-                                <p>Gross Earnings - Total Deductions</p>
                             </div>
                             <div class="net-amount">
                                 <span class="currency">₹</span>
-                                <span class="net-amount-value" id="preview-netSalary">77,000.00</span>
+                                <span class="net-amount-value" id="preview-netSalary">48,250.00</span>
                             </div>
                             <div class="amount-in-words">
-                                <p><strong>Amount In Words:</strong> <span id="preview-salaryInWords">Indian Rupee Seventy-Seven Thousand Only</span></p>
+                                <p><strong>Amount In Words:</strong> <span id="preview-salaryInWords">Indian Rupee Forty-Eight Thousand Two Hundred Fifty Only</span></p>
                             </div>
                         </div>
                     </div>
@@ -515,6 +466,12 @@
                     <div class="slip-footer">
                         <div class="payslip-footer-note">
                             <p class="payslip-for-month">Payslip For the Month <span id="preview-footer-month">March 2024</span></p>
+                        </div>
+                        <div class="signature-section">
+                            <div class="signature-box">
+                                <div class="signature-line"></div>
+                                <p class="signature-label">Authorized Signature</p>
+                            </div>
                         </div>
                     </div>
                 </div>
