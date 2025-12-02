@@ -1,10 +1,13 @@
-// Salary Management System with Backend Integration
+// Salary Management System with Backend Integration - Updated for new layout
 
 // Global variables
 let currentSalaryId = null;
 let allSalaries = [];
 let currentEditingSalary = null;
 let currentDeleteSalary = null;
+let currentPage = 1;
+let itemsPerPage = 10;
+let totalSalariesCount = 0;
 
 // API Base URL
 const API_BASE_URL = 'https://crm-admin-panel-production.up.railway.app/api/salary';
@@ -23,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     initializeSalaries();
     setupEventListeners();
-    displayUserName(); // This will now also update the avatar
+    displayUserName();
     
     // Load sidebar state
     const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
@@ -31,13 +34,11 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('.app-container').classList.add('sidebar-collapsed');
     }
     
-    // Show salaries list by default
-    showSalaryList();
+    // Load salaries by default
+    loadSalaries();
     
     console.log('✅ Salary Management System initialized successfully');
 });
-
-
 
 function checkAuthentication() {
     console.log('🔐 Checking authentication...');
@@ -71,7 +72,6 @@ function checkAuthentication() {
 function getUserData() {
     try {
         const userDataString = localStorage.getItem('userData');
-        console.log('👤 Raw userData from localStorage:', userDataString);
         
         if (!userDataString) {
             console.warn('❌ No user data found in localStorage');
@@ -79,7 +79,6 @@ function getUserData() {
         }
         
         const userData = JSON.parse(userDataString);
-        console.log('👤 Parsed userData:', userData);
         
         // Validate required fields
         if (userData && userData.id && userData.name) {
@@ -97,10 +96,6 @@ function getUserData() {
 
 function initializeSalaries() {
     console.log('💰 Salary Management System initialized with backend integration');
-    
-    // Initialize form with current month/year
-    const currentDate = new Date();
-    document.getElementById('workingDays').value = getWorkingDaysInMonth(currentDate);
 }
 
 function getWorkingDaysInMonth(date) {
@@ -140,112 +135,31 @@ function setupEventListeners() {
         if (!e.target.closest('.user-profile') && !e.target.closest('.user-dropdown')) {
             closeAllDropdowns();
         }
-        if (!e.target.closest('.notifications') && !e.target.closest('.notifications-dropdown')) {
-            closeAllDropdowns();
-        }
     });
 
-    // Navigation
+    // Navigation - Updated for new structure
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const page = this.dataset.page;
-            console.log(`🔄 Navigation clicked: ${page}`);
-            handleNavigation(page);
+            if (this.getAttribute('href') === '#' || !this.getAttribute('href')) {
+                e.preventDefault();
+                const page = this.dataset.page;
+                console.log(`🔄 Navigation clicked: ${page}`);
+                handleNavigation(page);
+            }
         });
     });
 
-    // Initialize active menu manager
-    window.activeMenuManager = new ActiveMenuManager();
+    // Live form updates for preview
+    document.querySelectorAll('#salaryForm input, #salaryForm select').forEach(element => {
+        element.addEventListener('input', updateSalaryPreview);
+    });
     
     console.log('✅ Event listeners setup complete');
 }
 
-// Active Menu Manager
-class ActiveMenuManager {
-    constructor() {
-        this.currentActiveMenu = null;
-        this.init();
-    }
-
-    init() {
-        // Set salary as default active menu
-        this.setActiveMenu('salary');
-        
-        // Add click event listeners to all nav links
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const page = link.getAttribute('data-page');
-                this.setActiveMenu(page);
-                
-                // Handle navigation
-                this.navigateToPage(page, link.getAttribute('href'));
-            });
-        });
-
-        // Load saved active menu from session storage
-        this.loadSavedActiveMenu();
-    }
-
-    setActiveMenu(page) {
-        // Remove active class from all nav links
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.classList.remove('active');
-        });
-
-        // Add active class to clicked nav link
-        const activeLink = document.querySelector(`.nav-link[data-page="${page}"]`);
-        if (activeLink) {
-            activeLink.classList.add('active');
-            this.currentActiveMenu = page;
-            
-            // Save to session storage
-            this.saveActiveMenu(page);
-        }
-    }
-
-    saveActiveMenu(page) {
-        sessionStorage.setItem('activeMenu', page);
-    }
-
-    loadSavedActiveMenu() {
-        const savedMenu = sessionStorage.getItem('activeMenu');
-        if (savedMenu) {
-            this.setActiveMenu(savedMenu);
-        }
-    }
-
-    navigateToPage(page, href) {
-        console.log(`🔄 Navigating to: ${page}`);
-        
-        if (href && href !== '#' && !href.includes('javascript')) {
-            showNotification(`Loading ${this.getPageTitle(page)}...`, 'info');
-            // window.location.href = href; // Uncomment for actual navigation
-        }
-    }
-
-    getPageTitle(page) {
-        const titles = {
-            'dashboard': 'Dashboard',
-            'leads': 'Leads Management',
-            'industry-leads': 'Industry Leads',
-            'deals': 'Deals Pipeline',
-            'contacts': 'Contacts',
-            'invoice': 'Invoices',
-            'reports': 'Reports',
-            'settings': 'Settings',
-            'salary': 'Salary'
-        };
-        return titles[page] || page.replace('-', ' ');
-    }
-}
-
-// Update the handleNavigation function in script.js
 function handleNavigation(page) {
     console.log(`Navigation requested to: ${page}`);
     
-    // Define navigation routes with actual file paths
     const routes = {
         'dashboard': '/MAIN_PAGE/index.html',
         'leads': '/show_new_demo/show.html',
@@ -253,8 +167,6 @@ function handleNavigation(page) {
         'deals': '/DEAL/deal.html',
         'contacts': '/CONTACT/contact.html',
         'invoice': '/INVOICE/invoice.html',
-        'reports': '/REPORTS/reports.html',
-        'settings': '/SETTINGS/setting.html',
         'salary': '/SALARY/Salary.html'
     };
     
@@ -279,64 +191,78 @@ function getPageTitle(page) {
         'deals': 'Deals Pipeline',
         'contacts': 'Contacts',
         'invoice': 'Invoices',
-        'reports': 'Reports',
-        'settings': 'Settings',
         'salary': 'Salary'
     };
     return titles[page] || page.replace('-', ' ');
 }
 
 function displayUserName() {
-    const userData = getUserData();
-    const userNameElement = document.getElementById('userDisplayName');
-    
-    console.log('👤 Displaying user name for:', userData);
-    
-    if (userData && userData.name) {
-        userNameElement.textContent = userData.name;
-        console.log('✅ User name displayed:', userData.name);
-    } else {
-        // If no name found, try other fields
-        const displayName = userData?.username || userData?.email || 'User';
-        userNameElement.textContent = displayName;
-        console.log('✅ Fallback name displayed:', displayName);
+    try {
+        const userData = getUserData();
+        const userNameElement = document.getElementById('userDisplayName');
+        
+        let displayName = 'User';
+        
+        if (userData) {
+            displayName = userData.name || userData.username || userData.email || 'User';
+        }
+        
+        if (userNameElement) {
+            userNameElement.textContent = displayName;
+        }
+        
+        updateUserAvatar();
+        
+    } catch (error) {
+        console.error('❌ Error displaying user name:', error);
+        const userNameElement = document.getElementById('userDisplayName');
+        if (userNameElement) {
+            userNameElement.textContent = 'User';
+        }
+        updateUserAvatar();
     }
-    
-    // Make the name clickable to open profile
-    userNameElement.style.cursor = 'pointer';
-    userNameElement.title = 'Click to view profile';
-    
-    // Add click event to open profile
-    userNameElement.onclick = function(e) {
-        e.stopPropagation();
-        showNotification('Profile feature coming soon', 'info');
-    };
 }
 
-// API Functions
-function getToken() {
-    return localStorage.getItem('authToken') || '';
-}
-
-// View Management
+// View Management Functions - UPDATED FOR NEW STRUCTURE
 function showSalaryGenerator() {
-    document.getElementById('salary-list').classList.add('hidden');
-    document.getElementById('salary-generator').classList.remove('hidden');
-    document.getElementById('salary-preview').classList.add('hidden');
-    resetSalaryForm();
+    // Hide all views except salary generator modal
+    closeSalaryModal();
+    
+    setTimeout(() => {
+        currentSalaryId = null;
+        document.getElementById('salaryModalTitle').textContent = 'Generate New Salary';
+        resetSalaryForm();
+        
+        const modal = document.getElementById('salaryGeneratorModal');
+        modal.style.display = 'flex';
+        modal.classList.add('show');
+        
+        // Update preview
+        updateSalaryPreview();
+    }, 100);
 }
 
 function showSalaryList() {
-    document.getElementById('salary-list').classList.remove('hidden');
-    document.getElementById('salary-generator').classList.add('hidden');
-    document.getElementById('salary-preview').classList.add('hidden');
+    // Just reload salaries - we're already in the list view
     loadSalaries();
 }
 
-function showSalaryPreview() {
-    document.getElementById('salary-list').classList.add('hidden');
-    document.getElementById('salary-generator').classList.add('hidden');
-    document.getElementById('salary-preview').classList.remove('hidden');
+function closeSalaryModal() {
+    const modal = document.getElementById('salaryGeneratorModal');
+    if (modal) {
+        modal.style.display = 'none';
+        modal.classList.remove('show');
+    }
+    currentSalaryId = null;
+    currentEditingSalary = null;
+}
+
+function closePreviewModal() {
+    const modal = document.getElementById('salaryPreviewModal');
+    if (modal) {
+        modal.style.display = 'none';
+        modal.classList.remove('show');
+    }
 }
 
 // Main Functions
@@ -382,9 +308,13 @@ async function saveSalary() {
                 'success'
             );
             
-            // Show preview of the saved salary
-            populatePreview(savedSalary);
-            showSalaryPreview();
+            // Close modal and reload list
+            closeSalaryModal();
+            await loadSalaries();
+            
+            // Optionally show preview
+            // populatePreview(savedSalary);
+            // showSalaryPreview();
             
         } else {
             throw new Error(result.message || 'Failed to save salary');
@@ -397,105 +327,119 @@ async function saveSalary() {
 }
 
 function collectFormData() {
+    const currentDate = new Date();
+    
     return {
-        employeeId: document.getElementById('employeeId').value.trim(),
-        employeeName: document.getElementById('employeeName').value.trim(),
-        title: document.getElementById('employeeTitle').value.trim(),
-        email: document.getElementById('employeeEmail').value.trim(),
-        pan: document.getElementById('employeePan').value.trim(),
-        accountNumber: document.getElementById('employeeAccount').value.trim(),
-        workingDays: parseInt(document.getElementById('workingDays').value) || 30,
-        lopDays: parseInt(document.getElementById('lopDays').value) || 0,
-        basicPay: parseFloat(document.getElementById('basicPay').value) || 0,
-        specialAllowance: parseFloat(document.getElementById('specialAllowance').value) || 0,
-        taxDeduction: parseFloat(document.getElementById('taxDeduction').value) || 0
+        employeeId: document.getElementById('employeeId')?.value.trim() || '',
+        employeeName: document.getElementById('employeeName')?.value.trim() || '',
+        title: document.getElementById('employeeTitle')?.value.trim() || '',
+        email: document.getElementById('employeeEmail')?.value.trim() || '',
+        pan: document.getElementById('employeePan')?.value.trim() || '',
+        accountNumber: document.getElementById('employeeAccount')?.value.trim() || '',
+        workingDays: parseInt(document.getElementById('workingDays')?.value) || 30,
+        lopDays: parseInt(document.getElementById('lopDays')?.value) || 0,
+        basicPay: parseFloat(document.getElementById('basicPay')?.value) || 0,
+        specialAllowance: parseFloat(document.getElementById('specialAllowance')?.value) || 0,
+        taxDeduction: parseFloat(document.getElementById('taxDeduction')?.value) || 0,
+        month: currentDate.toLocaleString('default', { month: 'long' }),
+        year: currentDate.getFullYear()
     };
 }
 
 function validateForm(data) {
     if (!data.employeeId) {
         showNotification('Employee ID is required', 'error');
-        document.getElementById('employeeId').focus();
+        document.getElementById('employeeId')?.focus();
         return false;
     }
     
     if (!data.employeeName) {
         showNotification('Employee name is required', 'error');
-        document.getElementById('employeeName').focus();
+        document.getElementById('employeeName')?.focus();
         return false;
     }
     
     if (!data.email) {
         showNotification('Email is required', 'error');
-        document.getElementById('employeeEmail').focus();
+        document.getElementById('employeeEmail')?.focus();
         return false;
     }
     
     if (!data.basicPay || data.basicPay <= 0) {
         showNotification('Valid basic pay is required', 'error');
-        document.getElementById('basicPay').focus();
+        document.getElementById('basicPay')?.focus();
         return false;
     }
     
     if (!data.specialAllowance || data.specialAllowance < 0) {
         showNotification('Valid special allowance is required', 'error');
-        document.getElementById('specialAllowance').focus();
+        document.getElementById('specialAllowance')?.focus();
         return false;
     }
     
     return true;
 }
 
-function previewSalary() {
+function updateSalaryPreview() {
+    try {
+        const data = collectFormData();
+        
+        // Update live preview in modal
+        const dailyPay = data.workingDays > 0 ? data.basicPay / data.workingDays : 0;
+        const lopDeduction = dailyPay * data.lopDays;
+        const totalEarnings = data.basicPay + data.specialAllowance;
+        const totalDeductions = data.taxDeduction + lopDeduction;
+        const netSalary = totalEarnings - totalDeductions;
+        
+        document.getElementById('previewBasicPay').textContent = formatCurrency(data.basicPay);
+        document.getElementById('previewAllowance').textContent = formatCurrency(data.specialAllowance);
+        document.getElementById('previewTax').textContent = formatCurrency(data.taxDeduction);
+        document.getElementById('previewLOP').textContent = formatCurrency(lopDeduction);
+        document.getElementById('previewNetSalary').textContent = formatCurrency(netSalary);
+        
+    } catch (error) {
+        console.error('Error updating preview:', error);
+    }
+}
+
+function previewSalarySlip() {
     const formData = collectFormData();
     if (!validateForm(formData)) return;
     
-    // Create a temporary salary object for preview
-    const currentDate = new Date();
-    const tempSalary = {
-        ...formData,
-        _id: 'preview',
-        month: currentDate.toLocaleString('default', { month: 'long' }),
-        year: currentDate.getFullYear(),
-        createdAt: new Date().toISOString()
-    };
-    
-    populatePreview(tempSalary);
-    showSalaryPreview();
-}
-
-function populatePreview(salary) {
     // Calculate salary components
-    const totalEarnings = salary.basicPay + salary.specialAllowance;
-    const dailyPay = salary.workingDays > 0 ? salary.basicPay / salary.workingDays : 0;
-    const lopDeduction = dailyPay * salary.lopDays;
-    const totalDeductions = salary.taxDeduction + lopDeduction;
+    const currentDate = new Date();
+    const totalEarnings = formData.basicPay + formData.specialAllowance;
+    const dailyPay = formData.workingDays > 0 ? formData.basicPay / formData.workingDays : 0;
+    const lopDeduction = dailyPay * formData.lopDays;
+    const totalDeductions = formData.taxDeduction + lopDeduction;
     const netSalary = totalEarnings - totalDeductions;
     
-    // Basic info
-    document.getElementById('preview-month').textContent = salary.month;
-    document.getElementById('preview-year').textContent = salary.year;
+    // Populate preview modal
+    document.getElementById('preview-month').textContent = currentDate.toLocaleString('default', { month: 'long' });
+    document.getElementById('preview-year').textContent = currentDate.getFullYear();
     
     // Employee details
-    document.getElementById('preview-employeeId').textContent = salary.employeeId;
-    document.getElementById('preview-employeeName').textContent = salary.employeeName;
-    document.getElementById('preview-employeeTitle').textContent = salary.title;
-    document.getElementById('preview-employeeEmail').textContent = salary.email;
-    document.getElementById('preview-employeePan').textContent = salary.pan;
-    document.getElementById('preview-employeeAccount').textContent = salary.accountNumber;
+    document.getElementById('preview-employeeId').textContent = formData.employeeId;
+    document.getElementById('preview-employeeName').textContent = formData.employeeName;
+    document.getElementById('preview-employeeTitle').textContent = formData.title;
+    document.getElementById('preview-employeeEmail').textContent = formData.email;
+    document.getElementById('preview-employeePan').textContent = formData.pan;
+    document.getElementById('preview-employeeAccount').textContent = formData.accountNumber;
     
     // Salary breakdown
-    document.getElementById('preview-basicPay').textContent = formatCurrency(salary.basicPay);
-    document.getElementById('preview-specialAllowance').textContent = formatCurrency(salary.specialAllowance);
+    document.getElementById('preview-basicPay').textContent = formatCurrency(formData.basicPay);
+    document.getElementById('preview-specialAllowance').textContent = formatCurrency(formData.specialAllowance);
     document.getElementById('preview-totalEarnings').textContent = formatCurrency(totalEarnings);
-    document.getElementById('preview-taxDeduction').textContent = formatCurrency(salary.taxDeduction);
+    document.getElementById('preview-taxDeduction').textContent = formatCurrency(formData.taxDeduction);
     document.getElementById('preview-lopDeduction').textContent = formatCurrency(lopDeduction);
     document.getElementById('preview-totalDeductions').textContent = formatCurrency(totalDeductions);
     document.getElementById('preview-netSalary').textContent = formatCurrency(netSalary);
     document.getElementById('preview-salaryInWords').textContent = `(${convertToWords(netSalary)} only)`;
     
-    // Store salary ID for later use
-    currentSalaryId = salary._id !== 'preview' ? salary._id : null;
+    // Show preview modal
+    const modal = document.getElementById('salaryPreviewModal');
+    modal.style.display = 'flex';
+    modal.classList.add('show');
 }
 
 function formatCurrency(amount) {
@@ -508,13 +452,12 @@ function formatCurrency(amount) {
 
 function convertToWords(num) {
     // Simple number to words conversion for Indian rupees
-    // For production, use a proper library like number-to-words
     const a = ['', 'one ', 'two ', 'three ', 'four ', 'five ', 'six ', 'seven ', 'eight ', 'nine ', 'ten ', 'eleven ', 'twelve ', 'thirteen ', 'fourteen ', 'fifteen ', 'sixteen ', 'seventeen ', 'eighteen ', 'nineteen '];
     const b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
     
-    if ((num = num.toString()).length > 9) return 'overflow';
+    if ((num = Math.floor(num)).toString().length > 9) return 'overflow';
     let n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
-    if (!n) return; 
+    if (!n) return ''; 
     
     let str = '';
     str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'crore ' : '';
@@ -526,21 +469,20 @@ function convertToWords(num) {
     return str.trim() + ' rupees';
 }
 
-function createNewSalary() {
-    currentSalaryId = null;
-    resetSalaryForm();
-    showSalaryGenerator();
-}
-
 function resetSalaryForm() {
-    document.getElementById('salaryForm').reset();
+    const form = document.getElementById('salaryForm');
+    if (form) form.reset();
+    
     const currentDate = new Date();
     document.getElementById('workingDays').value = getWorkingDaysInMonth(currentDate);
     document.getElementById('lopDays').value = 0;
     document.getElementById('taxDeduction').value = 0;
+    
+    // Trigger preview update
+    updateSalaryPreview();
 }
 
-// Update the loadSalaries function to handle API errors gracefully
+// Update the loadSalaries function
 async function loadSalaries() {
     try {
         showLoading(true);
@@ -585,7 +527,24 @@ async function loadSalaries() {
                 createdAt: salary.createdAt
             }));
 
-            renderSalariesTable(allSalaries);
+            totalSalariesCount = allSalaries.length;
+            
+            // Update total records display
+            document.getElementById('totalRecords').textContent = totalSalariesCount;
+            
+            // Apply filters and sort
+            const filteredSalaries = filterAndSortSalaries(allSalaries);
+            
+            renderSalariesTable(filteredSalaries);
+            
+            // Update pagination
+            updatePagination({
+                currentPage: currentPage,
+                totalPages: Math.ceil(totalSalariesCount / itemsPerPage),
+                totalSalaries: totalSalariesCount,
+                hasPrev: currentPage > 1,
+                hasNext: currentPage < Math.ceil(totalSalariesCount / itemsPerPage)
+            });
             
         } else {
             throw new Error(result.message || 'Failed to load salaries');
@@ -598,6 +557,57 @@ async function loadSalaries() {
     } finally {
         showLoading(false);
     }
+}
+
+function filterAndSortSalaries(salaries) {
+    // Apply filters
+    let filtered = [...salaries];
+    
+    const monthFilter = document.getElementById('monthFilter')?.value;
+    const yearFilter = document.getElementById('yearFilter')?.value;
+    const searchInput = document.getElementById('searchInput')?.value.toLowerCase();
+    
+    if (monthFilter && monthFilter !== 'all') {
+        filtered = filtered.filter(salary => salary.month === monthFilter);
+    }
+    
+    if (yearFilter && yearFilter !== 'all') {
+        filtered = filtered.filter(salary => salary.year.toString() === yearFilter);
+    }
+    
+    if (searchInput) {
+        filtered = filtered.filter(salary => 
+            salary.employeeName.toLowerCase().includes(searchInput) ||
+            salary.employeeId.toLowerCase().includes(searchInput) ||
+            salary.title.toLowerCase().includes(searchInput)
+        );
+    }
+    
+    // Apply sorting
+    const sortBy = document.getElementById('sortBy')?.value || 'created_desc';
+    
+    switch(sortBy) {
+        case 'name_asc':
+            filtered.sort((a, b) => a.employeeName.localeCompare(b.employeeName));
+            break;
+        case 'name_desc':
+            filtered.sort((a, b) => b.employeeName.localeCompare(a.employeeName));
+            break;
+        case 'amount_desc':
+            filtered.sort((a, b) => b.netPay - a.netPay);
+            break;
+        case 'amount_asc':
+            filtered.sort((a, b) => a.netPay - b.netPay);
+            break;
+        case 'created_asc':
+            filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            break;
+        default: // 'created_desc'
+            filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            break;
+    }
+    
+    return filtered;
 }
 
 function loadSampleData() {
@@ -631,55 +641,100 @@ function loadSampleData() {
             taxDeduction: 500
         }
     ];
-    renderSalariesTable(allSalaries);
+    
+    totalSalariesCount = allSalaries.length;
+    document.getElementById('totalRecords').textContent = totalSalariesCount;
+    
+    const filteredSalaries = filterAndSortSalaries(allSalaries);
+    renderSalariesTable(filteredSalaries);
+    
+    updatePagination({
+        currentPage: currentPage,
+        totalPages: Math.ceil(totalSalariesCount / itemsPerPage),
+        totalSalaries: totalSalariesCount,
+        hasPrev: currentPage > 1,
+        hasNext: currentPage < Math.ceil(totalSalariesCount / itemsPerPage)
+    });
 }
 
 function renderSalariesTable(salaries) {
     const tbody = document.getElementById('salaryTableBody');
-    const emptyState = document.getElementById('emptyState');
-    const loadingState = document.getElementById('loadingState');
-    
-    // Hide loading state
-    loadingState.style.display = 'none';
-    
-    if (salaries.length === 0) {
-        tbody.innerHTML = '';
-        emptyState.style.display = 'block';
-        console.log('📭 No salary records to display');
+    if (!tbody) {
+        console.error('Salary table body not found');
         return;
     }
     
-    emptyState.style.display = 'none';
     tbody.innerHTML = '';
+
+    // If no salaries, show empty state
+    if (salaries.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="10" class="no-data">
+                    <div class="no-contacts-message">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <h3>No Salary Records Found</h3>
+                        <p>Get started by generating your first salary</p>
+                        <button class="btn-primary" onclick="showSalaryGenerator()">
+                            <i class="fas fa-plus"></i> Generate First Salary
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    // Calculate pagination indices for client-side pagination
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, salaries.length);
     
-    console.log(`🔄 Rendering ${salaries.length} salary records`);
-    
-    salaries.forEach(salary => {
+    // Get only the salaries for the current page
+    const salariesToRender = salaries.slice(startIndex, endIndex);
+
+    // Render the paginated salaries
+    salariesToRender.forEach((salary, index) => {
+        const actualIndex = startIndex + index;
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${salary.employeeId}</td>
-            <td>${salary.employeeName}</td>
-            <td>${salary.title}</td>
-            <td>${salary.month}</td>
-            <td>${salary.year}</td>
-            <td>${formatCurrency(salary.basicPay)}</td>
-            <td>${formatCurrency(salary.specialAllowance)}</td>
-            <td>${formatCurrency(salary.netPay)}</td>
-            <td class="actions">
-                <button class="action-btn view" onclick="viewSalary('${salary._id}')" title="View">
-                    <i class="fas fa-eye"></i>
-                </button>
-                <button class="action-btn edit" onclick="editSalary('${salary._id}')" title="Edit">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="action-btn delete" onclick="confirmDeleteSalary('${salary._id}', '${salary.employeeName}')" title="Delete">
-                    <i class="fas fa-trash"></i>
-                </button>
+            <td><input type="checkbox" value="${salary._id}" onchange="toggleSalarySelection()"></td>
+            <td>${escapeHtml(salary.employeeId)}</td>
+            <td class="contact-name-cell">
+                <div class="contact-name">${escapeHtml(salary.employeeName)}</div>
+            </td>
+            <td>${escapeHtml(salary.title)}</td>
+            <td><span class="month-badge">${escapeHtml(salary.month)}</span></td>
+            <td>${escapeHtml(salary.year)}</td>
+            <td class="currency-cell">${formatCurrency(salary.basicPay)}</td>
+            <td class="currency-cell">${formatCurrency(salary.specialAllowance)}</td>
+            <td class="currency-cell"><strong>${formatCurrency(salary.netPay)}</strong></td>
+            <td>
+                <div class="table-actions">
+                    <button class="table-action-btn view" onclick="viewSalary('${salary._id}')" title="View">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="table-action-btn edit" onclick="editSalary('${salary._id}')" title="Edit">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="table-action-btn delete" onclick="confirmDeleteSalary('${salary._id}', '${salary.employeeName}')" title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
             </td>
         `;
-        
         tbody.appendChild(row);
     });
+}
+
+function escapeHtml(unsafe) {
+    if (unsafe === null || unsafe === undefined) return '';
+    return unsafe
+        .toString()
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 async function viewSalary(salaryId) {
@@ -701,8 +756,7 @@ async function viewSalary(salaryId) {
 
         if (result.success) {
             const salary = result.data;
-            populatePreview(salary);
-            showSalaryPreview();
+            showSalaryPreviewModal(salary);
         } else {
             throw new Error(result.message || 'Failed to load salary');
         }
@@ -711,6 +765,45 @@ async function viewSalary(salaryId) {
         console.error('Error viewing salary:', error);
         showNotification('Failed to load salary: ' + error.message, 'error');
     }
+}
+
+function showSalaryPreviewModal(salary) {
+    // Calculate salary components
+    const totalEarnings = salary.basicPay + salary.specialAllowance;
+    const dailyPay = salary.workingDays > 0 ? salary.basicPay / salary.workingDays : 0;
+    const lopDeduction = dailyPay * salary.lopDays;
+    const totalDeductions = salary.taxDeduction + lopDeduction;
+    const netSalary = totalEarnings - totalDeductions;
+    
+    // Populate preview modal
+    document.getElementById('preview-month').textContent = salary.month;
+    document.getElementById('preview-year').textContent = salary.year;
+    
+    // Employee details
+    document.getElementById('preview-employeeId').textContent = salary.employeeId;
+    document.getElementById('preview-employeeName').textContent = salary.employeeName;
+    document.getElementById('preview-employeeTitle').textContent = salary.title;
+    document.getElementById('preview-employeeEmail').textContent = salary.email;
+    document.getElementById('preview-employeePan').textContent = salary.pan;
+    document.getElementById('preview-employeeAccount').textContent = salary.accountNumber;
+    
+    // Salary breakdown
+    document.getElementById('preview-basicPay').textContent = formatCurrency(salary.basicPay);
+    document.getElementById('preview-specialAllowance').textContent = formatCurrency(salary.specialAllowance);
+    document.getElementById('preview-totalEarnings').textContent = formatCurrency(totalEarnings);
+    document.getElementById('preview-taxDeduction').textContent = formatCurrency(salary.taxDeduction);
+    document.getElementById('preview-lopDeduction').textContent = formatCurrency(lopDeduction);
+    document.getElementById('preview-totalDeductions').textContent = formatCurrency(totalDeductions);
+    document.getElementById('preview-netSalary').textContent = formatCurrency(netSalary);
+    document.getElementById('preview-salaryInWords').textContent = `(${convertToWords(netSalary)} only)`;
+    
+    // Store salary ID for print function
+    currentSalaryId = salary._id;
+    
+    // Show preview modal
+    const modal = document.getElementById('salaryPreviewModal');
+    modal.style.display = 'flex';
+    modal.classList.add('show');
 }
 
 async function editSalary(salaryId) {
@@ -747,7 +840,16 @@ async function editSalary(salaryId) {
             document.getElementById('taxDeduction').value = salary.taxDeduction;
             
             currentSalaryId = salaryId;
-            showSalaryGenerator();
+            document.getElementById('salaryModalTitle').textContent = 'Edit Salary';
+            
+            // Show modal
+            const modal = document.getElementById('salaryGeneratorModal');
+            modal.style.display = 'flex';
+            modal.classList.add('show');
+            
+            // Update preview
+            updateSalaryPreview();
+            
         } else {
             throw new Error(result.message || 'Failed to load salary for editing');
         }
@@ -764,10 +866,9 @@ function confirmDeleteSalary(salaryId, employeeName) {
         name: employeeName
     };
     
-    document.getElementById('deleteItemName').textContent = `${employeeName}'s salary record`;
+    document.getElementById('deleteSalaryName').textContent = `${employeeName}'s salary record`;
     document.getElementById('deleteModal').style.display = 'flex';
-    
-    document.getElementById('confirmDeleteBtn').onclick = () => deleteSalary(salaryId);
+    document.getElementById('deleteModal').classList.add('show');
 }
 
 async function deleteSalary(salaryId) {
@@ -807,6 +908,7 @@ async function deleteSalary(salaryId) {
 
 function closeDeleteModal() {
     document.getElementById('deleteModal').style.display = 'none';
+    document.getElementById('deleteModal').classList.remove('show');
     currentDeleteSalary = null;
 }
 
@@ -814,189 +916,227 @@ function closeAllModals() {
     const modals = document.querySelectorAll('.modal-overlay');
     modals.forEach(modal => {
         modal.style.display = 'none';
+        modal.classList.remove('show');
     });
     currentDeleteSalary = null;
 }
 
 function filterSalaries() {
-    const monthFilter = document.getElementById('monthFilter').value;
-    const yearFilter = document.getElementById('yearFilter').value;
-    const searchInput = document.getElementById('searchInput').value.toLowerCase();
-    
-    let filteredSalaries = allSalaries;
-    
-    if (monthFilter !== 'all') {
-        filteredSalaries = filteredSalaries.filter(salary => salary.month === monthFilter);
-    }
-    
-    if (yearFilter !== 'all') {
-        filteredSalaries = filteredSalaries.filter(salary => salary.year.toString() === yearFilter);
-    }
-    
-    if (searchInput) {
-        filteredSalaries = filteredSalaries.filter(salary => 
-            salary.employeeName.toLowerCase().includes(searchInput) ||
-            salary.employeeId.toLowerCase().includes(searchInput) ||
-            salary.title.toLowerCase().includes(searchInput)
-        );
-    }
-    
+    currentPage = 1;
+    const filteredSalaries = filterAndSortSalaries(allSalaries);
     renderSalariesTable(filteredSalaries);
+    updatePagination({
+        currentPage: currentPage,
+        totalPages: Math.ceil(filteredSalaries.length / itemsPerPage),
+        totalSalaries: filteredSalaries.length,
+        hasPrev: currentPage > 1,
+        hasNext: currentPage < Math.ceil(filteredSalaries.length / itemsPerPage)
+    });
+}
+
+function resetFilters() {
+    document.getElementById('monthFilter').value = 'all';
+    document.getElementById('yearFilter').value = 'all';
+    document.getElementById('sortBy').value = 'created_desc';
+    document.getElementById('searchInput').value = '';
+    
+    currentPage = 1;
+    filterSalaries();
+    
+    showNotification('Filters reset', 'info');
+}
+
+function sortSalaries() {
+    currentPage = 1;
+    filterSalaries();
+}
+
+// Bulk Operations
+function selectAllSalaries(checkbox) {
+    const checkboxes = document.querySelectorAll('#salaryTableBody input[type="checkbox"]');
+    checkboxes.forEach(cb => {
+        cb.checked = checkbox.checked;
+    });
+    toggleSalarySelection();
+}
+
+function toggleSalarySelection() {
+    const selectedCheckboxes = document.querySelectorAll('#salaryTableBody input[type="checkbox"]:checked');
+    const bulkActions = document.getElementById('bulkActions');
+    const selectedCount = document.querySelector('.selected-count');
+    
+    if (selectedCheckboxes.length > 0 && bulkActions && selectedCount) {
+        bulkActions.style.display = 'flex';
+        selectedCount.textContent = `${selectedCheckboxes.length} salar${selectedCheckboxes.length > 1 ? 'ies' : 'y'} selected`;
+    } else if (bulkActions) {
+        bulkActions.style.display = 'none';
+    }
+}
+
+function bulkPrintSalaries() {
+    const selectedCheckboxes = document.querySelectorAll('#salaryTableBody input[type="checkbox"]:checked');
+    if (selectedCheckboxes.length === 0) {
+        showNotification('Please select salaries to print', 'warning');
+        return;
+    }
+    showNotification(`Printing ${selectedCheckboxes.length} salaries...`, 'info');
+}
+
+function bulkExportSalaries() {
+    const selectedCheckboxes = document.querySelectorAll('#salaryTableBody input[type="checkbox"]:checked');
+    if (selectedCheckboxes.length === 0) {
+        showNotification('Please select salaries to export', 'warning');
+        return;
+    }
+    showNotification(`Exporting ${selectedCheckboxes.length} salaries...`, 'info');
+}
+
+function bulkDeleteSalaries() {
+    const selectedCheckboxes = document.querySelectorAll('#salaryTableBody input[type="checkbox"]:checked');
+    if (selectedCheckboxes.length === 0) {
+        showNotification('Please select salaries to delete', 'warning');
+        return;
+    }
+    
+    if (confirm(`Are you sure you want to delete ${selectedCheckboxes.length} salar${selectedCheckboxes.length > 1 ? 'ies' : 'y'}?`)) {
+        showNotification(`Deleting ${selectedCheckboxes.length} salaries...`, 'info');
+        // Implement bulk delete logic here
+    }
+}
+
+// Pagination
+function updatePagination(paginationData) {
+    const startElement = document.getElementById('paginationStart');
+    const endElement = document.getElementById('paginationEnd');
+    const totalElement = document.getElementById('paginationTotal');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    if (!startElement || !endElement || !totalElement || !prevBtn || !nextBtn) {
+        console.warn('Pagination elements not found in DOM');
+        return;
+    }
+    
+    const totalPages = Math.ceil(paginationData.totalSalaries / itemsPerPage);
+    const startIndex = ((currentPage - 1) * itemsPerPage) + 1;
+    const endIndex = Math.min(currentPage * itemsPerPage, paginationData.totalSalaries);
+    
+    startElement.textContent = startIndex;
+    endElement.textContent = endIndex;
+    totalElement.textContent = paginationData.totalSalaries;
+    
+    prevBtn.disabled = currentPage <= 1;
+    nextBtn.disabled = currentPage >= totalPages;
+    
+    renderPaginationNumbers(totalPages);
+}
+
+function renderPaginationNumbers(totalPages) {
+    const container = document.getElementById('paginationNumbers');
+    if (!container) {
+        console.warn('Pagination numbers container not found');
+        return;
+    }
+    
+    container.innerHTML = '';
+    
+    const maxVisible = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+    
+    if (endPage - startPage + 1 < maxVisible) {
+        startPage = Math.max(1, endPage - maxVisible + 1);
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+        const pageBtn = document.createElement('button');
+        pageBtn.className = `page-number ${i === currentPage ? 'active' : ''}`;
+        pageBtn.textContent = i;
+        pageBtn.onclick = () => goToPage(i);
+        container.appendChild(pageBtn);
+    }
+}
+
+function goToPage(page) {
+    if (page < 1 || page > Math.ceil(totalSalariesCount / itemsPerPage)) {
+        console.warn('Invalid page number:', page);
+        return;
+    }
+    
+    currentPage = page;
+    const filteredSalaries = filterAndSortSalaries(allSalaries);
+    renderSalariesTable(filteredSalaries);
+    
+    updatePagination({
+        currentPage: currentPage,
+        totalPages: Math.ceil(totalSalariesCount / itemsPerPage),
+        totalSalaries: totalSalariesCount,
+        hasPrev: currentPage > 1,
+        hasNext: currentPage < Math.ceil(totalSalariesCount / itemsPerPage)
+    });
+}
+
+function previousPage() {
+    if (currentPage > 1) {
+        goToPage(currentPage - 1);
+    }
+}
+
+function nextPage() {
+    if (currentPage < Math.ceil(totalSalariesCount / itemsPerPage)) {
+        goToPage(currentPage + 1);
+    }
 }
 
 function printSalary() {
     window.print();
 }
 
+function printAllSalaries() {
+    showNotification('Print all feature coming soon', 'info');
+}
+
+function exportSalaries() {
+    showNotification('Export feature coming soon', 'info');
+}
+
 function showLoading(show) {
-    const loadingState = document.getElementById('loadingState');
-    const salariesSection = document.querySelector('.form-container');
-    
+    // You can implement a loading indicator if needed
     if (show) {
-        salariesSection.style.opacity = '0.6';
-        loadingState.style.display = 'block';
-        console.log('⏳ Showing loading state');
+        console.log('⏳ Loading salaries...');
     } else {
-        salariesSection.style.opacity = '1';
-        loadingState.style.display = 'none';
-        console.log('✅ Hiding loading state');
+        console.log('✅ Loading complete');
     }
 }
 
 // Dashboard Functions
 function toggleSidebar() {
     const appContainer = document.querySelector('.app-container');
-    appContainer.classList.toggle('sidebar-collapsed');
+    const sidebarToggleIcon = document.getElementById('sidebarToggleIcon');
+    const floatingToggleIcon = document.getElementById('floatingToggleIcon');
     
-    // Update the menu toggle icon
-    const menuToggleIcon = document.querySelector('.menu-toggle i');
-    if (appContainer.classList.contains('sidebar-collapsed')) {
-        menuToggleIcon.className = 'fas fa-chevron-right';
-    } else {
-        menuToggleIcon.className = 'fas fa-bars';
-    }
-}
-// Update user avatar function
-function updateUserAvatar() {
-    try {
-        const userData = getUserData();
-        const userName = userData ? (userData.name || userData.username || userData.email || 'User') : 'User';
-        
-        console.log('Updating avatar for user:', userName);
-        
-        // Update sidebar avatar (div element)
-        const sidebarAvatar = document.getElementById('userAvatar');
-        if (sidebarAvatar) {
-            createLetterAvatar(userName, sidebarAvatar);
-        }
-
-    } catch (error) {
-        console.error('Error updating avatar:', error);
-        // Fallback with gradient color
-        const sidebarAvatar = document.getElementById('userAvatar');
-        if (sidebarAvatar) {
-            sidebarAvatar.style.background = 'linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%)';
-            const letterSpan = sidebarAvatar.querySelector('.avatar-letter');
-            if (letterSpan) {
-                letterSpan.textContent = 'U';
-            }
-        }
-    }
-}
-
-// Create letter avatar function
-function createLetterAvatar(name, element) {
-    if (!name || name === 'User' || name === 'Loading...') {
-        name = 'User';
-    }
-
-    // Get first letter of the name
-    const firstLetter = name.charAt(0).toUpperCase();
-    const backgroundColor = getAvatarColor();
-
-    if (element.tagName === 'IMG') {
-        // For image elements, create canvas avatar
-        const canvas = document.createElement('canvas');
-        const size = 200;
-        canvas.width = size;
-        canvas.height = size;
-        const context = canvas.getContext('2d');
-
-        // Create gradient for canvas
-        const gradient = context.createLinearGradient(0, 0, size, size);
-        gradient.addColorStop(0, '#00BCD4');
-        gradient.addColorStop(1, '#1E88E5');
-
-        // Draw background with gradient
-        context.fillStyle = gradient;
-        context.fillRect(0, 0, size, size);
-
-        // Draw letter
-        context.fillStyle = '#FFFFFF';
-        context.font = `bold ${size * 0.4}px Inter, Arial, sans-serif`;
-        context.textAlign = 'center';
-        context.textBaseline = 'middle';
-        context.fillText(firstLetter, size / 2, size / 2);
-
-        element.src = canvas.toDataURL();
-        element.alt = name;
-    } else {
-        // For div elements (like in sidebar), use CSS gradient directly
-        element.style.background = backgroundColor;
-        const letterSpan = element.querySelector('.avatar-letter');
-        if (letterSpan) {
-            letterSpan.textContent = firstLetter;
+    const isCollapsed = appContainer.classList.toggle('sidebar-collapsed');
+    
+    // Update sidebar toggle icon based on sidebar state
+    if (sidebarToggleIcon) {
+        if (isCollapsed) {
+            sidebarToggleIcon.className = 'fas fa-chevron-right';
         } else {
-            // If no span exists, create one (for sidebar avatar)
-            const newLetterSpan = document.createElement('span');
-            newLetterSpan.className = 'avatar-letter';
-            newLetterSpan.textContent = firstLetter;
-            element.innerHTML = '';
-            element.appendChild(newLetterSpan);
+            sidebarToggleIcon.className = 'fas fa-chevron-left';
         }
     }
-}
-
-// Avatar color function
-function getAvatarColor() {
-    return 'linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%)';
-}
-
-// Update the displayUserName function to include avatar
-function displayUserName() {
-    try {
-        const userData = getUserData();
-        const userNameElement = document.getElementById('userDisplayName');
-        
-        console.log('👤 Displaying user name for:', userData);
-        
-        let displayName = 'User';
-        
-        if (userData) {
-            // Priority: name -> username -> email -> 'User'
-            displayName = userData.name || userData.username || userData.email || 'User';
-            console.log('✅ User name found:', displayName);
-        } else {
-            console.warn('❌ No user data found in localStorage');
-        }
-        
-        // Always update the display name
-        if (userNameElement) {
-            userNameElement.textContent = displayName;
-        }
-        
-        // Update avatar with letter
-        updateUserAvatar();
-        
-    } catch (error) {
-        console.error('❌ Error displaying user name:', error);
-        const userNameElement = document.getElementById('userDisplayName');
-        if (userNameElement) {
-            userNameElement.textContent = 'User';
-        }
-        updateUserAvatar();
+    
+    // Update floating button icon
+    if (floatingToggleIcon) {
+        floatingToggleIcon.className = 'fas fa-chevron-right';
     }
+    
+    // Save sidebar state to localStorage
+    localStorage.setItem('sidebarCollapsed', isCollapsed);
+    
+    console.log('🔧 Sidebar toggled:', isCollapsed ? 'collapsed' : 'expanded');
 }
+
 function toggleUserMenu() {
     const dropdown = document.getElementById('userDropdown');
     const isVisible = dropdown.classList.contains('show');
@@ -1007,18 +1147,8 @@ function toggleUserMenu() {
     }
 }
 
-function toggleNotifications() {
-    const dropdown = document.getElementById('notificationsDropdown');
-    const isVisible = dropdown.classList.contains('show');
-    closeAllDropdowns();
-    if (!isVisible) {
-        dropdown.classList.add('show');
-        console.log('🔔 Opening notifications');
-    }
-}
-
 function closeAllDropdowns() {
-    document.querySelectorAll('.user-dropdown, .notifications-dropdown').forEach(dropdown => {
+    document.querySelectorAll('.user-dropdown').forEach(dropdown => {
         dropdown.classList.remove('show');
     });
 }
@@ -1062,19 +1192,82 @@ function logout() {
     }
 }
 
-function markAllRead() {
-    const badge = document.getElementById('notificationCount');
-    badge.textContent = '0';
-    badge.style.display = 'none';
-    closeAllDropdowns();
-    showNotification('All notifications marked as read', 'success');
-    console.log('📬 All notifications marked as read');
+function getToken() {
+    return localStorage.getItem('authToken') || '';
 }
 
-function viewNotification(id) {
-    closeAllDropdowns();
-    showNotification(`Viewing notification ${id}`, 'info');
-    console.log(`👀 Viewing notification: ${id}`);
+function getAvatarColor() {
+    return 'linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%)';
+}
+
+function createLetterAvatar(name, element) {
+    if (!name || name === 'User' || name === 'Loading...') {
+        name = 'User';
+    }
+
+    const firstLetter = name.charAt(0).toUpperCase();
+    const backgroundColor = getAvatarColor();
+
+    if (element.tagName === 'IMG') {
+        const canvas = document.createElement('canvas');
+        const size = 200;
+        canvas.width = size;
+        canvas.height = size;
+        const context = canvas.getContext('2d');
+
+        const gradient = context.createLinearGradient(0, 0, size, size);
+        gradient.addColorStop(0, '#00BCD4');
+        gradient.addColorStop(1, '#1E88E5');
+
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, size, size);
+
+        context.fillStyle = '#FFFFFF';
+        context.font = `bold ${size * 0.4}px Inter, Arial, sans-serif`;
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(firstLetter, size / 2, size / 2);
+
+        element.src = canvas.toDataURL();
+        element.alt = name;
+    } else {
+        element.style.background = backgroundColor;
+        const letterSpan = element.querySelector('.avatar-letter');
+        if (letterSpan) {
+            letterSpan.textContent = firstLetter;
+        } else {
+            const newLetterSpan = document.createElement('span');
+            newLetterSpan.className = 'avatar-letter';
+            newLetterSpan.textContent = firstLetter;
+            element.innerHTML = '';
+            element.appendChild(newLetterSpan);
+        }
+    }
+}
+
+function updateUserAvatar() {
+    try {
+        const userData = getUserData();
+        const userName = userData ? (userData.name || userData.username || userData.email || 'User') : 'User';
+        
+        console.log('Updating avatar for user:', userName);
+        
+        const sidebarAvatar = document.getElementById('userAvatar');
+        if (sidebarAvatar) {
+            createLetterAvatar(userName, sidebarAvatar);
+        }
+
+    } catch (error) {
+        console.error('Error updating avatar:', error);
+        const sidebarAvatar = document.getElementById('userAvatar');
+        if (sidebarAvatar) {
+            sidebarAvatar.style.background = 'linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%)';
+            const letterSpan = sidebarAvatar.querySelector('.avatar-letter');
+            if (letterSpan) {
+                letterSpan.textContent = 'U';
+            }
+        }
+    }
 }
 
 // Notification System
@@ -1129,4 +1322,10 @@ function getNotificationIcon(type) {
     return icons[type] || icons.info;
 }
 
-console.log('✅ Salary Management System fully initialized');
+function confirmDelete() {
+    if (!currentDeleteSalary) return;
+    
+    deleteSalary(currentDeleteSalary.id);
+}
+
+console.log('✅ Salary Management System fully initialized for new layout');
