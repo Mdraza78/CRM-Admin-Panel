@@ -28,337 +28,409 @@ body {
     display: none !important;
 }
 
-/* ===== ZYLKER SALARY SLIP PREVIEW STYLES ===== */
+/* ===== UPDATED SALARY SLIP PREVIEW STYLES ===== */
 
 /* Salary Slip Container */
 .salary-slip-container {
     background: white;
     border-radius: 8px;
-    padding: 40px;
+    padding: 30px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    max-width: 850px;
+    max-width: 700px;
     margin: 0 auto;
     font-family: 'Arial', sans-serif;
-    color: #333;
-    line-height: 1.5;
 }
 
-/* Company Header */
-.company-header {
-    text-align: center;
-    margin-bottom: 30px;
+
+/* Slip Header */
+.slip-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding-bottom: 20px;
-    border-bottom: 2px solid #2c3e50;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #00BCD4;
 }
 
-.company-name {
-    font-size: 48px;
-    font-weight: 700;
-    color: #2c3e50;
-    margin: 0;
-    letter-spacing: 2px;
-    text-transform: uppercase;
+.company-info {
+    flex: 1;
 }
 
-.company-location {
+.slip-logo {
+    max-height: 70px;
+    max-width: 180px;
+    object-fit: contain;
+}
+
+.slip-title {
+    text-align: right;
+}
+
+.employee-section h3 {
     font-size: 16px;
-    color: #666;
-    margin: 5px 0 0 0;
-    font-weight: 500;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e2e8f0;
 }
 
-/* Employee Summary Section */
-.employee-summary-section {
-    margin: 30px 0;
-}
-
-.section-title {
-    font-size: 24px;
+.slip-title h2 {
+    font-size: 20px;
     font-weight: 700;
     color: #2c3e50;
-    margin-bottom: 20px;
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    margin-bottom: 10px;
+    text-align: right;
 }
 
-.summary-table {
-    max-width: 600px;
-    margin: 0 auto;
+.slip-period {
+    background: #f8fafc;
+    padding: 10px 15px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    text-align: right;
+
 }
 
-.summary-row {
+.period-item {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.period-item:last-child {
+    margin-bottom: 0;
+}
+
+.period-item .label {
+    font-weight: 600;
+    color: #475569;
+}
+
+.period-item .value {
+    color: #2c3e50;
+    margin-left: 5px;
+}
+
+/* Employee Section */
+.employee-section {
+    margin-bottom: 25px;
+    padding: 20px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.info-grid {
     display: grid;
-    grid-template-columns: 160px 20px 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
     padding: 8px 0;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f1f5f9;
 }
 
-.summary-row:last-child {
+.info-label {
+    font-weight: 600;
+    color: #475569;
+    font-size: 14px;
+    min-width: 140px;
+}
+
+.info-row:last-child {
     border-bottom: none;
 }
 
-.summary-label {
-    font-weight: 600;
-    color: #555;
-    font-size: 14px;
-}
-
-.summary-separator {
-    text-align: center;
-    font-weight: 600;
-    color: #555;
-}
-
-.summary-value {
+.info-value {
     font-weight: 600;
     color: #2c3e50;
     font-size: 14px;
-}
-
-/* Divider */
-.divider {
-    height: 1px;
-    background: #e0e0e0;
-    margin: 25px 0;
-}
-
-/* Payslip Header */
-.payslip-header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.payslip-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #555;
-    margin: 0 0 5px 0;
-}
-
-.month-year {
-    font-size: 28px;
-    font-weight: 700;
-    color: #2c3e50;
-    margin: 0;
-}
-
-/* Net Pay Display */
-.net-pay-display {
-    text-align: center;
-    margin: 30px 0;
-    padding: 20px;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border-radius: 10px;
-    border: 2px solid #00BCD4;
-}
-
-.net-amount-large {
-    font-size: 48px;
-    font-weight: 800;
-    color: #2c3e50;
-    margin-bottom: 10px;
-}
-
-.net-amount-large .currency {
-    font-size: 36px;
-    margin-right: 5px;
-}
-
-.net-amount-large .amount {
-    font-family: monospace;
-    letter-spacing: 1px;
-}
-
-.net-pay-label {
-    font-size: 18px;
-    font-weight: 600;
-    color: #555;
-    margin: 0;
-}
-
-/* Working Days Info */
-.working-days-info {
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-    margin: 20px 0 30px 0;
-    font-size: 14px;
-}
-
-.days-info {
-    font-size: 14px;
-    color: #555;
-}
-
-.days-label {
-    font-weight: 600;
-    margin-right: 5px;
-}
-
-.days-value {
-    font-weight: 700;
-    color: #2c3e50;
-}
-
-/* Earnings and Deductions Table */
-.salary-details-table {
-    margin: 30px 0;
-    overflow-x: auto;
-}
-
-.earnings-deductions-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-    border: 1px solid #e0e0e0;
-}
-
-.earnings-deductions-table thead {
-    background: #f8f9fa;
-}
-
-.earnings-deductions-table thead tr:first-child th {
-    background: #2c3e50;
-    color: white;
-    font-size: 16px;
-    padding: 15px;
-    border: 1px solid #2c3e50;
-}
-
-.earnings-deductions-table thead tr:nth-child(2) th {
-    padding: 10px 15px;
-    font-weight: 600;
-    color: #555;
-    background: #e9ecef;
-    border: 1px solid #e0e0e0;
-}
-
-.earnings-deductions-table thead th:first-child {
-    text-align: left;
-}
-
-.earnings-deductions-table tbody td {
-    padding: 12px 15px;
-    border: 1px solid #e0e0e0;
-    text-align: left;
-    vertical-align: top;
-}
-
-.earnings-deductions-table tbody td:first-child {
-    font-weight: 600;
-    color: #555;
-    min-width: 180px;
-}
-
-.earnings-deductions-table .amount,
-.earnings-deductions-table .ytd {
     text-align: right;
-    font-family: monospace;
+}
+
+.salary-details-section {
+    margin-bottom: 25px;
+    padding: 20px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.salary-details-section h3 {
+    font-size: 16px;
     font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+/* PF Section */
+.pf-section {
+    margin: 15px 0;
+    padding: 15px;
+    background: #f8fafc;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+}
+
+.pf-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.pf-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pf-label {
+    font-weight: 600;
+    color: #475569;
+    font-size: 13px;
     min-width: 120px;
 }
 
-.earnings-deductions-table .amount {
-    color: #065f46;
-}
-
-.earnings-deductions-table .ytd {
-    color: #1e40af;
-}
-
-.earnings-deductions-table .total-row td {
-    background: #f8f9fa;
-    border-top: 2px solid #e0e0e0;
-    font-weight: 700;
+.pf-value {
+    font-weight: 600;
     color: #2c3e50;
-}
-
-.earnings-deductions-table .total-row td.amount {
-    color: #065f46;
-    font-size: 14px;
-}
-
-/* Total Net Payable */
-.total-net-payable {
-    text-align: center;
-    margin: 40px 0;
-    padding: 25px;
-    background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
-    border-radius: 8px;
-    border: 1px solid #ced4da;
-}
-
-.net-payable-title {
-    font-size: 22px;
-    font-weight: 700;
-    color: #2c3e50;
-    margin: 0 0 10px 0;
-    text-transform: uppercase;
-}
-
-.net-payable-subtitle {
-    font-size: 14px;
-    color: #666;
-    margin: 0 0 20px 0;
-    font-style: italic;
-}
-
-.net-payable-amount {
-    font-size: 40px;
-    font-weight: 800;
-    color: #2c3e50;
-    margin: 15px 0;
-}
-
-.net-payable-amount .currency {
-    font-size: 32px;
-    margin-right: 5px;
-}
-
-.net-payable-amount .amount {
+    font-size: 13px;
     font-family: monospace;
-    letter-spacing: 1px;
 }
 
-.amount-in-words {
-    font-size: 14px;
-    color: #555;
-    margin: 20px 0 0 0;
-    padding: 12px;
-    background: white;
-    border-radius: 6px;
-    border: 1px solid #e0e0e0;
+/* Salary Table Section */
+.salary-table-section {
+    margin: 20px 0;
+    overflow-x: auto;
+}
+
+.salary-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.salary-table th {
+    background: #f1f5f9;
+    padding: 8px 10px;
+    text-align: center;
+    font-weight: 600;
+    color: #2c3e50;
+    border: 1px solid #e2e8f0;
+}
+
+.salary-table td {
+    padding: 8px 10px;
+    border: 1px solid #e2e8f0;
     text-align: left;
 }
 
-#preview-amountInWords {
+.salary-table td.amount,
+.salary-table td.ytd {
+    text-align: right;
+    font-family: monospace;
+    font-weight: 600;
+}
+
+.salary-table .total-row td {
+    background: #f8fafc;
+    border-top: 2px solid #e2e8f0;
     font-weight: 600;
     color: #2c3e50;
 }
 
-/* Footer */
-.salary-footer {
-    margin-top: 40px;
-    padding-top: 20px;
+.salary-table td.amount.total {
+    color: #065f46;
+    font-size: 13px;
 }
 
-.footer-divider {
-    height: 1px;
-    background: #e0e0e0;
+/* Net Salary Display */
+.net-salary-display {
+    margin: 20px 0;
+}
+
+.net-salary-card {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: 10px;
+    padding: 25px;
+    border: 2px solid #00BCD4;
+    text-align: center;
+}
+
+.net-salary-header {
+    text-align: center;
     margin-bottom: 15px;
 }
 
-.footer-note {
+.net-salary-header h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+.net-salary-header p {
     font-size: 12px;
-    color: #666;
+    color: #64748b;
+}
+
+.net-amount {
     text-align: center;
-    font-style: italic;
+    margin: 20px 0;
+}
+
+.net-amount .currency {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.net-amount .net-amount-value {
+    font-size: 40px;
+    font-weight: 800;
+    color: #2c3e50;
+    margin-left: 5px;
+}
+
+
+.amount-in-words {
+    text-align: center;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    margin-top: 20px;
+}
+
+.amount-in-words p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+}
+.amount-in-words strong {
+    color: #475569;
+}
+
+#preview-salaryInWords {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+/* Slip Footer */
+.slip-footer {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.payslip-footer-note {
+    font-size: 13px;
+    color: #64748b;
+}
+
+.payslip-for-month {
     margin: 0;
 }
 
-/* Sidebar Toggle Styles */
+#preview-footer-month {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.signature-section {
+    text-align: center;
+}
+
+.signature-box {
+    min-width: 200px;
+}
+
+.signature-line {
+    width: 180px;
+    height: 1px;
+    background: #2c3e50;
+    margin: 0 auto 8px;
+    position: relative;
+}
+
+.signature-line::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: repeating-linear-gradient(
+        to right,
+        transparent,
+        transparent 5px,
+        #2c3e50 5px,
+        #2c3e50 10px
+    );
+}
+
+.signature-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+
+@media (max-width: 768px) {
+    .salary-slip-container {
+        padding: 20px;
+    }
+    
+    .slip-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .slip-title h2 {
+        text-align: center;
+    }
+    
+    .slip-period {
+        text-align: center;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .net-amount .net-amount-value {
+        font-size: 32px;
+    }
+    
+    .net-amount .currency {
+        font-size: 24px;
+    }
+    
+    .slip-footer {
+        flex-direction: column;
+        gap: 20px;
+        align-items: center;
+    }
+    
+    .signature-box {
+        margin-top: 15px;
+    }
+}
+
 .sidebar-toggle-btn {
     background: linear-gradient(135deg, #00BCD4 0%, #1E88E5 100%);
     border: none;
@@ -1964,6 +2036,8 @@ body {
     color: #065f46;
 }
 
+
+
 .employee-details {
     margin: 30px 0;
 }
@@ -2058,46 +2132,22 @@ body {
     margin-top: 40px;
 }
 
-/* Print Styles for Salary Slip */
+/* Print Styles */
 @media print {
-    body * {
-        visibility: hidden;
+    body { 
+        background-color: white; 
     }
-    
-    .salary-slip-container,
-    .salary-slip-container * {
-        visibility: visible;
+    .header, .dashboard-header, .main-content-area, .floating-sidebar-toggle { 
+        display: none; 
     }
-    
-    .salary-slip-container {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        padding: 20px;
-        box-shadow: none;
+    .main-content { 
+        padding: 0; 
         margin: 0;
     }
-    
-    .modal-overlay,
-    .modal-content,
-    .modal-header,
-    .modal-actions {
-        display: none !important;
-    }
-    
-    .company-header {
-        break-inside: avoid;
-    }
-    
-    .earnings-deductions-table {
-        break-inside: avoid;
-        box-shadow: none;
-        border: 1px solid #ddd;
-    }
-    
-    .total-net-payable {
-        break-inside: avoid;
+    .salary-paper { 
+        box-shadow: none; 
+        border: none;
+        padding: 0;
     }
 }
 
@@ -2197,45 +2247,6 @@ body {
     
     .modal-actions-inline {
         flex-direction: column;
-    }
-    
-    /* Zylker design responsive */
-    .salary-slip-container {
-        padding: 20px;
-    }
-    
-    .company-name {
-        font-size: 36px;
-    }
-    
-    .summary-row {
-        grid-template-columns: 120px 20px 1fr;
-        font-size: 12px;
-    }
-    
-    .net-amount-large {
-        font-size: 36px;
-    }
-    
-    .net-payable-amount {
-        font-size: 32px;
-    }
-    
-    .earnings-deductions-table {
-        font-size: 11px;
-    }
-    
-    .working-days-info {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .section-title {
-        font-size: 20px;
-    }
-    
-    .month-year {
-        font-size: 24px;
     }
 }
 
@@ -2586,4 +2597,47 @@ body {
     font-family: 'Inter', sans-serif;
     font-weight: 500;
     color: #065f46;
+}
+
+/* Print Styles for Salary Slip */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    
+    .salary-slip-container,
+    .salary-slip-container * {
+        visibility: visible;
+    }
+    
+    .salary-slip-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        padding: 20px;
+        box-shadow: none;
+        margin: 0;
+    }
+    
+    .modal-overlay,
+    .modal-content,
+    .modal-header,
+    .modal-actions {
+        display: none !important;
+    }
+    
+    .slip-header {
+        break-inside: avoid;
+    }
+    
+    .salary-table {
+        break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+    
+    .net-salary-display {
+        break-inside: avoid;
+    }
 }
