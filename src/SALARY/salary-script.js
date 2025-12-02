@@ -800,81 +800,73 @@ async function viewSalary(salaryId) {
 }
 
 function populatePreviewModal(salary) {
-    // Calculate salary components
-    const month = salary.month || 'March';
-    const year = salary.year || 2024;
-    
-    document.getElementById('preview-month').textContent = month;
-    document.getElementById('preview-year').textContent = year;
-    
-    // Format date for pay date
-    const payDate = salary.payDate || '29/03/2024';
-    document.getElementById('preview-pay-date').textContent = payDate;
-    
-    // Employee details
-    document.getElementById('preview-employeeName').textContent = salary.employeeName || 'Gaurav';
-    document.getElementById('preview-employeeTitle').textContent = salary.title || 'Associate Editor';
-    document.getElementById('preview-employeeId').textContent = salary.employeeId || '43521';
-    document.getElementById('preview-date-of-joining').textContent = salary.dateOfJoining || '30/06/2020';
-    
-    // PF details
-    document.getElementById('preview-pf-number').textContent = salary.pfNumber || 'AA/AAA/9999999/99G/9899999';
-    document.getElementById('preview-uan').textContent = salary.uan || '1111111111111';
-    
-    // Calculate YTD values
-    const ytdMultiplier = 3;
-    
-    // Salary breakdown table
-    const basicPay = salary.basicPay || 43750;
-    document.getElementById('preview-basicPay').textContent = formatCurrency(basicPay);
-    document.getElementById('preview-basic-ytd').textContent = formatCurrency(basicPay * ytdMultiplier);
-    
-    const hra = salary.hra || (basicPay * 0.5);
-    const conveyance = salary.conveyance || 6000;
-    const education = salary.education || 4000;
-    const fixedAllowance = salary.fixedAllowance || 6625;
-    
-    document.getElementById('preview-hra').textContent = formatCurrency(hra);
-    document.getElementById('preview-hra-ytd').textContent = formatCurrency(hra * ytdMultiplier);
-    document.getElementById('preview-conveyance').textContent = formatCurrency(conveyance);
-    document.getElementById('preview-conveyance-ytd').textContent = formatCurrency(conveyance * ytdMultiplier);
-    document.getElementById('preview-education').textContent = formatCurrency(education);
-    document.getElementById('preview-education-ytd').textContent = formatCurrency(education * ytdMultiplier);
-    document.getElementById('preview-fixed').textContent = formatCurrency(fixedAllowance);
-    document.getElementById('preview-fixed-ytd').textContent = formatCurrency(fixedAllowance * ytdMultiplier);
-    
-    // Calculate gross earnings
-    const grossEarnings = basicPay + hra + conveyance + education + fixedAllowance;
-    document.getElementById('preview-gross-earnings').textContent = formatCurrency(grossEarnings);
-    
-    // Deductions
-    const epf = salary.epf || (basicPay * 0.12);
-    const profTax = salary.taxDeduction || 0;
-    
-    document.getElementById('preview-epf').textContent = formatCurrency(epf);
-    document.getElementById('preview-epf-ytd').textContent = formatCurrency(epf * ytdMultiplier);
-    document.getElementById('preview-prof-tax').textContent = formatCurrency(profTax);
-    document.getElementById('preview-prof-tax-ytd').textContent = formatCurrency(profTax * ytdMultiplier);
-    
-    // Total deductions
-    const totalDeductions = epf + profTax;
-    document.getElementById('preview-total-deductions').textContent = formatCurrency(totalDeductions);
-    
-    // Net salary
-    const netSalary = grossEarnings - totalDeductions;
-    document.getElementById('preview-netSalary').textContent = netSalary.toFixed(2);
-    document.getElementById('preview-salaryInWords').textContent = `Indian Rupee ${convertToWords(netSalary)} Only`;
-    
-    // Footer month
-    document.getElementById('preview-footer-month').textContent = `${month} ${year}`;
-    
-    // Store current salary ID
-    currentSalaryId = salary._id;
-    
-    // Show preview modal
-    const modal = document.getElementById('salaryPreviewModal');
-    modal.style.display = 'flex';
-    modal.classList.add('show');
+    try {
+        // Calculate salary components
+        const month = salary.month || 'March';
+        const year = salary.year || 2024;
+        
+        // Format date for pay date
+        const payDate = salary.payDate || new Date().toLocaleDateString('en-GB');
+        
+        // Update elements that exist in the HTML
+        const previewMonth = document.getElementById('preview-month');
+        const previewYear = document.getElementById('preview-year');
+        const previewPayDate = document.getElementById('preview-pay-date');
+        
+        if (previewMonth) previewMonth.textContent = month;
+        if (previewYear) previewYear.textContent = year;
+        if (previewPayDate) previewPayDate.textContent = payDate;
+        
+        // Employee details - only update elements that exist
+        const employeeName = document.getElementById('preview-employeeName');
+        const employeeTitle = document.getElementById('preview-employeeTitle');
+        const employeeId = document.getElementById('preview-employeeId');
+        const employeeEmail = document.getElementById('preview-employeeEmail');
+        const employeeAccount = document.getElementById('preview-employeeAccount');
+        
+        if (employeeName) employeeName.textContent = salary.employeeName || 'N/A';
+        if (employeeTitle) employeeTitle.textContent = salary.title || 'N/A';
+        if (employeeId) employeeId.textContent = salary.employeeId || 'N/A';
+        if (employeeEmail) employeeEmail.textContent = salary.email || 'N/A';
+        if (employeeAccount) employeeAccount.textContent = salary.accountNumber || 'N/A';
+        
+        // Salary details
+        const workingDays = document.getElementById('preview-working-days');
+        const lopDays = document.getElementById('preview-lop-days');
+        const basicPay = document.getElementById('preview-basicPay');
+        const specialAllowance = document.getElementById('preview-specialAllowance');
+        const taxDeduction = document.getElementById('preview-taxDeduction');
+        
+        if (workingDays) workingDays.textContent = salary.workingDays || 0;
+        if (lopDays) lopDays.textContent = salary.lopDays || 0;
+        if (basicPay) basicPay.textContent = formatCurrency(salary.basicPay || 0);
+        if (specialAllowance) specialAllowance.textContent = formatCurrency(salary.specialAllowance || 0);
+        if (taxDeduction) taxDeduction.textContent = formatCurrency(salary.taxDeduction || 0);
+        
+        // Calculate net salary
+        const netSalary = (salary.basicPay || 0) + (salary.specialAllowance || 0) - (salary.taxDeduction || 0);
+        
+        // Net Salary section
+        const netSalaryElement = document.getElementById('preview-netSalary');
+        const salaryInWords = document.getElementById('preview-salaryInWords');
+        const footerMonth = document.getElementById('preview-footer-month');
+        
+        if (netSalaryElement) netSalaryElement.textContent = netSalary.toFixed(2);
+        if (salaryInWords) salaryInWords.textContent = `Indian Rupee ${convertToWords(netSalary)} Only`;
+        if (footerMonth) footerMonth.textContent = `${month} ${year}`;
+        
+        // Store current salary ID
+        currentSalaryId = salary._id;
+        
+        // Show preview modal
+        const modal = document.getElementById('salaryPreviewModal');
+        modal.style.display = 'flex';
+        modal.classList.add('show');
+        
+    } catch (error) {
+        console.error('Error populating preview modal:', error);
+        showNotification('Failed to load salary preview: ' + error.message, 'error');
+    }
 }
 
 async function editSalary(salaryId) {
